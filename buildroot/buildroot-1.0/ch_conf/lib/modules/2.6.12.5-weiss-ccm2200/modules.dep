@@ -1,0 +1,87 @@
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/bluetooth/hci_usb.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/bluetooth.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/ftdi_sio.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/ipaq.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/cypress_m8.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/belkin_sa.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/io_ti.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/omninet.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/digi_acceleport.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/hp4x.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/io_edgeport.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/cyberjack.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/ipw.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/kobil_sct.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/ti_usb_3410_5052.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/airprime.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/pl2303.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/empeg.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/cp2101.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/safe_serial.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/keyspan.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/garmin_gps.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/ir-usb.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/mct_u232.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/kl5kusb105.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/keyspan_pda.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/whiteheat.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/visor.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/serial/usbserial.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/gadget/g_ether.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/gadget/gadgetfs.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/gadget/g_zero.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/gadget/g_serial.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/drivers/usb/gadget/g_file_storage.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/bluetooth.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/l2cap.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/bluetooth.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/sco.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/bluetooth.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/rfcomm/rfcomm.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/l2cap.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/bluetooth.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/bnep/bnep.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/l2cap.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/bluetooth/bluetooth.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/iptable_raw.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_multiport.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/iptable_nat.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_TOS.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_DSCP.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_MASQUERADE.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/iptable_nat.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_owner.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_SAME.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/iptable_nat.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/iptable_mangle.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_helper.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_pkttype.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_iprange.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/arptable_filter.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/arp_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_LOG.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_state.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_CLASSIFY.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_ECN.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_NETMAP.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/iptable_nat.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/iptable_filter.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_nat_snmp_basic.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_REJECT.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_hashlimit.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_ttl.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_tos.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/arpt_mangle.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/arp_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_TCPMSS.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_REDIRECT.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/iptable_nat.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_length.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_ULOG.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_mac.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_conntrack.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_comment.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_recent.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_esp.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/arp_tables.ko:
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_ecn.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_tcpmss.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_mark.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_ah.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_dscp.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_limit.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_sctp.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_NOTRACK.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_conntrack.ko /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_MARK.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_addrtype.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ipt_realm.ko: /lib/modules/2.6.12.5-weiss-ccm2200/kernel/net/ipv4/netfilter/ip_tables.ko
+/lib/modules/2.6.12.5-weiss-ccm2200/kernel/fs/cifs/cifs.ko:

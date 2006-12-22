@@ -1,0 +1,45 @@
+#! /bin/sh
+#*****************************************************************************
+#* 
+#*  @file          S91proftpd
+#*
+#*  /etc/init.d script for proftpd FTP Server for Weiss CCM2200
+#*
+#*  @version       1.0 (\$Revision: 1818 $)
+#*  @author        Markus Forster <br>
+#*                 Weiss-Electronic GmbH
+#* 
+#*  $LastChangedBy: fom9tr $  
+#*  $Date: 2006-08-09 $
+#*  $URL:  $
+#*
+#*  @par Modification History:
+#*    2006-08-09 mf: initial version (unixdef)
+#*
+#*  
+#*****************************************************************************
+
+# Make sure the proftpd daemon exists
+[ -f /sbin/proftpd ] || exit 0
+
+case "$1" in
+  start)
+	if ! [ -f /usr/local/var/proftpd/proftpd.delay ]; then
+	    mkdir -p /usr/local/var/proftpd
+	    touch /usr/local/var/proftpd/proftpd.delay
+	fi
+  	/sbin/proftpd
+	;;
+  stop)
+  	killall proftpd
+	;;
+  restart|reload)
+  	kill -HUP proftpd
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
+

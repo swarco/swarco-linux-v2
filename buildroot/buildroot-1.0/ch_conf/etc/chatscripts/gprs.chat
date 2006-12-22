@@ -1,0 +1,29 @@
+# Chat Script fuer GPRS-Verbindung ueber T-D1
+# GPRS Konfiguration fuer pppd auf CCM2200
+# (C) 2006-06-07 Weiss-Electronic GmbH / Markus Forster
+#
+# 
+ABORT        BUSY
+ABORT        "NO CARRIER"
+ABORT        VOICE
+ABORT	     "NO DIALTONE"
+#terminate connection, if allready established
+""      AT
+TIMEOUT 10
+OK-\d\d+++\d\d\c-OK  ATH
+# Pruefe ob PIN eingeben
+# MC35 liefert hier "ERROR" bei AT+CPIN? wenn schon eine PIN eingegeben,
+# daher nur ausfuehren, wenn keine PIN vorliegt
+OK--OK    AT+CPIN?
+READY-@/etc/chatscripts/gprs/pin-OK   AT
+# jetzt erst abort by ERROR
+ABORT        ERROR
+#
+#
+"OK"    @/etc/chatscripts/gprs/gprs_apn
+#
+TIMEOUT 90
+#
+"OK"    "ATD *99**PPP*1#"
+"CONNECT"
+

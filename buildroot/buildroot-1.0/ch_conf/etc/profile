@@ -1,0 +1,40 @@
+#!/bin/sh
+
+#umask 022
+
+for dir in /sbin /bin /usr/bin /usr/weiss/bin /root/scripts /root/bin 
+do
+  if [ -d $dir ]; then
+      PATH=$PATH:$dir
+  fi
+done
+
+for dir in /usr/weiss/lib /usr/local/lib
+do
+  if [ -d $dir ]; then
+      LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$dir
+  fi
+done
+
+export PATH 
+export LD_LIBRARY_PATH
+
+PS1='\h:\w\$ '
+export PS1
+
+#2004-03-12 gc: aliase / functions
+alias rw='mount -oremount,rw /'
+alias ro='mount -oremount,ro /'
+
+
+mem() {
+ if [ $# -lt 1 ]; then 
+     set ks polling tls_over_ip 
+  fi
+
+ for proc
+ do
+   ps | egrep "[^(]($proc)\>" | head -1
+ done
+ head -2 /proc/meminfo
+}

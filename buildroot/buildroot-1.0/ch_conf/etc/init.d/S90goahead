@@ -1,0 +1,43 @@
+#! /bin/sh
+#*****************************************************************************
+#* 
+#*  @file          S90goahead
+#*
+#*  /etc/init.d script for goAhead webserver for Weiss CCM2200
+#*
+#*  @version       1.0 (\$Revision: 1818 $)
+#*  @author        Markus Forster <br>
+#*                 Weiss-Electronic GmbH
+#* 
+#*  $LastChangedBy: fom9tr $  
+#*  $Date: 2006-05-02 $
+#*  $URL:  $
+#*
+#*  @par Modification History:
+#*    2006-05-02 mf: initial version (unixdef)
+#*
+#*  
+#*****************************************************************************
+
+# Make sure the goAhead progam exists
+[ -f /sbin/goahead ] || exit 0
+
+case "$1" in
+  start)
+	cd /web
+  	/sbin/goahead &
+	;;
+  stop)
+  	killall goahead
+	;;
+  restart|reload)
+	cd /web
+  	kill -HUP goahead
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
+

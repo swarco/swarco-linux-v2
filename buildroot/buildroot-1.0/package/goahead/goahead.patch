@@ -1,0 +1,8 @@
+--- build_arm/ws031202/LINUX/Makefile	2003-12-02 21:13:57.000000000 +0100
++++ build_arm/ws031202/LINUX/Makefile	2006-04-28 10:43:01.000000000 +0200
+@@ -152,4 +152,4 @@
+ #	Transition rules (add -o to put object in right directory)
+ #
+ .c.o:
+-	cc -c -o $@ $(DEBUG) $(CFLAGS) $(IFLAGS) $<
++	$(CC) -c -o $@ $(DEBUG) $(CFLAGS) $(IFLAGS) $<

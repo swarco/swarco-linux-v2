@@ -1,0 +1,14 @@
+# This is the chat script used to dial out to your default service provider.
+# Please customize the entries enclosed in parenthesis to match your setup.
+# Only the "provider" file will be handled by poff and pon (unless with
+# extra command line arguments).
+# 
+# Remember to edit /etc/ppp/peers/provider accordingly.
+#
+ABORT        BUSY
+ABORT        "NO CARRIER"
+ABORT        VOICE
+ABORT	     "NO DIALTONE"
+""           ATDT<put phone number here>
+ogin         <put login name here>
+word         \q<put password here>

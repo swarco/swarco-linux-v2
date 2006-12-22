@@ -1,0 +1,75 @@
+#!/bin/sh
+#*****************************************************************************/
+#* 
+#*  @file          S41bluetooth
+#*
+#*  Starts console connectivity for bluetooth interface
+#*  
+#*  @version       0.1
+#*  @date          <2006-07-06 15:01:33 mf>
+#*  @author        Markus Forster
+#* 
+#*  Changes:
+#*    2006-07-06 mf: initial version
+#*  
+#****************************************************************************/
+
+export KERNEL_VER=`uname -r`
+
+startup()
+{
+    killall polling
+
+    insmod /lib/modules/$KERNEL_VER/kernel/net/bluetooth/bluetooth.ko
+    insmod /lib/modules/$KERNEL_VER/kernel/net/bluetooth/l2cap.ko
+    insmod /lib/modules/$KERNEL_VER/kernel/net/bluetooth/rfcomm/rfcomm.ko
+    insmod /lib/modules/$KERNEL_VER/kernel/drivers/bluetooth/hci_usb.ko
+
+    hcid -f /etc/bluetooth/hcid.conf
+    hciconfig hci0 up
+
+    # start service discovery protocol demon and advertise "Serial Port"
+    sdpd	
+    sdptool add SP
+
+
+    DEV_IN=/dev/tts/1
+    DEV_OUT=/dev/bluetooth/rfcomm/0 
+
+    #stty -F $DEV_IN 4800 raw -cstopb -parenb
+
+    #getty -L $DEV_IN 4800 xterm &
+
+    (while true; do rfcomm listen 0; done)&
+    (while true; do if [ -c $DEV_OUT ] ; then getty -L $DEV_OUT 4800 xterm; fi; sleep 10; done)&
+    #(while true; do rfcomm listen 0; done)&
+    #(while true; do if [ -c $DEV_OUT ] ; then stty -F $DEV_OUT raw; fi; sleep 10; done)&
+}
+
+stopit()
+{
+    killall rfcomm
+    killall sdpd
+    killall hcid
+    rmmod hci_usb
+    killall rfcomm
+    rmmod rfcomm
+    rmmod l2cap
+    rmmod bluetooth
+}
+
+case "$1" in
+  start)
+	startup	
+	;;
+  stop)
+  	stopit
+	;;
+  restart|reload)
+  	stopit
+	startup
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac

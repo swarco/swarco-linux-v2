@@ -1,0 +1,89 @@
+# /etc/ppp/options
+
+-pap
++chap
+
+#override default hostname
+name fg16
+
+#record /var/log/ppp-sniffed.log
+
+#chap only:
+#name pppname
+#remotename pppclient
+#-
+
+# ip of the local endpoint of the ppp link
+#10.0.0.150:
+
+## local endpoint ip used in UE
+#172.16.8.121:
+
+## let the peer give the address - may help
+noipdefault
+
+usepeerdns
+
+debug
+kdebug 6
+
+#disconnect "chat -- \d+++\d\c OK ath0 OK"
+
+asyncmap 0
+auth
+crtscts
+lock
+#hide-password
+show-password
+modem
+
+#passive
+#-all
+#-ac
+#-am
+#-detach
+#-ip
+#noip
+#-mn
+#-mru
+#-pc
+#+pap
+#-pap
+#+chap
+#-chap
+#-vj
+#debug
+#domain <d>
+#kdebug n
+#mtu <n>
+#name <n>
+#usehostname
+#remotename <n>
+proxyarp
+# login
+lcp-echo-interval 30
+lcp-echo-failure 4
+#lcp-restart <n>
+#lcp-max-terminate <n>
+#lcp-max-configure <n>
+#lcp-max-failure <n>
+#ipcp-restart <n>
+#ipcp-max-terminate <n>
+#ipcp-max-configure <n>
+#ipcp-max-failure <n>
+#pap-restart <n>
+#pap-max-authreq <n>
+#pap-timeout <n>
+#chap-restart <n>
+#chap-max-challenge
+#chap-interval <n>
+#ipcp-accept-local
+#ipcp-accept-remote
+#noipx
+#nopersist
+#persist
+#maxfail <n>
+#demand
+#idle <n>
+#holdoff <n>
+#connect-delay <n>

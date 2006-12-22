@@ -1,0 +1,38 @@
+#!/bin/sh
+#*****************************************************************************/
+#* 
+#*  @file          S42nmbd
+#*
+#*  Started den nmbd Daemon.
+#*  
+#*  @version       0.1
+#*  @date          <2006-07-04 15:01:33 mf>
+#*  @author        Markus Forster
+#* 
+#*  Changes:
+#*    2006-07-04 mf: initial version
+#*  
+#****************************************************************************/
+
+case "$1" in
+  start)
+	start-stop-daemon --start --quiet --exec /bin/nmbd -- -D
+	;;
+  stop)
+  	killall nmbd
+	exit 0
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+
+# Local Variables:
+# mode: shell-script
+# time-stamp-pattern: "20/@date[\t ]+<%%>"
+# backup-inhibited: t
+# End:

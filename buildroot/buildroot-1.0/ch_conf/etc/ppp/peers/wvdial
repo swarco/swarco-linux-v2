@@ -1,0 +1,4 @@
+noauth
+name wvdial
+usepeerdns
+debug

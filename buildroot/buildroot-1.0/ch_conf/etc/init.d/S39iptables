@@ -1,0 +1,83 @@
+#!/bin/sh
+#*****************************************************************************/
+#* 
+#*  @file          iptables.sh
+#*
+#*  Einfache Paketfilter-Regeln als Firewall für die Internet-Einwahl
+#*  einrichten.  
+#*
+#*  Die Paketfilter-Regeln sollten geladen werden bevor die Netzwerkinterfaces
+#*  initialisiert werden, damit sich keine kurzzeitigen Sicherheitslücken 
+#*  ergeben.
+#*
+#*  @version       0.1
+#*  @date          <2005-11-11 15:01:33 gc>
+#*  @author        Guido Classen
+#* 
+#*  Changes:
+#*    2004-12-23 gc: initial version
+#*  
+#****************************************************************************/
+
+case "$1" in
+  start)
+	# break
+	;;
+  stop)
+  	exit 0
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+. /etc/init_common.sh
+
+
+echo "Setting up ip_tables packet filter"
+load_module kernel/net/ipv4/netfilter/ip_tables
+load_module kernel/net/ipv4/netfilter/iptable_filter
+
+(
+    PPP_IFACE=ppp0
+    # 2004-12-22 gc: setup iptables packetfilter for internet connection
+    #                over ppp interface (GPRS)
+    #default policy: drop all packets
+    iptables -P INPUT DROP
+    # don't filter eth0 and loopback interface
+    iptables -A INPUT -i eth0 -j ACCEPT
+    iptables -A INPUT -i lo -j ACCEPT   
+    iptables -A INPUT -i usb0 -j ACCEPT
+    # erlaube eingehende ICMP Pakete, ausser echo-request (ping)
+    iptables -A INPUT -i $PPP_IFACE -p icmp --icmp-type ! echo-request -j ACCEPT
+    # Eingehende Verbindungen auf die folgenden Ports zulassen:
+    #  ssh:  Secure Shell Remotezugang
+    #  7100: WAN-Com
+    iptables -A INPUT -i $PPP_IFACE -p tcp --dport ssh -j ACCEPT
+    iptables -A INPUT -i $PPP_IFACE -p tcp --dport 7100 -j ACCEPT
+    # erlaube ausgehende TCP Verbindungen von unpriviligierten Ports
+    # um dies zu erreichen, lasse eingehende Pakete mit gesetztem 
+    # SYN+ACK (Bestaetigung Verbindugnsaufbau) zu 
+    # sowie eingehende Pakete mit nicht gesetztem SYN (Daten oder Verbindungs-
+    # abbruch)
+    iptables -A INPUT -i $PPP_IFACE -p tcp --tcp-flags SYN,ACK SYN,ACK --dport 1024:65535 -j ACCEPT
+    iptables -A INPUT -i $PPP_IFACE -p tcp --tcp-flags SYN NONE --dport 1024:65535 -j ACCEPT
+    # erlaube folgende eingehende UDP 
+    # 
+    # Antwort von DNS server
+    iptables -A INPUT -i ppp0 -p udp --sport domain -j ACCEPT
+    # Antwort vom NTP server
+    iptables -A INPUT -i ppp0 -p udp --sport ntp -j ACCEPT
+    # Alle priviligierten UDP Ports
+    # iptables -A INPUT -i $PPP_IFACE -p udp --dport 1:1023 -j ACCEPT
+
+)
+
+# Local Variables:
+# mode: shell-script
+# time-stamp-pattern: "20/@date[\t ]+<%%>"
+# backup-inhibited: t
+# End:

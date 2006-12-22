@@ -1,0 +1,24 @@
+# Testeinwahl ueber CSD Konfiguration fuer pppd
+# (C) 2004-12-21 Weiss-Electronic GmbH / Guido Classen
+#
+# 
+# ppd noproxyarp usehostname noipdefault modem defaultreoute  noauth user d2 nodetach debug connect "/bin/chat -vs -f /etc/chatscripts/otello" /dev/tts/3 115200
+# 
+#
+ABORT        BUSY
+ABORT        "NO CARRIER"
+ABORT        VOICE
+ABORT	     "NO DIALTONE"
+""  AT+CPIN=5516
+# MC35 liefert hier "ERROR" wenn schon eine PIN eingegeben,
+# ansonsten wird die PIN uebernommen, das Script beendet und die Einwahl
+# erfolgt bein naechsten Versuch durch pppd
+ABORT        ERROR
+"ERROR"
+#
+# AT+cgdcont=1,"IP","internet.t-d1.de"
+#  AT+cgdcont=1,"IP","web.vodafone.de"
+#"OK" 
+"ATD +498924401000"
+"CONNECT"
+

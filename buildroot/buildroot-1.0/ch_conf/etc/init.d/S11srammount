@@ -1,0 +1,44 @@
+#!/bin/sh
+#*****************************************************************************/
+#* 
+#*  @file          S11srammount
+#*
+#*  mounts SRAM (/dev/mtdblock/4) to /tmp/timestamp and performs timestamp
+#*  
+#*  @version       0.1
+#*  @date          <2006-07-06 15:01:33 mf>
+#*  @author        Markus Forster
+#* 
+#*  Changes:
+#*    2006-07-06 mf: initial version
+#*  
+#****************************************************************************/
+startup()
+{
+    echo "mounting SRAM and performing timestamp"
+    mount /dev/mtdblock/4 /tmp/timestamp
+    echo "`date` : Sytem startup"  >> /tmp/timestamp/sysboot.log
+}
+
+stopit()
+{
+    echo "`date` : regular System shutdown" >> /tmp/timestamp/sysboot.log
+    umount /tmp/timestamp
+    echo "SRAM unmounted"
+}
+
+case "$1" in
+  start)
+	startup	
+	;;
+  stop)
+  	stopit
+	;;
+  restart|reload)
+  	stopit
+	startup
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac

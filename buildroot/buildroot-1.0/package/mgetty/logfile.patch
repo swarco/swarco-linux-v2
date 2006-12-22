@@ -1,0 +1,35 @@
+--- logfile.c	2004-11-08 21:07:29.000000000 +0100
++++ logfile.c	2005-09-20 10:36:59.000000000 +0200
+@@ -58,10 +58,12 @@
+ /* Most systems have these variables but do not declare them. On many
+    of those systems that _do_ declare them, it won't hurt */
+ 
+-#if !defined(__NetBSD__) && !defined( __FreeBSD__ ) && !defined(__OpenBSD__) && !defined(__GLIBC__) && !defined(__MACH__)
+-extern int sys_nerr;
+-extern char *sys_errlist[];
+-#endif
++//#if !defined(__NetBSD__) && !defined( __FreeBSD__ ) && !defined(__OpenBSD__) && !defined(__GLIBC__) && !defined(__MACH__)
++//extern int sys_nerr;
++//extern char *sys_errlist[];
++//int sys_nerr;
++//char *sys_errlist[];
++//#endif
+ 
+ /* Interactive Unix is a little bit braindead - does not have atexit(),
+  */
+@@ -327,12 +329,12 @@
+     }
+     else		/* ERROR or FATAL */
+     {
+-	fprintf(log_fp, "\n%02d/%02d %02d:%02d:%02d %s %s: %s",
++	fprintf(log_fp, "\n%02d/%02d %02d:%02d:%02d %s %s: Errornr %d",
+ 		             tm->tm_mon+1,  tm->tm_mday,
+ 			     tm->tm_hour, tm->tm_min, tm->tm_sec,
+ 		             log_infix, ws,
+-			     ( errnr <= sys_nerr ) ? sys_errlist[errnr]:
+-			     "<error not in list>" );
++			     errnr
++			     );
+ #ifdef SYSLOG
+ 	syslog( level == L_FATAL? LOG_ALERT: LOG_ERR, "%s: %m", ws );
+ #endif

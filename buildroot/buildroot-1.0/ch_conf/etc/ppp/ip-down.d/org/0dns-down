@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# 0dns-down by John Hasler 4 Apr 1999.  You may treat this program as if it
+# was in the public domain.
+
+# 0dns-down takes down what 0dns-up sets up.
+
+# If pppconfig has been removed we are not supposed to do anything.
+
+test -f /usr/sbin/pppconfig || exit 0
+
+ETC="/var/etc"
+RESOLVBAK="$ETC/resolv.conf.ppp.bak"
+RESOLVCONF="$ETC/resolv.conf"
+
+test -f "$RESOLVBAK" && mv $RESOLVBAK $RESOLVCONF
+chmod 644 $RESOLVCONF
+# Tell nscd about what we've done.
+test -x /usr/sbin/nscd || exit 0
+/usr/sbin/nscd -i hosts || exit 0

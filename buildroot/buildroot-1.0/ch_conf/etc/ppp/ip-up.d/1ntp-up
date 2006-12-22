@@ -1,0 +1,14 @@
+#!/bin/sh
+
+NTPDATE=/usr/bin/ntpdate
+HWCLOCK=/usr/bin/hwclock
+# synchronize systime from NTP-Server
+test -f $NTPDATE || exit 0
+test -f /etc/default/ntp-servers || exit 0
+
+. /etc/default/ntp-servers
+
+test -n "$NTPSERVERS" || exit 0
+
+logger "$0 Running ntpdate to synchronize clock"
+$NTPDATE -s $NTPSERVERS && $HWCLOCK --systohc

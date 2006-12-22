@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/usr/bin/updatedd dyndns -- --ipv4 $PPP_LOCAL <login>:<pass> <hostname>.<domainname>

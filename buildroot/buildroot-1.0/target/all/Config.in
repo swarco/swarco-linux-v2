@@ -1,0 +1,5 @@
+config BR2_TARGET_ALL_CONF
+	bool "all changed configs"
+	default y
+	help
+	  Set Weiss Configuration files.

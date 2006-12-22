@@ -1,0 +1,78 @@
+#############################################################
+#
+# microperl
+#
+#############################################################
+MICROPERL_VER=5.8.7
+MICROPERL_SOURCE=perl-$(MICROPERL_VER).tar.bz2
+MICROPERL_SITE=ftp://ftp.cpan.org/pub/CPAN/src/5.0
+MICROPERL_DIR=$(BUILD_DIR)/perl-$(MICROPERL_VER)
+MICROPERL_P_DIR=$(BUILD_DIR)/../package/microperl
+
+$(DL_DIR)/$(MICROPERL_SOURCE):
+	$(WGET) -P $(DL_DIR) $(MICROPERL_SITE)/$(MICROPERL_SOURCE)
+
+$(MICROPERL_DIR)/.source: $(DL_DIR)/$(MICROPERL_SOURCE)
+	bzcat $(DL_DIR)/$(MICROPERL_SOURCE) | tar -C $(BUILD_DIR) $(TAR_OPTIONS) -
+	touch $(MICROPERL_DIR)/.source
+
+$(MICROPERL_DIR)/.host-perl:$(MICROPERL_DIR)/.source
+	(cd $(MICROPERL_DIR); \
+	#make -f Makefile.micro \
+	-rm config.sh Policy.sh; \
+	sh Configure -de; \
+	make -j 5; \
+	cp miniperl miniperl.native \
+	);
+	#rm -R  $(MICROPERL_DIR)/*.o
+	#mv $(MICROPERL_DIR)/microperl $(MICROPERL_DIR)/host-microperl
+	#$(MAKE) -f Makefile.micro CC=$(TARGET_CC) -C $(MICROPERL_DIR)
+	-rm $(MICROPERL_DIR)/config.sh
+	-rm $(MICROPERL_DIR)/Policy.sh
+	chmod -R 777 $(MICROPERL_DIR)
+	cp $(MICROPERL_P_DIR)/Configure $(MICROPERL_DIR)
+	cp $(MICROPERL_DIR)/Cross/config.sh-arm-linux $(MICROPERL_DIR)/config.sh
+	touch $(MICROPERL_DIR)/.host-perl
+
+$(MICROPERL_DIR)/.configured:$(MICROPERL_DIR)/.host-perl
+	(cd $(MICROPERL_DIR); \
+		cp $(MICROPERL_P_DIR)/config.sh-arm-linux config.sh; \
+		$(TARGET_CONFIGURE_OPTS) \
+		CC="$(TARGET_CC)" \
+		LD="$(TARGET_LD)" \
+		ranlib="$(TARGET_RANLIB)" \
+		CFLAGS="$(TARGET_CFLAGS)" \
+		LDFLAGS="$(TARGET_LDFLAGS)" \
+		#./configure.gnu \
+		#--prefix=/usr/local \
+		sh Configure -S \
+	);
+	touch $(MICROPERL_DIR)/.configured
+
+$(MICROPERL_DIR)/microperl: $(MICROPERL_DIR)/.configured
+	-$(MAKE1) CC=$(TARGET_CC) -C $(MICROPERL_DIR)
+	-cp $(MICROPERL_DIR)/miniperl.native $(MICROPERL_DIR)/miniperl
+	$(MAKE1) CC=$(TARGET_CC) -C $(MICROPERL_DIR)
+
+$(TARGET_DIR)/usr/bin/microperl: $(MICROPERL_DIR)/microperl
+	cp -dpf $(MICROPERL_DIR)/microperl $(TARGET_DIR)/usr/bin/microperl
+
+microperl: uclibc $(TARGET_DIR)/usr/bin/microperl
+
+microperl-source: $(DL_DIR)/$(MICROPERL_SOURCE)
+
+microperl-clean:
+	rm -f $(TARGET_DIR)/usr/bin/microperl
+	-$(MAKE) -C $(MICROPERL_DIR) clean
+
+microperl-dirclean:
+	rm -rf $(MICROPERL_DIR)
+
+#############################################################
+#
+# Toplevel Makefile options
+#
+#############################################################
+ifeq ($(strip $(BR2_PACKAGE_MICROPERL)),y)
+TARGETS+=microperl
+endif

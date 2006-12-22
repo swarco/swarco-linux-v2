@@ -1,0 +1,62 @@
+#!/bin/sh
+#*****************************************************************************
+#* 
+#*  @file          /etc/S10hw-init
+#*
+#*                 Initialize LS2000CP Hardware
+#*                 Buildroot uclibc linux
+#*                 2005 Weiss-Electronic GmbH
+#*
+#*  @version       0.2
+#*  @date          <2005-05-18 17:03:03 gc>
+#*  @author        Guido Classen
+#* 
+#*  @par change history:
+#*    2005-06-07 gc: initial version 
+#*  
+#*****************************************************************************
+
+case "$1" in
+  start)
+	# break
+	;;
+  stop)
+  	exit 0
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+
+##############################################################################
+# 2005-06-08 gc: Shell functions
+##############################################################################
+sysctl() {
+   case "$1" in
+   -w)	
+	assignment=$2
+	echo ${assignment##*=} >/proc/sys/${assignment%%=*}
+	;;
+   *)
+	echo $1 = `echo /proc/sys/$1`
+	return 1
+	;;
+    esac
+    return 0
+}
+
+##############################################################################
+# 2005-06-08 gc: End shell functions
+##############################################################################
+
+#2003-05-16 gc:
+echo "Setting SysV IPC limits"
+#maximal size in bytes of all messages in queue
+sysctl -w kernel/msgmnb=1048576
+#maximal number of message queues in system
+sysctl -w kernel/msgmni=256
+
