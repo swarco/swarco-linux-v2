@@ -11,10 +11,11 @@
 #*  ergeben.
 #*
 #*  @version       0.1
-#*  @date          <2005-11-11 15:01:33 gc>
+#*  @date          <2007-01-11 00:32:03 gc>
 #*  @author        Guido Classen
 #* 
 #*  Changes:
+#*    2007-01-11 gc: bugfix let incoming FIN packets pass!!!!
 #*    2004-12-23 gc: initial version
 #*  
 #****************************************************************************/
@@ -47,10 +48,12 @@ load_module kernel/net/ipv4/netfilter/iptable_filter
     #                over ppp interface (GPRS)
     #default policy: drop all packets
     iptables -P INPUT DROP
+
     # don't filter eth0 and loopback interface
     iptables -A INPUT -i eth0 -j ACCEPT
     iptables -A INPUT -i lo -j ACCEPT   
     iptables -A INPUT -i usb0 -j ACCEPT
+
     # erlaube eingehende ICMP Pakete, ausser echo-request (ping)
     iptables -A INPUT -i $PPP_IFACE -p icmp --icmp-type ! echo-request -j ACCEPT
     # Eingehende Verbindungen auf die folgenden Ports zulassen:
@@ -58,22 +61,27 @@ load_module kernel/net/ipv4/netfilter/iptable_filter
     #  7100: WAN-Com
     iptables -A INPUT -i $PPP_IFACE -p tcp --dport ssh -j ACCEPT
     iptables -A INPUT -i $PPP_IFACE -p tcp --dport 7100 -j ACCEPT
-    # erlaube ausgehende TCP Verbindungen von unpriviligierten Ports
-    # um dies zu erreichen, lasse eingehende Pakete mit gesetztem 
-    # SYN+ACK (Bestaetigung Verbindugnsaufbau) zu 
-    # sowie eingehende Pakete mit nicht gesetztem SYN (Daten oder Verbindungs-
-    # abbruch)
-    iptables -A INPUT -i $PPP_IFACE -p tcp --tcp-flags SYN,ACK SYN,ACK --dport 1024:65535 -j ACCEPT
-    iptables -A INPUT -i $PPP_IFACE -p tcp --tcp-flags SYN NONE --dport 1024:65535 -j ACCEPT
+
+    # 2007-01-11 gc: Korrektur der Regel: Wir lassen alle ankommenden
+    # TCP Pakete passieren, auﬂer welche bei denen ausschlieﬂlich das
+    # SYN Bit gesetzt ist (TCP-Verbindungsaufbau). 
+    # Das bedeutet, dass SYN+ACK (Bestaetigung Verbindugnsaufbau) sowie
+    # RST und FIN (Verbindungsende) Pakete durchgelassen werden, sowie normale
+    # Datenpakete!
+    # Der lokale Port muss sich immer im unpriviligierten Bereich befinden!
+    iptables -A INPUT -i $PPP_IFACE -p tcp --tcp-flags !SYN,ACK,FIN,RST SYN --dport 1024:65535 -j ACCEPT
+
     # erlaube folgende eingehende UDP 
     # 
+
     # Antwort von DNS server
     iptables -A INPUT -i ppp0 -p udp --sport domain -j ACCEPT
+
     # Antwort vom NTP server
     iptables -A INPUT -i ppp0 -p udp --sport ntp -j ACCEPT
+
     # Alle priviligierten UDP Ports
     # iptables -A INPUT -i $PPP_IFACE -p udp --dport 1:1023 -j ACCEPT
-
 )
 
 # Local Variables:
