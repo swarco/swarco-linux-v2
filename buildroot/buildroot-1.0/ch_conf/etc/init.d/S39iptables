@@ -11,7 +11,7 @@
 #*  ergeben.
 #*
 #*  @version       0.1
-#*  @date          <2007-01-11 00:32:03 gc>
+#*  @date          <2007-01-11 00:35:58 gc>
 #*  @author        Guido Classen
 #* 
 #*  Changes:
@@ -65,7 +65,7 @@ load_module kernel/net/ipv4/netfilter/iptable_filter
     # 2007-01-11 gc: Korrektur der Regel: Wir lassen alle ankommenden
     # TCP Pakete passieren, auﬂer welche bei denen ausschlieﬂlich das
     # SYN Bit gesetzt ist (TCP-Verbindungsaufbau). 
-    # Das bedeutet, dass SYN+ACK (Bestaetigung Verbindugnsaufbau) sowie
+    # Das bedeutet, dass SYN+ACK (Bestaetigung Verbindungsaufbau) sowie
     # RST und FIN (Verbindungsende) Pakete durchgelassen werden, sowie normale
     # Datenpakete!
     # Der lokale Port muss sich immer im unpriviligierten Bereich befinden!
