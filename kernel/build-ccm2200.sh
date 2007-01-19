@@ -1,6 +1,9 @@
 KERNEL_DIR=.
 INSTALL_MOD_PATH=$PWD/../../buildroot/buildroot-1.0/ch_conf
 OUTPUT_DIR=$PWD/../output
+IMAGE_DIR=../../tftp_root/
+
+
 test -d $OUTPUT_DIR || mkdir -p $OUTPUT_DIR
 test -d $INSTALL_MOD_PATH || mkdir -p $INSTALL_MOD_PATH
 
@@ -21,7 +24,7 @@ fi
 
 make -C "$KERNEL_DIR" BUILD_VERBOSE=1 ARCH=arm CROSS_COMPILE="arm-linux-" INSTALL_MOD_PATH=$INSTALL_MOD_PATH O=$OUTPUT_DIR $@
 
-cp $OUTPUT_DIR/arch/arm/boot/uImage ../../tftp_root/uImage-ccm2200dev.bin
+cp $OUTPUT_DIR/arch/arm/boot/uImage $IMAGE_DIR/uImage-ccm2200dev.bin
 
 # Local Variables:
 # mode: shell-script

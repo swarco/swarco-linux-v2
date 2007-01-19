@@ -24,21 +24,39 @@
 #*
 #*****************************************************************************
 
+TFTP_ROOT_DIR	= tftp_root
+
+BUILDROOT_BASE  = buildroot
+BUILDROOT_DIR	= buildroot-1.0
+BUILDROOT_SOFT_FLOAT_DIR = buildroot-1.0-soft-float
+
+
+U_BOOT_BASE	= u-boot
+U_BOOT_DIR	= u-boot-weiss
+KERNEL_BASE	= kernel
+KERNEL_DIR	= linux-2.6.12.5-ccm2200
+
 .PHONY: all
-all: buildroot u-boot kernel
+all: buildroot buildroot-soft-float u-boot kernel
 
 
 .PHONY: buildroot
 buildroot:
-	cd buildroot/buildroot-1.0/; make
+	make -C $(BUILDROOT_BASE)/$(BUILDROOT_DIR)
+	cp $(BUILDROOT_BASE)/$(BUILDROOT_DIR)/rootfs-ccm2200-?p-nand.jffs2 \
+	   $(TFTP_ROOT_DIR)
+
+.PHONY: buildroot-soft-float
+buildroot-soft-float:
+	make -C $(BUILDROOT_BASE)/$(BUILDROOT_SOFT_FLOAT_DIR)
 
 .PHONY: u-boot
 u-boot:
-	cd u-boot/u-boot-weiss; sh weiss.sh
+	cd $(U_BOOT_BASE)/$(U_BOOT_DIR); sh build-ccm2200.sh
 
 .PHONY: kernel
 kernel:
-	cd kernel/linux-2.6.12.5-ccm2200; sh weiss.sh
+	cd $(KERNEL_BASE)/$(KERNEL_DIR); sh build-ccm2200.sh
 
 .PHONY: prepare_tree
 prepare_tree:
