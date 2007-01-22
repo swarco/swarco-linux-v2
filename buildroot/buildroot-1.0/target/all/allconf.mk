@@ -31,9 +31,7 @@ allconf:
 	-@tar -xvf root_changes.tar -C $(TARGET_DIR)
 	-@rm root_changes.tar
 	# remove dropbear from automatic start at boottime
-	-@mkdir -p $(TARGET_DIR)/etc/init.d/not_started
 	# dropbear is replaced by openSSH
-	-@mv $(TARGET_DIR)/etc/init.d/S11srammount $(TARGET_DIR)/etc/init.d/not_started/
 	-@find $(TARGET_DIR) -type f -perm +111 | xargs $(STRIP) 2>/dev/null || true;
 	@rm -rf $(TARGET_DIR)/usr/man
 	@rm -rf $(TARGET_DIR)/usr/share/man

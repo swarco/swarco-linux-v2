@@ -10,27 +10,94 @@
 #*  @author        Markus Forster
 #* 
 #*  Changes:
+#*    2006-12-20 gc: cleanup
 #*    2006-07-06 mf: initial version
 #*  
 #****************************************************************************/
 
 export KERNEL_VER=`uname -r`
 
-startup()
+#bluetooth_services="modules hcid sdpd serial_port"
+bluetooth_services="modules hcid sdpd dun_server"
+
+. /etc/init_common.sh
+
+ebegin()
 {
-    killall polling
+        echo -n $*
+}
 
-    insmod /lib/modules/$KERNEL_VER/kernel/net/bluetooth/bluetooth.ko
-    insmod /lib/modules/$KERNEL_VER/kernel/net/bluetooth/l2cap.ko
-    insmod /lib/modules/$KERNEL_VER/kernel/net/bluetooth/rfcomm/rfcomm.ko
-    insmod /lib/modules/$KERNEL_VER/kernel/drivers/bluetooth/hci_usb.ko
+eend()
+{
+	if [ "$1" -eq 0 ]; then
+		echo -e '\tokay'
+	else
+		echo -e '\tFAILED'
+	fi
+}
 
-    hcid -f /etc/bluetooth/hcid.conf
+start_modules() {
+    ebegin "Loading Bluetooth modules"
+    load_module kernel/net/bluetooth/bluetooth
+    load_module kernel/net/bluetooth/l2cap
+    load_module kernel/net/bluetooth/rfcomm/rfcomm
+    load_module kernel/drivers/bluetooth/hci_usb
+    load_module kernel/net/bluetooth/bnep/bnep
+    eend $?
+}
+
+stop_modules() {
+    ebegin "Unloading Bluetooth modules"
+    rmmod bnep
+    rmmod hci_usb
+    rmmod rfcomm
+    rmmod l2cap
+    rmmod bluetooth
+    eend $?
+}
+
+
+start_hcid() {
+    ebegin "Starting Bluetooth hcid"
+    [ -x /usr/sbin/hcid ] && \
+        start-stop-daemon --start --quiet --exec /usr/sbin/hcid -- \
+		-f /etc/bluetooth/hcid.conf
+
+    
     hciconfig hci0 up
+    eend $?
+}
 
+stop_hcid() {
+    ebegin "Shutting down Bluetooth hcid"
+    [ -x /usr/sbin/hcid ] && \
+        start-stop-daemon --stop --quiet --exec /usr/sbin/hcid
+    eend $?
+}
+
+start_sdpd() {
+    ebegin "Starting Bluetooth sdpd"
+    [ -x /usr/sbin/sdpd ] && \
+        start-stop-daemon --start --quiet --exec /usr/sbin/sdpd 
+
+    eend $?
+}
+
+stop_sdpd() {
+    ebegin "Shutting down Bluetooth sdpd"
+    [ -x /usr/sbin/sdpd ] && \
+        start-stop-daemon --stop --quiet --exec /usr/sbin/sdpd
+    eend $?
+}
+
+
+start_serial_port() {
+    ebegin "Starting Bluetooth rfcomm serial port emulation"
     # start service discovery protocol demon and advertise "Serial Port"
     sdpd	
-    sdptool add SP
+    #sdptool add SP
+
+    
 
 
     DEV_IN=/dev/tts/1
@@ -40,35 +107,100 @@ startup()
 
     #getty -L $DEV_IN 4800 xterm &
 
-    (while true; do rfcomm listen 0; done)&
-    (while true; do if [ -c $DEV_OUT ] ; then getty -L $DEV_OUT 4800 xterm; fi; sleep 10; done)&
-    #(while true; do rfcomm listen 0; done)&
+   # (while true; do rfcomm listen 0; done)&
+   # (while true; do if [ -c $DEV_OUT ] ; then getty -L $DEV_OUT 4800 xterm; fi; sleep 10; done)&
     #(while true; do if [ -c $DEV_OUT ] ; then stty -F $DEV_OUT raw; fi; sleep 10; done)&
+    eend $?
+}
+
+stop_serial_port() {
+    ebegin "Shutting down Bluetooth rfcomm serial port emulation"
+    killall rfcomm
+    eend $?
+}
+
+
+start_pan_nap() {
+    ebegin "Starting Bluetooth PAN NAP"
+    [ -x /usr/bin/pand ] && \
+        start-stop-daemon --start --quiet --exec /usr/bin/pand --\
+        --listen --role NAP
+    eend $?
+}
+
+stop_pan_nap() {
+    ebegin "Shutting down Bluetooth PAN NAP"
+    [ -x /usr/bin/pand ] && \
+        start-stop-daemon --stop --quiet --exec /usr/bin/pand
+    eend $?
+} 
+
+start_dun_server() {
+    local result
+    ebegin "Starting Bluetooth DUN server"
+    [ -x /usr/bin/dund ] && \
+        start-stop-daemon --start --quiet --exec /usr/bin/dund --\
+        --listen --msdun unit 1 call dun
+    result=$?
+    iptables -A INPUT -i ppp1 -j ACCEPT
+
+#    ifconfig eth0 down
+    eend $result
+}
+
+stop_dun_server() {
+    ebegin "Shutting down Bluetooth DUN server"
+    [ -x /usr/bin/dund ] && \
+        start-stop-daemon --stop --quiet --exec /usr/bin/dund
+    eend $?
+}
+
+startup()
+{
+    
+
+
+  start_network
 }
 
 stopit()
 {
-    killall rfcomm
+   stop_network
+   
     killall sdpd
-    killall hcid
-    rmmod hci_usb
     killall rfcomm
-    rmmod rfcomm
-    rmmod l2cap
-    rmmod bluetooth
 }
+
+
+bluetooth_stop_services=`echo $bluetooth_services | 
+	awk 'BEGIN { RS = " " } { r = $1 " " r; } END { print r }' `
 
 case "$1" in
   start)
-	startup	
+	for item in $bluetooth_services
+        do
+          start_$item
+        done
 	;;
+
   stop)
-  	stopit
+	for item in $bluetooth_stop_services
+        do
+          stop_$item
+        done
 	;;
+
   restart|reload)
-  	stopit
-	startup
+	for item in $bluetooth_stop_services
+        do
+          stop_$item
+        done
+	for item in $bluetooth_services
+        do
+          start_$item
+        done
 	;;
+
   *)
 	echo $"Usage: $0 {start|stop|restart}"
 	exit 1

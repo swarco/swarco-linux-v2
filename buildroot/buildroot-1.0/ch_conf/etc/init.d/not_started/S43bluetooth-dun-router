@@ -1,0 +1,61 @@
+
+PPP_IFACE=ppp2
+ALLOWED_IP_ADDRS="10.122.10.80/32
+		  10.122.10.86/32 
+		  10.122.10.89/32
+		  10.122.10.29/32
+		  10.122.8.8/32
+		  10.122.8.9/32
+		  10.122.10.65/32"
+
+startup()
+{
+
+  #default policy: drop all packets
+  iptables -P INPUT DROP
+  iptables -P FORWARD DROP
+
+  # allow transfer for selected packets from PPP
+  # erlaube ausgehende TCP Verbindungen von unpriviligierten Ports
+  # um dies zu erreichen, lasse eingehende Pakete mit gesetztem
+  # SYN+ACK (Bestaetigung Verbindugnsaufbau) zu
+  # sowie eingehende Pakete mit nicht gesetztem SYN (Daten oder Verbindungs-
+  # abbruch)
+  for ip_addr in $ALLOWED_IP_ADDRS
+  do
+    iptables -A FORWARD -i $PPP_IFACE --destination $ip_addr -p tcp --tcp-flags ! SYN,ACK,FIN,RST SYN --dport 1024:65535 -j ACCEPT
+  done
+
+  iptables -A INPUT -i $PPP_IFACE --destination 10.122.10.24 -p tcp --tcp-flags ! SYN,ACK,FIN,RST SYN --dport 1024:65535 -j ACCEPT
+
+  # allow all packets from LAN to PPP
+  for ip_addr in $ALLOWED_IP_ADDRS
+  do
+    iptables -A FORWARD -o $PPP_IFACE --source $ip_addr -p tcp -j ACCEPT
+  done
+
+  # Anfrage an NTP server
+  iptables -A FORWARD -i $PPP_IFACE --destination 10.122.1.19/32 -p udp --dport ntp -j ACCEPT  
+  # Antwort von NTP server
+  iptables -A FORWARD -o $PPP_IFACE --source 10.122.1.19/32 -p udp --dport ntp -j ACCEPT
+
+  echo 1 >/proc/sys/net/ipv4/ip_forward
+
+  dund --persist 1 -c 00:04:0E:8B:D1:AB unit 2 call dun_server
+}
+
+case "$1" in
+  start)
+	startup
+	;;
+
+  stop)
+	;;
+
+  restart|reload)
+	;;
+
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac

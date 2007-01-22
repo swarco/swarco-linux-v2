@@ -28,5 +28,5 @@ cp $OUTPUT_DIR/arch/arm/boot/uImage $IMAGE_DIR/uImage-ccm2200dev.bin
 
 # Local Variables:
 # mode: shell-script
-# compile-command: "./weiss.sh"
+# compile-command: "./build-ccm2200.sh"
 # End:

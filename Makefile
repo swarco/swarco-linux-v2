@@ -37,12 +37,13 @@ KERNEL_BASE	= kernel
 KERNEL_DIR	= linux-2.6.12.5-ccm2200
 
 .PHONY: all
-all: buildroot buildroot-soft-float u-boot kernel
+all: buildroot buildroot-soft-float u-boot kernel modules_install buildroot
 
 
 .PHONY: buildroot
 buildroot:
-	make -C $(BUILDROOT_BASE)/$(BUILDROOT_DIR)
+#	make -C $(BUILDROOT_BASE)/$(BUILDROOT_DIR) #this dosn't work WHY?
+	cd $(BUILDROOT_BASE)/$(BUILDROOT_DIR); make
 	cp $(BUILDROOT_BASE)/$(BUILDROOT_DIR)/rootfs-ccm2200-?p-nand.jffs2 \
 	   $(TFTP_ROOT_DIR)
 
@@ -57,6 +58,11 @@ u-boot:
 .PHONY: kernel
 kernel:
 	cd $(KERNEL_BASE)/$(KERNEL_DIR); sh build-ccm2200.sh
+
+
+.PHONY: modules_install
+modules_install:
+	cd $(KERNEL_BASE)/$(KERNEL_DIR); sh build-ccm2200.sh modules_install
 
 .PHONY: prepare_tree
 prepare_tree:
