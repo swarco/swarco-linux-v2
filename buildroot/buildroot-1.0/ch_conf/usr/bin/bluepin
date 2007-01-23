@@ -1,0 +1,2 @@
+#! /bin/sh
+echo "PIN:"`cat /etc/bluetooth/pin`

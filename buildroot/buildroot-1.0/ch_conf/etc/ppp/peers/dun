@@ -1,0 +1,14 @@
+115200
+local
+noipdefault
+#connect "/usr/sbin/chat -vs -f /etc/chatscripts/dun_ppc.chat" 
+noauth
+defaultroute
+#noipdefault   # Don't use the local hostname to determine the local IP used
+noproxyarp
+idle 0      # Set an unlimited disconnect timeout
+#0.0.0.0:0.0.0.0
+10.122.10.33:10.122.10.24
+# netmask <Netmask for your network>
+netmask 255.255.128.0 
+# ms-dns 10.10.10.1
