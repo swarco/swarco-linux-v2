@@ -35,7 +35,7 @@ fi
 #prepare a copy of buildroot to create the soft-float toolchain 
 # necessary to build u-boot
 (
-  cd $BUILDROOT_BASE)
+  cd $BUILDROOT_BASE
   svn export $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
   cp dot_config_buildroot-1.0-soft-float $BUILDROOT_SOFT_FLOAT_DIR/.config  
 )

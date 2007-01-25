@@ -32,7 +32,7 @@ echo coping u-boot.bin in tftp download directory
 cp u-boot.bin $IMAGE_DIR/u-boot-ccm2200dev.bin
 #cp u-boot.bin $IMAGE_DIR
 
-tools/mkimage -A arm -O linux -T script -C none -a 0x20100000 -e 0x20100000 -n "Weiss U-Boot autoupdate script" -d ccm2200_usb_script/ccm2200.script $IAMGE_DIR/ccm2200.bin
+tools/mkimage -A arm -O linux -T script -C none -a 0x20100000 -e 0x20100000 -n "Weiss U-Boot autoupdate script" -d ccm2200_usb_script/ccm2200.script $IMAGE_DIR/ccm2200.bin
 
 
 # Local Variables:
