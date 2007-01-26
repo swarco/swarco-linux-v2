@@ -60,7 +60,9 @@ stop_modules() {
 start_hcid() {
     ebegin "Starting Bluetooth hcid"
     [ -x /usr/sbin/hcid ] && \
-        start-stop-daemon --start --quiet --exec /usr/sbin/hcid -- \
+        start-stop-daemon --start --quiet \
+                --make-pidfile --pidfile /var/run/hcid.pid \
+                --exec /usr/sbin/hcid -- \
 		-f /etc/bluetooth/hcid.conf
 
     
@@ -71,14 +73,18 @@ start_hcid() {
 stop_hcid() {
     ebegin "Shutting down Bluetooth hcid"
     [ -x /usr/sbin/hcid ] && \
-        start-stop-daemon --stop --quiet --exec /usr/sbin/hcid
+        start-stop-daemon --stop --quiet \
+	                --pidfile /var/run/hcid.pid \
+	                --exec /usr/sbin/hcid
     eend $?
 }
 
 start_sdpd() {
     ebegin "Starting Bluetooth sdpd"
     [ -x /usr/sbin/sdpd ] && \
-        start-stop-daemon --start --quiet --exec /usr/sbin/sdpd 
+        start-stop-daemon --start --quiet \
+                --make-pidfile --pidfile /var/run/sdpd.pid \
+		--exec /usr/sbin/sdpd 
 
     eend $?
 }
@@ -86,7 +92,9 @@ start_sdpd() {
 stop_sdpd() {
     ebegin "Shutting down Bluetooth sdpd"
     [ -x /usr/sbin/sdpd ] && \
-        start-stop-daemon --stop --quiet --exec /usr/sbin/sdpd
+        start-stop-daemon --stop --quiet \
+                --pidfile /var/run/sdpd.pid \
+		--exec /usr/sbin/sdpd
     eend $?
 }
 
@@ -123,15 +131,19 @@ stop_serial_port() {
 start_pan_nap() {
     ebegin "Starting Bluetooth PAN NAP"
     [ -x /usr/bin/pand ] && \
-        start-stop-daemon --start --quiet --exec /usr/bin/pand --\
-        --listen --role NAP
+        start-stop-daemon --start --quiet \
+                --make-pidfile --pidfile /var/run/pand.pid \
+		--exec /usr/bin/pand -- \
+	        --listen --role NAP
     eend $?
 }
 
 stop_pan_nap() {
     ebegin "Shutting down Bluetooth PAN NAP"
     [ -x /usr/bin/pand ] && \
-        start-stop-daemon --stop --quiet --exec /usr/bin/pand
+        start-stop-daemon --stop --quiet \
+                --pidfile /var/run/pand.pid \
+		--exec /usr/bin/pand
     eend $?
 } 
 
@@ -139,8 +151,10 @@ start_dun_server() {
     local result
     ebegin "Starting Bluetooth DUN server"
     [ -x /usr/bin/dund ] && \
-        start-stop-daemon --start --quiet --exec /usr/bin/dund --\
-        --listen --msdun unit 1 call dun
+        start-stop-daemon --start --quiet \
+                --make-pidfile --pidfile /var/run/dund.pid \
+		--exec /usr/bin/dund -- \
+	        --listen --msdun unit 1 call dun
     result=$?
     iptables -A INPUT -i ppp1 -j ACCEPT
 
@@ -151,7 +165,9 @@ start_dun_server() {
 stop_dun_server() {
     ebegin "Shutting down Bluetooth DUN server"
     [ -x /usr/bin/dund ] && \
-        start-stop-daemon --stop --quiet --exec /usr/bin/dund
+        start-stop-daemon --stop --quiet \
+                --pidfile /var/run/dund.pid \
+		--exec /usr/bin/dund
     eend $?
 }
 

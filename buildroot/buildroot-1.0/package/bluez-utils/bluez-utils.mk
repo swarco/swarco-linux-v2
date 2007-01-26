@@ -42,6 +42,15 @@ $(BLUEZ-UTILS_DIR)/$(BLUEZ-UTILS_BINARY): $(BLUEZ-UTILS_DIR)/.configured
 $(TARGET_DIR)/$(BLUEZ-UTILS_TARGET_BINARY):$(BLUEZ-UTILS_DIR)/$(BLUEZ-UTILS_BINARY)
 	$(MAKE) prefix=$(TARGET_DIR)/usr -C $(BLUEZ-UTILS_DIR) install
 	rm -Rf $(TARGET_DIR)/usr/man
+	# phyton script don't run on our system
+	rm -f $(TARGET_DIR)/usr/bin/bluepin
+	rm -f $(TARGET_DIR)/lib/sdp.o
+	rm -f $(TARGET_DIR)/lib/hci.o
+	rm -f $(TARGET_DIR)/lib/bluetooth.o
+	rm -f $(TARGET_DIR)/lib/libbluetooth.a
+	rm -f $(TARGET_DIR)/lib/libbluetooth.la
+	rm -f $(TARGET_DIR)/lib/libbluetooth.lai
+
 
 bluez-utils: uclibc bluez-libs $(TARGET_DIR)/$(BLUEZ-UTILS_TARGET_BINARY)
 
