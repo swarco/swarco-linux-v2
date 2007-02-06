@@ -29,6 +29,9 @@ HOST_KEY_RSA=/etc/ssh_host_rsa_key
 if [ ! -f /etc/.firstboot ]; then
     exit 0
 else
+    # 2007-02-06 gc: start watchdog trigger daemon!
+    /sbin/watchdog -t 1 /dev/ccm2200_watchdog
+
     mount -o remount,rw /
     echo "rsa1, dsa and rsa keys for openSSH will be created..."
     if [ ! -f $HOST_KEY_RSA1 ]; then

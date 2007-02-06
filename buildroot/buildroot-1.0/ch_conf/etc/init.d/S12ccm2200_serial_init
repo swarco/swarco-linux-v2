@@ -1,0 +1,95 @@
+#!/bin/sh
+#*****************************************************************************
+#* 
+#*  @file          /etc/init.d/S12ccm2200_serial_init
+#*
+#*                 Create links in /dev with same name as SM2010 ports
+#*                 and configure board specific CCM2200 serial modes
+#*                 Buildroot uclibc linux
+#*                 2006 Weiss-Electronic GmbH
+#*
+#*  @version       0.2
+#*  @date          <2005-05-18 17:03:03 gc>
+#*  @author        Guido Classen
+#* 
+#*  @par change history:
+#*    2006-12-07 gc: initial version 
+#*  
+#*****************************************************************************
+
+case "$1" in
+  start)
+	# break
+	;;
+  stop)
+  	exit 0
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+# ---------------- Atmel AT91RM9200 interne UARTs -------------------------
+
+# COM2 Piggyback u.r.
+ln -s /dev/ttyS0 /dev/com2
+# COM1 Piggyback o.r.
+ln -s /dev/ttyS1 /dev/com1
+ln -s /dev/ttyS2 /dev/ttySconsole
+ln -s /dev/ttyS2 /dev/com5
+# COM6 Piggyback u.l.
+ln -s /dev/ttyS3 /dev/com6
+ln -s /dev/ttyS4 /dev/ttySdebug
+
+# ---------------- externer QUAD-UART --------------------------------------
+# COM3 RS485
+ln -s /dev/ttyS5 /dev/com3
+# COM4 Piggyback o.l.
+ln -s /dev/ttyS6 /dev/com4
+# Pfostenstecker oben
+ln -s /dev/ttyS7 /dev/com7
+# Pfostenstecker Mitte
+ln -s /dev/ttyS8 /dev/com8
+
+# ---------------- assign RX / TX indicator LEDs ---------------------------
+
+#ccm2200_serial /dev/com1 mode rs485hw
+ccm2200_serial /dev/com1 rxled 0x0001
+ccm2200_serial /dev/com1 txled 0x0002
+
+#ccm2200_serial /dev/com2 mode rs485hw
+ccm2200_serial /dev/com2 rxled 0x0004
+ccm2200_serial /dev/com2 txled 0x0008
+
+# com3 is always rs485kern!
+ccm2200_serial /dev/com3 mode rs485kern
+ccm2200_serial /dev/com3 rxled 0x0010
+ccm2200_serial /dev/com3 txled 0x0020
+
+#ccm2200_serial /dev/com3 mode rs485kern
+ccm2200_serial /dev/com4 rxled 0x0040
+ccm2200_serial /dev/com4 txled 0x0080
+
+ccm2200_serial /dev/ttySconsole rxled 0x0100
+ccm2200_serial /dev/ttySconsole txled 0x0200
+
+#ccm2200_serial /dev/com3 mode rs485hw
+ccm2200_serial /dev/com6 rxled 0x0400
+ccm2200_serial /dev/com6 txled 0x0800
+
+#ccm2200_serial /dev/com7 mode rs485kern
+ccm2200_serial /dev/com7 rxled 0x1000
+ccm2200_serial /dev/com7 txled 0x2000
+
+# currently no LED for com8
+ccm2200_serial /dev/com8 mode rs485kern
+ccm2200_serial /dev/com8 rxled 0x0000
+ccm2200_serial /dev/com8 txled 0x0000
+
+
+
+
+
