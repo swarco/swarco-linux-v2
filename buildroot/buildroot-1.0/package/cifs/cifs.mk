@@ -13,6 +13,8 @@ CIFS_SITE=http://websvn.samba.org/cgi-bin/viewcvs.cgi/*checkout*/branches/SAMBA_
 CIFS_MOUNT_SOURCE=$(CIFS_SITE)/mount.cifs.c?rev=$(CIFS_MOUNT_REVISION)
 CIFS_DIR=$(BUILD_DIR)/cifs
 CIFS_DLDIR=$(DL_DIR)/cifs
+CIFS_TARGET_BINARY:=/sbin/mount.cifs
+
 
 $(CIFS_DIR) $(CIFS_DLDIR):
 	mkdir -p $@
@@ -25,22 +27,23 @@ $(CIFS_DIR)/.unpacked:	$(CIFS_DLDIR)/.downloaded $(CIFS_DIR)
 	cp -a $(CIFS_DLDIR)/*.c $(CIFS_DIR)/
 	touch $@
 
-$(CIFS_DIR)/mount.cifs.c: $(CIFS_DIR)/.unpacked
 
 $(CIFS_DIR)/mount.cifs:	$(CIFS_DIR)/mount.cifs.c
 	$(TARGET_CC) -O2 -o $@ $<
 
-$(CIFS_DIR)/.installed: $(CIFS_DIR)/mount.cifs 
-	mkdir -p $(TARGET_DIR)/sbin
-	cp -f $(CIFS_DIR)/mount.cifs $(TARGET_DIR)/sbin
-	#$(STRIP) --strip-all $(TARGET_DIR)/sbin/mount.cifs
-	touch $(CIFS_DIR)/.installed
 
-cifs:	uclibc $(CIFS_DIR)/.installed
+$(TARGET_DIR)/$(CIFS_TARGET_BINARY): $(CIFS_DIR)/mount.cifs 
+	/usr/bin/install -c $(CIFS_DIR)/mount.cifs $(TARGET_DIR)/sbin
+	$(STRIP) $@
 
-cifs-source: $(CIFS_DIR)/.unpacked
+
+cifs:	uclibc $(TARGET_DIR)/$(CIFS_TARGET_BINARY)
+
+cifs-source: $(CIFS_DIR)/.unpacked 
 
 cifs-clean:
+	rm -f $(TARGET_DIR)/$(CIFS_TARGET_BINARY)
+	rm -f $(CIFS_DIR)/mount.cifs $(CIFS_DIR)/mount.cifs.o
 
 cifs-dirclean:
 	rm -rf $(CIFS_DIR)
