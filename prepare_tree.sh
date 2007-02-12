@@ -29,7 +29,9 @@ fi
 #prepare buildroot dl directory
 (
   cd $BUILDROOT_BASE
-  tar xvzf $1/sources/userland/application_sources.tar.gz
+#  tar xvzf $1/sources/userland/application_sources.tar.gz
+  mkdir dl
+  cp -a $1/sources/userland/dl dl
 )
 
 #prepare a copy of buildroot to create the soft-float toolchain 
