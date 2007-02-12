@@ -4,7 +4,7 @@
 #
 ##############################################################################
 FUSER_VER:=22.2
-FUSER_SOURCE:=psmisc_$(FUSER_VER).tar.gz
+FUSER_SOURCE:=psmisc-$(FUSER_VER).tar.gz
 FUSER_SITE:=http://
 FUSER_DIR:=$(BUILD_DIR)/psmisc-$(FUSER_VER)
 FUSER_BINARY:=fuser
