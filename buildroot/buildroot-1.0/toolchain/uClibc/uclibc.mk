@@ -19,7 +19,7 @@ UCLIBC_SOURCE:=uClibc-$(strip $(subst ",, $(BR2_USE_UCLIBC_SNAPSHOT))).tar.bz2
 #"
 UCLIBC_SITE:=http://www.uclibc.org/downloads/snapshots
 else
-UCLIBC_VER:=0.9.28
+UCLIBC_VER:=0.9.28.1
 UCLIBC_DIR:=$(TOOL_BUILD_DIR)/uClibc-$(UCLIBC_VER)
 UCLIBC_SOURCE:=uClibc-$(UCLIBC_VER).tar.bz2
 UCLIBC_SITE:=http://www.uclibc.org/downloads
