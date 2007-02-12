@@ -5,7 +5,7 @@ BUILDROOT_BASE=buildroot
 BUILDROOT_DIR=buildroot-1.0
 BUILDROOT_SOFT_FLOAT_DIR=buildroot-1.0-soft-float
 U_BOOT_BASE=u-boot
-U_BOOT_DIR=u-boot-weiss
+U_BOOT_DIR=u-boot-ccm2200
 KERNEL_BASE=kernel
 KERNEL_DIR=linux-2.6.12.5-ccm2200
 
@@ -46,7 +46,7 @@ fi
   \rm -rf $U_BOOT_DIR
   # warning, only example, this is not current u-boot-release
   # DO NOT USE THIS VERSION
-  tar xvzf $1/sources/u-boot/u-boot-weiss-20061020.tar.gz
+  tar xvzf $1/sources/u-boot/u-boot-ccm2200-20070209.tar.gz
 
   # create symlink for build script
   cd $U_BOOT_DIR

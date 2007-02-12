@@ -42,7 +42,8 @@
 void usage(void)
 {
   printf("usage: ccm2200_serial device info\n"
-         "       ccm2200_serial device mode <normal|rs232|rs485hw|rs485kern> [lead-delay followup-delay]\n"
+         "       ccm2200_serial device mode <normal|rs232|rs485hw|rs485int|rs485kern> "
+         "                                  [turn-on-delay turn-off-delay]\n"
          "       ccm2200_serial device rxled mask delay\n"
          "       ccm2200_serial device txled mask delay\n");
 }
@@ -65,8 +66,10 @@ void info(int fd)
     default:
       sprintf(mode_str, "%d", (int) serial_config.mode);             
     };
-    printf("Mode: %s, lead-delay: %d, followup-delay: %d\n",
-           mode_str, serial_config.leadDelay, serial_config.followupDelay);
+    printf("Mode: %s, turn-on-delay: %d, turn-off-delay: %d\n",
+           mode_str, 
+           serial_config.turn_on_delay, 
+           serial_config.turn_off_delay);
   } else {
     printf("CCM2200_SERIAL_GET_CONF operation not supported by device\n");
   }
@@ -115,6 +118,8 @@ int main(int argc, char *argv[])
         serial_config.mode = CCM2200_SERIAL_MODE_NORMAL;
       } else if (!strcmp(argv[3], "rs485hw")) {
         serial_config.mode = CCM2200_SERIAL_MODE_RS485HW;
+      } else if (!strcmp(argv[3], "rs485int")) {
+        serial_config.mode = CCM2200_SERIAL_MODE_RS485INT;
       } else if (!strcmp(argv[3], "rs485") || !strcmp(argv[3], "rs485kern")) {
         serial_config.mode = CCM2200_SERIAL_MODE_RS485KERN;
       } else {
@@ -124,10 +129,10 @@ int main(int argc, char *argv[])
         goto cleanup;
       }
       if (argc > 4) {
-        serial_config.leadDelay = strtoul(argv[4], NULL, 0);   
+        serial_config.turn_on_delay = strtoul(argv[4], NULL, 0);   
       }
       if (argc > 5) {
-        serial_config.followupDelay = strtoul(argv[5], NULL, 0);
+        serial_config.turn_off_delay = strtoul(argv[5], NULL, 0);
       }
       
       if (ioctl(device_fd, CCM2200_SERIAL_SET_CONF, &serial_config) != 0) {

@@ -22,7 +22,7 @@ fi
 
 
 
-make -C "$KERNEL_DIR" BUILD_VERBOSE=1 ARCH=arm CROSS_COMPILE="arm-linux-" INSTALL_MOD_PATH=$INSTALL_MOD_PATH O=$OUTPUT_DIR $@
+make -C "$KERNEL_DIR" BUILD_VERBOSE=1 ARCH=arm CROSS_COMPILE="arm-linux-" INSTALL_MOD_PATH=$INSTALL_MOD_PATH O=$OUTPUT_DIR $@ || exit $?
 
 cp $OUTPUT_DIR/arch/arm/boot/uImage $IMAGE_DIR/uImage-ccm2200dev.bin
 
