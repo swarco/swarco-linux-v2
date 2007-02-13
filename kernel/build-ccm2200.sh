@@ -21,8 +21,8 @@ set uImage modules modules_install
 fi
 
 
-
-make -C "$KERNEL_DIR" BUILD_VERBOSE=1 ARCH=arm CROSS_COMPILE="arm-linux-" INSTALL_MOD_PATH=$INSTALL_MOD_PATH O=$OUTPUT_DIR $@ || exit $?
+# KBUILD_VERBOSE=1
+make -C "$KERNEL_DIR" ARCH=arm CROSS_COMPILE="arm-linux-" INSTALL_MOD_PATH=$INSTALL_MOD_PATH O=$OUTPUT_DIR $@ || exit $?
 
 cp $OUTPUT_DIR/arch/arm/boot/uImage $IMAGE_DIR/uImage-ccm2200dev.bin
 
