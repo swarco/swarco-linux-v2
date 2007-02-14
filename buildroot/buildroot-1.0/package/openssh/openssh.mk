@@ -72,7 +72,13 @@ $(TARGET_DIR)/usr/bin/ssh: $(OPENSSH_DIR)/ssh
 	cp $(OPENSSH_DIR)/ssh-agent $(TARGET_DIR)/usr/bin/ssh-agent
 	cp $(OPENSSH_DIR)/ssh-keygen $(TARGET_DIR)/usr/bin/ssh-keygen
 	cp $(OPENSSH_DIR)/ssh-keyscan $(TARGET_DIR)/usr/bin/ssh-keyscan
-	cp $(OPENSSH_DIR)/sshd_config $(TARGET_DIR)/etc/sshd_config
+	#
+	# 2007-02-14 gc: install sftp-server!!!
+	sed 's#/usr/libexec/sftp-server#/usr/lib/sftp-server#g' \
+	    < $(OPENSSH_DIR)/sshd_config                        \
+	    > $(TARGET_DIR)/etc/sshd_config
+	cp $(OPENSSH_DIR)/sftp-server $(TARGET_DIR)/usr/lib
+	#
 	mkdir -p $(TARGET_DIR)/etc/init.d/
 	cp $(OPENSSH_DIR)/opensshd.init $(TARGET_DIR)/etc/init.d/S50sshd
 	chmod a+x $(TARGET_DIR)/etc/init.d/S50sshd
