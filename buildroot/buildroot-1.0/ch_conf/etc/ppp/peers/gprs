@@ -7,14 +7,14 @@ usehostname
 noipdefault 
 modem 
 noauth 
-connect "/usr/bin/chat -vs -f /etc/chatscripts/gprs.chat" 
+connect "/usr/sbin/chat -vs -f /etc/chatscripts/gprs.chat" 
 hide-password 
 defaultroute
 usepeerdns
 
 user d1
 
-/dev/ttyS1
+/dev/com1
 115200
 
 
