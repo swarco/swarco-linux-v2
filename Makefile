@@ -86,7 +86,6 @@ u-boot-dist:
 	-cd $(U_BOOT_BASE); diff -Nrub '--exclude=*~' --exclude=.depend --exclude=.git u-boot-git $(U_BOOT_DIR) >$(WEISS_CD_DIR)/sources/u-boot/u-boot-ccm2200-$(TODAY).patch
 
 
-KERNEL_ACTUAL = linux-2.6.12.5
 KERNEL_ORIG = linux-orig
 PATCH_FILE = 201-weiss-ccm2200.patch
 

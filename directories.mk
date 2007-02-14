@@ -31,7 +31,8 @@ U_BOOT_BASE	= u-boot
 U_BOOT_DIR	= u-boot-ccm2200
 U_BOOT_PATH     = $(BASE_DIR)/$(U_BOOT_BASE)/$(U_BOOT_DIR)
 KERNEL_BASE	= kernel
-KERNEL_DIR	= linux-2.6.12.5-ccm2200
+KERNEL_ACTUAL   = linux-2.6.12.6
+KERNEL_DIR	= $(KERNEL_ACTUAL)-ccm2200
 KERNEL_PATH     = $(BASE_DIR)/$(KERNEL_BASE)/$(KERNEL_DIR)
 
 CROSS_CC	= arm-linux-uclibc-gcc

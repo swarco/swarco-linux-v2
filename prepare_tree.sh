@@ -7,7 +7,8 @@ BUILDROOT_SOFT_FLOAT_DIR=buildroot-1.0-soft-float
 U_BOOT_BASE=u-boot
 U_BOOT_DIR=u-boot-ccm2200
 KERNEL_BASE=kernel
-KERNEL_DIR=linux-2.6.12.5-ccm2200
+KERNEL_ACTUAL=linux-2.6.12.6
+KERNEL_DIR=${KERNEL_ACTUAL}-ccm2200
 
 
 if [ "$1" == "" ] || [ ! -d "$1" ] ; then
@@ -66,11 +67,11 @@ fi
   cp $1/sources/kernel/kernel-config-ccm2200 output/.config
 
   # remove old kernel source if available
-  \rm -rf linux-2.6.12.5 $KERNEL_DIR
+  \rm -rf $KERNEL_ACTUAL $KERNEL_DIR
 
   # extract kernel
-  tar xjvf $1/sources/kernel/linux-2.6.12.5.tar.bz2
-  mv linux-2.6.12.5 $KERNEL_DIR
+  tar xjvf $1/sources/kernel/linux-2.6.12.6.tar.bz2
+  mv $KERNEL_ACTUAL $KERNEL_DIR
   cd $KERNEL_DIR
 
   # apply patches
