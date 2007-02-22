@@ -21,36 +21,8 @@
 
 umask 022
 
-SSH_KEYGEN=/usr/bin/ssh-keygen
-HOST_KEY_RSA1=/etc/ssh_host_key
-HOST_KEY_DSA=/etc/ssh_host_dsa_key
-HOST_KEY_RSA=/etc/ssh_host_rsa_key
-
 if [ ! -f /etc/.firstboot ]; then
     exit 0
 else
-    # 2007-02-06 gc: start watchdog trigger daemon!
-    /sbin/watchdog -t 1 /dev/ccm2200_watchdog
-
-    mount -o remount,rw /
-    echo "rsa1, dsa and rsa keys for openSSH will be created..."
-    if [ ! -f $HOST_KEY_RSA1 ]; then
-	${SSH_KEYGEN} -b 1024 -t rsa1 -f ${HOST_KEY_RSA1} -N ""
-    fi
-    if [ ! -f $HOST_KEY_DSA ]; then
-	${SSH_KEYGEN} -b 1024 -t dsa -f ${HOST_KEY_DSA} -N ""
-    fi
-    if [ ! -f $HOST_KEY_RSA ]; then
-	${SSH_KEYGEN} -b 1024 -t rsa -f ${HOST_KEY_RSA} -N ""
-    fi
-    # change permissions of ssh key files to non other access
-    chmod 600 ${HOST_KEY_RSA1}
-    chmod 600 ${HOST_KEY_DSA}
-    chmod 600 ${HOST_KEY_RSA}
-    echo "done."
-    
-    chown ftp:ftp /home/ftp
-
-    rm /etc/.firstboot
-    mount -o remount,ro /
+    /etc/ssh_keygen.sh &
 fi
