@@ -1,0 +1,7 @@
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file.
+
+# m h dom mon dow command
+15 2 * * * /etc/ppp/ip-up.d/1ntp-up
+
