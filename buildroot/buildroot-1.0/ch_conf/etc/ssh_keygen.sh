@@ -36,14 +36,16 @@ mount -o remount,rw /
 
 logger "rsa1, dsa and rsa keys for openSSH will be created..."
 ${SSH_KEYGEN} -b 1024 -t rsa1 -f ${HOST_KEY_RSA1_TMP} -N ""
-cp ${HOST_KEY_RSA1_TMP} ${HOST_KEY_RSA1}
 ${SSH_KEYGEN} -b 1024 -t dsa -f ${HOST_KEY_DSA_TMP} -N ""
-cp ${HOST_KEY_DSA_TMP} ${HOST_KEY_DSA}
 ${SSH_KEYGEN} -b 1024 -t rsa -f ${HOST_KEY_RSA_TMP} -N ""
-cp ${HOST_KEY_RSA_TMP} ${HOST_KEY_RSA}
 # change permissions of ssh key files to non other access
 chown ftp:ftp /home/ftp
 #rm /etc/.firstboot
+
+logger "copying new ssh keys to /etc ..."
+cp ${HOST_KEY_RSA1_TMP} ${HOST_KEY_RSA1}
+cp ${HOST_KEY_DSA_TMP} ${HOST_KEY_DSA}
+cp ${HOST_KEY_RSA_TMP} ${HOST_KEY_RSA}
 
 chmod 600 ${HOST_KEY_RSA1}
 chmod 600 ${HOST_KEY_DSA}
