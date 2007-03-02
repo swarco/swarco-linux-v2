@@ -57,32 +57,32 @@ ln -s /dev/ttyS8 /dev/com8
 # ---------------- assign RX / TX indicator LEDs ---------------------------
 
 #ccm2200_serial /dev/com1 mode rs485hw
-ccm2200_serial /dev/com1 rxled 0x0001
-ccm2200_serial /dev/com1 txled 0x0002
+ccm2200_serial /dev/com1 rxled $((1<<0))
+ccm2200_serial /dev/com1 txled $((1<<1))
 
-#ccm2200_serial /dev/com2 mode rs485hw
-ccm2200_serial /dev/com2 rxled 0x0004
-ccm2200_serial /dev/com2 txled 0x0008
+ccm2200_serial /dev/com2 mode rs485kern 0 0
+ccm2200_serial /dev/com2 rxled $((1<<2)) 4
+ccm2200_serial /dev/com2 txled $((1<<3)) 4
 
 # com3 is always rs485kern!
-ccm2200_serial /dev/com3 mode rs485kern
-ccm2200_serial /dev/com3 rxled 0x0010
-ccm2200_serial /dev/com3 txled 0x0020
+ccm2200_serial /dev/com3 mode rs485kern 0 0
+ccm2200_serial /dev/com3 rxled $((1<<4)) 10
+ccm2200_serial /dev/com3 txled $((1<<5)) 10
 
-#ccm2200_serial /dev/com3 mode rs485kern
-ccm2200_serial /dev/com4 rxled 0x0040
-ccm2200_serial /dev/com4 txled 0x0080
+#ccm2200_serial /dev/com4 mode rs485kern
+ccm2200_serial /dev/com4 rxled $((1<<6))
+ccm2200_serial /dev/com4 txled $((1<<7))
 
-ccm2200_serial /dev/ttySconsole rxled 0x0100
-ccm2200_serial /dev/ttySconsole txled 0x0200
+ccm2200_serial /dev/ttySconsole rxled $((1<<8))
+ccm2200_serial /dev/ttySconsole txled $((1<<9))
 
-#ccm2200_serial /dev/com3 mode rs485hw
-ccm2200_serial /dev/com6 rxled 0x0400
-ccm2200_serial /dev/com6 txled 0x0800
+ccm2200_serial /dev/com6 mode rs485kern 0 0
+ccm2200_serial /dev/com6 rxled $((1<<10)) 4
+ccm2200_serial /dev/com6 txled $((1<<11)) 4
 
 #ccm2200_serial /dev/com7 mode rs485kern
-ccm2200_serial /dev/com7 rxled 0x1000
-ccm2200_serial /dev/com7 txled 0x2000
+ccm2200_serial /dev/com7 rxled 0x0000
+ccm2200_serial /dev/com7 txled 0x0000
 
 # currently no LED for com8
 ccm2200_serial /dev/com8 mode rs485kern
