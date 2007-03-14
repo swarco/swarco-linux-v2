@@ -1,4 +1,4 @@
 #!/bin/sh
 
-/usr/bin/updatedd dyndns -- --ipv4 $PPP_LOCAL weisselectronic:weiss-313 `cat /et
-c/hostname`.`cat /etc/dnsdomainname`
+/usr/bin/updatedd dyndns -- --ipv4 $PPP_LOCAL weisselectronic:weiss-313 `cat /etc/hostname`.`cat /etc/dnsdomainname`
+
