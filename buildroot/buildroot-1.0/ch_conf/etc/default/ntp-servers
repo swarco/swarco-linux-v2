@@ -1,0 +1,4 @@
+NTPSERVERS="ptbtime1.ptb.de ptbtime2.ptb.de ntps1-0.uni-erlangen.de ntps1-0.cs.tu-berlin.de"
+#NTPSERVERS="10.122.1.19 10.122.1.20"
+
+
