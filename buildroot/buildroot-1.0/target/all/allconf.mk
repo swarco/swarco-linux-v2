@@ -33,6 +33,7 @@ allconf:
 	# remove dropbear from automatic start at boottime
 	# dropbear is replaced by openSSH
 	-@find $(TARGET_DIR) -type f -perm +111 | xargs $(STRIP) 2>/dev/null || true;
+	@chmod 0600 $(TARGET_DIR)/etc/ssh_host*
 	@rm -rf $(TARGET_DIR)/usr/man
 	@rm -rf $(TARGET_DIR)/usr/share/man
 	@rm -rf $(TARGET_DIR)/usr/info
