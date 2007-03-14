@@ -13,22 +13,26 @@
 #*    2006-07-06 mf: initial version
 #*  
 #****************************************************************************/
-MYTMPSIZE=1024
-MYTMPDIR=/mnt/.ram1
+#MYTMPSIZE=1024
+#MYTMPDIR=/mnt/.ram1
 
 case "$1" in
   start)
     echo "Initializing log filesystem..."
-    mount -t ramfs /dev/ram0 $MYTMPDIR > /dev/null 2>&1
-    dd if=/dev/zero of=$MYTMPDIR/mytmp bs=1024 count=$MYTMPSIZE > /dev/null 2>&1
-    losetup /dev/loop7 $MYTMPDIR/mytmp > /dev/null 2>&1
-    mkfs.ext2 -b 1024 /dev/loop7 > /dev/null 2>&1
-    mount /dev/loop7 /tmp > /dev/null 2>&1
+    
+    # 2006-03-14 gc: now we are using the size option of tempfs in fstab
+    #                to specify the MAXIMUM size of the ramdisk
+    #                So we don't need to mess around with loopback devices
+    #                and filesystems here!!!
+
+    #mount -t ramfs /dev/ram0 $MYTMPDIR > /dev/null 2>&1
+    #dd if=/dev/zero of=$MYTMPDIR/mytmp bs=1024 count=$MYTMPSIZE > /dev/null 2>&1
+    #losetup /dev/loop7 $MYTMPDIR/mytmp > /dev/null 2>&1
+    #mkfs.ext2 -b 1024 /dev/loop7 > /dev/null 2>&1
+    #mount /dev/loop7 /tmp > /dev/null 2>&1
+
+
     mkdir -p /tmp/timestamp
-    #if [ -f /etc/.firstboot ]
-    #then
-	#mkfs.ext2 /dev/mtdblock/4 > /dev/null 2>&1
-    #fi
     #ln -s /tmp /var/lib
     #ln -s /tmp /var/lock
     #ln -s /tmp /var/log
@@ -47,8 +51,8 @@ case "$1" in
   stop)
     killall klogd
     killall syslogd
-    umount /dev/loop7
-    losetup -d /dev/loop7
+    #umount /dev/loop7
+    #losetup -d /dev/loop7
     ;;
   *)
     echo "Usage: myvarinit {start|stop}" >&2

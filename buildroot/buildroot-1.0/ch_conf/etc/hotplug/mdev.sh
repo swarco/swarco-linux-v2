@@ -1,7 +1,7 @@
 #!/bin/sh
 
 mount -t sysfs none /sys
-mount -t tmpfs none /dev
+mount -t tmpfs -o size=512k tmpfs /dev
 mkdir /dev/pts
 mount -t devpts /dev/pts
 mdev -s
