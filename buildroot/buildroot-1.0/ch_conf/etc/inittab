@@ -28,8 +28,8 @@ null::sysinit:/bin/hostname -F /etc/hostname
 null::sysinit:/sbin/ifconfig lo 127.0.0.1 up
 null::sysinit:/sbin/route add -net 127.0.0.0 netmask 255.0.0.0 lo
 
-# 2006-05-02 gc set ip
-null::sysinit:/sbin/ifconfig eth0 192.168.42.2
+# 2006-05-02 gc set ip (2007-03-30 same as in /etc/network/interfaces)x
+null::sysinit:/sbin/ifconfig eth0 192.168.42.30 netmask 255.255.255.0
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS
 # 2006-07-26 mf: Terminates led startup procedure
