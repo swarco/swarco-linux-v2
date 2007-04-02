@@ -12,7 +12,7 @@ hide-password
 defaultroute
 usepeerdns
 
-user d1
+call ppp_provider_options
 
 /dev/com1
 115200
