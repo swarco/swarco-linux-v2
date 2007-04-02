@@ -4,9 +4,9 @@
 
 noproxyarp 
 usehostname 
-noipdefault 
-modem 
-noauth 
+noipdefault  
+noauth
+#auth
 connect "/usr/sbin/chat -vs -f /etc/chatscripts/gprs.chat" 
 hide-password 
 defaultroute
@@ -14,6 +14,10 @@ usepeerdns
 
 call ppp_provider_options
 
+crtscts
+lock
+asyncmap 0
+modem
 /dev/com1
 115200
 
