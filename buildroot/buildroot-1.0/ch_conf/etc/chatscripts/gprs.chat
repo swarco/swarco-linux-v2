@@ -1,8 +1,12 @@
 # Chat Script fuer GPRS-Verbindung ueber T-D1
-# GPRS Konfiguration fuer pppd auf CCM2200
-# (C) 2006-06-07 Weiss-Electronic GmbH / Markus Forster
+# GPRS Konfiguration fuer pppd
+# (C) 2004-12-21 Weiss-Electronic GmbH / Guido Classen
 #
 # 
+# pppd noproxyarp usehostname noipdefault modem defaultreoute  noauth user d2 nodetach debug connect "/bin/chat -vs -f /etc/chatscripts/gprs.chat" /dev/tts/3 115200
+# 
+# 
+#
 ABORT        BUSY
 ABORT        "NO CARRIER"
 ABORT        VOICE
@@ -19,11 +23,16 @@ READY-@/etc/chatscripts/gprs/pin-OK   AT
 # jetzt erst abort by ERROR
 ABORT        ERROR
 #
+OK-AT-OK	AT
 #
 "OK"    @/etc/chatscripts/gprs/gprs_apn
 #
+OK-AT-OK	AT
+#
 TIMEOUT 90
 #
-"OK"    "ATD *99**PPP*1#"
+OK-AT-OK	AT
+#
+"OK"    @/etc/chatscripts/gprs/dial
 "CONNECT"
 
