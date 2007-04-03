@@ -1,0 +1,35 @@
+#!/bin/sh
+
+#logger ip-down.d/9statistics:
+#logger CONNECT_TIME: $CONNECT_TIME
+#logger BYTES_SENT:   $BYTES_SENT
+#logger BYTES_RCVD:   $BYTES_RCVD
+
+STAT_FILE=/etc/ppp/stat/${PPP_IFACE}
+now=`date +%Y-%m-%d_%H:%M`
+#now=`date -I`
+
+
+# this values are overwritten by stat if, if it already exists
+reconnects=0
+connect_time=0
+bytes_sent=0
+bytes_rcvd=0
+since=$now
+test -f $STAT_FILE && . $STAT_FILE
+
+mount -oremount,rw /
+
+cat >$STAT_FILE <<Stat_End
+# Statistic for Interface $PPP_IFACE
+since=$since
+last_update=$now
+reconnects=$(($reconnects + 1))
+connect_time=$(($connect_time + $CONNECT_TIME))
+bytes_sent=$(($bytes_sent + $BYTES_SENT))
+bytes_rcvd=$(($bytes_rcvd + $BYTES_RCVD))
+Stat_End
+
+mount -oremount,ro /
+
+
