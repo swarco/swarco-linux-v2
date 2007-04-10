@@ -45,7 +45,7 @@ buildroot:
 
 .PHONY: buildroot-soft-float
 buildroot-soft-float:
-	make -C $(BUILDROOT_BASE)/$(BUILDROOT_SOFT_FLOAT_DIR)
+	-make -C $(BUILDROOT_BASE)/$(BUILDROOT_SOFT_FLOAT_DIR)
 
 
 .PHONY: u-boot
