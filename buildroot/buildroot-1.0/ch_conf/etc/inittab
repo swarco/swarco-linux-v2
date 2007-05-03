@@ -49,8 +49,8 @@ ttyS2::respawn:/sbin/getty -L ttyS2 38400 ansi-ht
 #::respawn:/sbin/getty -L console 38400 xterm
 # 2006-06-08 mf start pppd
 # null::respawn:/usr/sbin/pppd call gprs nodetach
-# 2006-09-22 mf start mgetty on ttyS0
-# ttyS0::respawn:/sbin/mgetty ttyS0
+# 2006-09-22 mf start mgetty on ttyS1
+# ttyS1::respawn:/sbin/mgetty ttyS1
 # Logging junk not needed cause started by init.d
 #null::sysinit:/bin/touch /var/log/messages
 #null::respawn:/sbin/syslogd -s 200kb -b 1 -n -m 0
