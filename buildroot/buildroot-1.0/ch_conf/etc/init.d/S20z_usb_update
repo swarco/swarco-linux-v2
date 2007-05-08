@@ -1,0 +1,64 @@
+#!/bin/sh
+#*****************************************************************************
+#* 
+#*  @file          S20z_usb_update
+#*
+#*  /etc/init.d script initializes the ssh keys on first system boot 
+#*
+#*  @version       1.0 (\$Revision: 1818 $)
+#*  @author        Markus Forster <br>
+#*                 Weiss-Electronic GmbH
+#* 
+#*  $LastChangedBy: fom9tr $  
+#*  $Date: 2006-08-27 $
+#*  $URL:  $
+#*
+#*  @par Modification History:
+#*    2007-05-08 gc: initial version
+#*
+#*  
+#*****************************************************************************
+
+case "$1" in
+  start)
+	# break
+	;;
+  stop)
+  	exit 0
+	;;
+  *)
+	echo $"Usage: $0 {start|stop}"
+	exit 1
+esac
+
+
+okay=0
+
+if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) == 0 ] && 
+   [ ! -f /etc/.usb-configurated ]; then
+    mount -oremount,rw /
+    mount -tvfat /dev/sda1 /mnt/usb/
+    ls -l /mnt/usb
+    if [ -f /mnt/usb/.usb-config.sh ]; then
+        sh /mnt/usb/.usb-config.sh && okay=1
+    fi
+    umount /mnt/usb
+
+    touch /etc/.usb-configurated
+    mount -oremount,ro /
+    
+    # enable watchdog (without LED display)
+    killall watchdog 
+    /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x0000
+    /sbin/watchdog -t 1 /dev/ccm2200_watchdog
+
+    if [ $okay != 0 ]; then
+      # display "O" Symbol
+      ccm2200_gpio_test /dev/ccm2200_gpio led 0x6996
+    else
+      # display "F" Symbol
+      ccm2200_gpio_test /dev/ccm2200_gpio led 0x131F
+    fi
+
+    while true; do sleep 1; done
+fi

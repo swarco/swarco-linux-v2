@@ -23,6 +23,7 @@
  * MA 02111-1307 USA
  *
  *  @par Modification History:
+ *     2007-05-08 gc: support for continuous option
  *     2007-02-05 gc: initial version
  */
 
@@ -51,10 +52,19 @@ int main(int argc, char *argv[])
   int init = 1;
   int output = 0;
   int loop = 0;
+  int continuous = 0;
+
   if (argc < 3) {
-    printf("usage: ccm2200_gpio_test device in|out|led|sconf|loop "
-           "[value] [mask]\n");
+    printf("usage: ccm2200_gpio_test -c device in|out|led|sconf|loop "
+           "[value] [mask]\n"
+           "       -c continuous display\n");
     return 1;
+  }
+
+  if (!strcmp(argv[1], "-c")) {
+    continuous = 1;
+    ++argv;
+    --argc;
   }
 
   if ((device_fd = open(argv[1], O_RDWR | O_SYNC)) == -1) {
@@ -99,8 +109,8 @@ int main(int argc, char *argv[])
     }
   }
 
-  printf("dev: %d, value: 0x%08x, mask: 0x%08x\n", port, ioctl_data.data,
-         mask);
+  /*   printf("dev: %d, value: 0x%08x, mask: 0x%08x\n", port, ioctl_data.data, */
+  /*          mask); */
 
   for (;;) {
     ioctl_data.device = port;
@@ -126,8 +136,12 @@ int main(int argc, char *argv[])
         ioctl(device_fd, CCM2200_GPIO_OUT, &ioctl_data);
       }
 
-      printf("value: %08x\n", value);
+      printf("0x%08x\n", value);
     }
+
+    if (!continuous)
+      break;
+
     usleep(50000);
   }
 
