@@ -1,0 +1,9 @@
+#!/bin/sh
+
+ifconfig lo   127.0.0.1
+route add -net 127.0.0.0 netmask 255.0.0.0 lo
+
+ifconfig eth0 192.168.42.30 netmask 255.255.255.0
+#ifconfig eth0 10.122.10.38 netmask 255.255.128.0
+
+ifconfig usb0 169.254.17.101
