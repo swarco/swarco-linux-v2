@@ -1,0 +1,168 @@
+#!/bin/sh
+#*****************************************************************************
+#* 
+#*  @file          ccm2200_hotplug
+#*
+#*  /etc/hotplug   script for downloading files to USB memory disk 
+#*                 after plugging in.   
+#*                 
+#*  @version       1.0 (\$Revision: 1818 $)
+#*  @author        Markus Forster <br>
+#*                 Weiss-Electronic GmbH
+#* 
+#*  $LastChangedBy: fom9tr $  
+#*  $Date: 2006-08-27 $
+#*  $URL:  $
+#*
+#*  @par Modification History:
+#*    2006-05-03 mf: initial version (unixdef)
+#*
+#*  
+#*****************************************************************************
+
+SUBSYSTEM=$1
+
+#for load_module
+. /etc/init_common.sh
+
+log_event()
+{
+    logger -t hotplug <<Ende
+args: "$SUBSYSTEM" 
+ACTION: "$ACTION" 
+PRODUCT: "$PRODUCT" 
+TYPE: "$TYPE" 
+INTERFACE: "$INTERFACE" 
+DEVICE: "$DEVICE" 
+DEVFS: "$DEVFS" 
+MODALIAS: "$MODALIAS"
+DEVPATH: "$DEVPATH"
+
+Ende
+
+    true
+}
+
+process_running() {
+    if [ -d /proc/$1 ] ; then
+	return 0;
+    else
+	return 1;
+    fi
+}
+
+block_add()
+{
+    case "$DEVPATH" in 
+      *sd*[0-9])
+        USBDISK=`echo $DEVPATH | awk '{ l=length($0); print substr($0, l-3) }'`
+	logger -t hotplug USB-Stick at $USBDISK
+	mount -o sync /dev/$USBDISK /mnt/usb
+	if [ -f /mnt/usb/.ccm2200_autostart ]; then
+	    /bin/sh /mnt/usb/.ccm2200_autostart
+	#else
+	#    /usr/bin/tdmdata.sh
+	fi
+	sync
+	;;
+      *)
+  	;;
+  esac
+}
+
+usb_add()
+{
+  case "$PRODUCT" in
+    "3f0/1016/0") # IPAQ PDA
+	logger -t hotplug Hallo IPAQ
+        load_module kernel/drivers/usb/serial/usbserial
+        load_module kernel/drivers/usb/serial/ipaq
+
+	;;
+  *)
+	;;
+  esac
+}
+
+
+start_polling()
+{
+  if [ ! -f /var/run/polling_omc.pid ] || 
+       ! process_running `cat /var/run/polling_omc.pid`; then
+
+    logger -t hotplug STARTING POLLING
+
+    LD_LIBRARY_PATH=/usr/weiss/lib \
+      nohup /usr/weiss/bin/polling /etc/weiss/polling_omc >/dev/null 2>&1 &
+
+    echo $! >/var/run/polling_omc.pid
+  fi
+}
+
+tty_add()
+{
+  logger tty_add
+  case "$DEVPATH" in
+    "/class/tty/ttyUSB0")
+         start_polling
+	;;
+  *)
+	;;
+  esac
+}
+
+usb_remove()
+{
+  case "$PRODUCT" in
+    "3f0/1016/0") # IPAQ PDA
+	logger -t hotplug Tschuess IPAQ
+	logger -t hotplug KILLING POLLING
+	kill `cat /var/run/polling_omc.pid`
+	rm /var/run/polling_omc.pid
+	;;
+  *)
+	;;
+  esac
+}
+
+block_remove()
+{
+  case "$DEVPATH" in
+    *sd*[0-9])
+	USBDISK=`echo $DEVPATH | awk '{ l=length($0); print substr($0, l-3) }'`
+	logger -t hotplug USB-Stick at "$USBDISK" removed.
+	umount -f /mnt/usb
+
+  	;;
+  *)
+  	;;
+  esac
+
+}
+
+#write event to syslog for testing and debugging
+/sbin/mdev
+#log_event
+
+case "${SUBSYSTEM}_${ACTION}" in
+  "usb_add")
+        usb_add
+        ;;
+  "block_add")
+	block_add
+	;;
+  "block_remove")
+   	block_remove
+	;;
+  "usb_remove")
+        usb_remove
+        ;;
+  "tty_add")
+	tty_add
+        ;;
+  "tty_remove")
+	tty_remove
+        ;;
+  *)
+	;;
+esac

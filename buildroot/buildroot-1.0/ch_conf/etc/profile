@@ -22,9 +22,10 @@ export LD_LIBRARY_PATH
 PS1='\h:\w\$ '
 export PS1
 
+#2007-05-09 mf: replaced by rw, ro wrapper program in /bin
 #2004-03-12 gc: aliase / functions
-alias rw='mount -oremount,rw /'
-alias ro='mount -oremount,ro /'
+#alias rw='mount -oremount,rw /'
+#alias ro='mount -oremount,ro /'
 
 
 mem() {
