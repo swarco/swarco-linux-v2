@@ -29,7 +29,7 @@ include	$(BASE_DIR)/directories.mk
 
 CFLAGS		+=  -I$(KERNEL_PATH)/include
 
-PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward
+PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward ro rw
 
 .PHONY: all
 all: $(PROGRAMS) install
@@ -37,7 +37,9 @@ all: $(PROGRAMS) install
 
 .PHONY: install
 install:
-	cp $(PROGRAMS) $(BUILDROOT_PATH)/ch_conf/usr/bin
+	chmod 4770 ro
+	chmod 4770 rw
+	cp -a $(PROGRAMS) $(BUILDROOT_PATH)/ch_conf/usr/bin
 
 
 #simple pattern rule to compile executables from just one source file!
