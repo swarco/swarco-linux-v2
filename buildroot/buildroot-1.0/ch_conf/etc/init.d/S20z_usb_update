@@ -49,6 +49,10 @@ if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) == 0 ] &&
     
     # enable watchdog (without LED display)
     killall watchdog 
+    /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x0000
+    /sbin/watchdog -t 1 /dev/ccm2200_watchdog
+    sleep 3
+    killall watchdog
     
     if [ $okay != 0 ]; then
       # display "O" Symbol
