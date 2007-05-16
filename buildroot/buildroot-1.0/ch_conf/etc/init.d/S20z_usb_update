@@ -37,7 +37,7 @@ okay=0
 if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) == 0 ] && 
    [ ! -f /etc/.usb-configurated ]; then
     mount -oremount,rw /
-    mount -tvfat /dev/sda1 /mnt/usb/
+    mount -tvfat -oro /dev/sda1 /mnt/usb/
     ls -l /mnt/usb
     if [ -f /mnt/usb/.usb-config.sh ]; then
         sh /mnt/usb/.usb-config.sh && okay=1
@@ -49,16 +49,17 @@ if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) == 0 ] &&
     
     # enable watchdog (without LED display)
     killall watchdog 
-    /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x0000
-    /sbin/watchdog -t 1 /dev/ccm2200_watchdog
-
+    
     if [ $okay != 0 ]; then
       # display "O" Symbol
-      ccm2200_gpio_test /dev/ccm2200_gpio led 0x6996
+      #ccm2200_gpio_test /dev/ccm2200_gpio led 0x6996
+      /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x6996
     else
       # display "F" Symbol
-      ccm2200_gpio_test /dev/ccm2200_gpio led 0x131F
+      #ccm2200_gpio_test /dev/ccm2200_gpio led 0x131F
+      /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x131F
     fi
+    /sbin/watchdog -t 1 /dev/ccm2200_watchdog
 
     while true; do sleep 1; done
 fi
