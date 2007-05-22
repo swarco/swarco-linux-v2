@@ -104,10 +104,11 @@ int main(int argc, char *argv[])
 
   error_message("file_write_test STARTED");
   /* test loop */
-  for (block=0;; ++block, ++blocks_total) {
+  for (block=0;; ++block) {
     if (block >= BLOCK_COUNT) 
       block = 0;
 
+    ++blocks_total;
     generate_random_block();
     lseek(fd, BLOCK_SIZE * block, SEEK_SET);
     if (write(fd, test_block, BLOCK_SIZE) == -1) {
