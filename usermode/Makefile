@@ -29,7 +29,8 @@ include	$(BASE_DIR)/directories.mk
 
 CFLAGS		+=  -I$(KERNEL_PATH)/include
 
-PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward ro rw
+PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward ro rw \
+	   file_write_test
 
 .PHONY: all
 all: $(PROGRAMS) install
