@@ -48,7 +48,8 @@ if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) == 0 ] &&
     mount -oremount,ro /
     
     # enable watchdog (without LED display)
-    killall watchdog 
+    #killall watchdog 
+    ccm2200_gpio_test /dev/ccm2200_gpio led 0x0000
     /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x0000
     /sbin/watchdog -t 1 /dev/ccm2200_watchdog
     sleep 3
