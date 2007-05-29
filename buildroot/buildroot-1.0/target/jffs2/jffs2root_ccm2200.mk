@@ -21,11 +21,12 @@
 CCM2200_JFFS2_IMAGE_NAND = rootfs-ccm2200-sp-nand.jffs2
 CCM2200_JFFS2_IMAGE_LP_NAND = rootfs-ccm2200-lp-nand.jffs2
 CCM2200_JFFS2_IMAGE_NOR  = rootfs-unc90dev.jffs2
+CCM2200_YAFFS2_IMAGE_LP_NAND = rootfs-ccm2200-lp-nand.yaffs2
 
 
 .PHONY: ccm2200_jffs2_images ccm2200_jffs2_prepare
 
-ccm2200_jffs2_images: ccm2200_jffs2_prepare $(CCM2200_JFFS2_IMAGE_NAND) $(CCM2200_JFFS2_IMAGE_NOR) 
+ccm2200_jffs2_images: ccm2200_jffs2_prepare $(CCM2200_JFFS2_IMAGE_NAND) $(CCM2200_JFFS2_IMAGE_NOR)  $(CCM2200_YAFFS2_IMAGE_LP_NAND)
 
 
 ccm2200_jffs2_prepare: host-fakeroot makedevs $(STAGING_DIR)/fakeroot.env mtd-host
@@ -86,6 +87,20 @@ $(CCM2200_JFFS2_IMAGE_NOR):
 		  --root=$(BUILD_DIR)/root                              \
 	          --output=$(CCM2200_JFFS2_IMAGE_NOR)
 		@ls -l $(CCM2200_JFFS2_IMAGE_NOR)
+
+.PHONY: $(CCM2200_YAFFS2_IMAGE_LP_NAND)
+$(CCM2200_YAFFS2_IMAGE_LP_NAND):
+	# 2007-05-24: build yaffs2 image for CCM2200 NAND flash
+	$(STAGING_DIR)/usr/bin/fakeroot \
+		-i $(STAGING_DIR)/fakeroot.env \
+		-s $(STAGING_DIR)/fakeroot.env -- \
+	/home/mafo/yaffs2/utils/mkyaffs2image     \
+	$(BUILD_DIR)/root                         \
+	$(CCM2200_YAFFS2_IMAGE_LP_NAND)
+	chmod a+r $(CCM2200_YAFFS2_IMAGE_LP_NAND)
+	@ls -l $(CCM2200_YAFFS2_IMAGE_LP_NAND)
+
+
 
 #############################################################
 #
