@@ -11,4 +11,10 @@ ttyS0
 ttyS1
 ttyS2
 ttyS3
+ttyAT0
+ttyAT1
+ttyAT2
+ttyAT3
+ttyAT4
+ttySconsole
 UNKNOWN

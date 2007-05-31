@@ -40,7 +40,7 @@ null::sysinit:/sbin/watchdog -t 1 /dev/ccm2200_watchdog
 #tty2::respawn:/sbin/getty 38400 tty2
 
 # Put a getty on the serial port
-ttyS2::respawn:/sbin/getty -L ttyS2 38400 ansi-ht
+ttySconsole::respawn:/sbin/getty -L ttySconsole 38400 ansi-ht
 #::respawn:/sbin/getty -L /dev/bluetooth/rfcomm/0 38400 xterm
 # hier kein TTY angeben, dann wird automatisch /dev/console genommen!!!
 # wieder raus, console ist kein tty und hat kein job control
