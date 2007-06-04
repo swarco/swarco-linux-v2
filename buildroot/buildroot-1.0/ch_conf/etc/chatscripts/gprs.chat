@@ -33,6 +33,8 @@ TIMEOUT 90
 #
 OK-AT-OK	AT
 #
+"OK"		AT+CSQ
+#
 "OK"    @/etc/chatscripts/gprs/dial
 "CONNECT"
 
