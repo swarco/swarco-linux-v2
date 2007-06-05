@@ -94,7 +94,7 @@ $(CCM2200_YAFFS2_IMAGE_LP_NAND):
 	$(STAGING_DIR)/usr/bin/fakeroot \
 		-i $(STAGING_DIR)/fakeroot.env \
 		-s $(STAGING_DIR)/fakeroot.env -- \
-	/home/mafo/yaffs2/utils/mkyaffs2image     \
+	$(BUILD_DIR)/yaffs2/utils/mkyaffs2image     \
 	$(BUILD_DIR)/root                         \
 	$(CCM2200_YAFFS2_IMAGE_LP_NAND)
 	chmod a+r $(CCM2200_YAFFS2_IMAGE_LP_NAND)

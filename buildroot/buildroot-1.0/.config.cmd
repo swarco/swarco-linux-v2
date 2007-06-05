@@ -16,6 +16,7 @@ deps_config := \
 	target/all/Config.in \
 	target/Config.in \
 	package/qemacs/Config.in \
+	package/yaffs2/Config.in \
 	package/proftpd/Config.in \
 	package/mgetty/Config.in \
 	package/cifs/Config.in \
