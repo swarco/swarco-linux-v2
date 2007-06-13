@@ -93,7 +93,7 @@ fi
 
 # ---------------- assign RX / TX indicator LEDs ---------------------------
 
-ccm2200_serial /dev/com2 mode rs485kern 0 0
+ccm2200_serial /dev/com1 mode rs485kern 0 0
 ccm2200_serial /dev/com1 rxled $((1<<0)) 4
 ccm2200_serial /dev/com1 txled $((1<<1)) 4
 

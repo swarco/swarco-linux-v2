@@ -39,6 +39,8 @@ esac
 
 
 echo "Setting up ip_tables packet filter"
+load_module kernel/net/netfilter/x_tables
+load_module kernel/net/netfilter/xt_tcpudp
 load_module kernel/net/ipv4/netfilter/ip_tables
 load_module kernel/net/ipv4/netfilter/iptable_filter
 
