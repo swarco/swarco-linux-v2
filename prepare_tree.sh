@@ -60,27 +60,28 @@ fi
 
 #prepare ccm2200 kernel directory
 (
+  KERNEL_SRC_DIR=$1/sources/kernel/2.6.12.6/
   cd $KERNEL_BASE
   mkdir output
 
   # copy kernel config
-  cp $1/sources/kernel/kernel-config-ccm2200 output/.config
+  cp $KERNEL_SRC_DIR/kernel-config-ccm2200 output/.config
 
   # remove old kernel source if available
   \rm -rf $KERNEL_ACTUAL $KERNEL_DIR
 
   # extract kernel
-  tar xjvf $1/sources/kernel/linux-2.6.12.6.tar.bz2
+  tar xjvf $KERNEL_SRC_DIR/linux-2.6.12.6.tar.bz2
   mv $KERNEL_ACTUAL $KERNEL_DIR
   cd $KERNEL_DIR
 
   # apply patches
-  for patch in $1/sources/kernel/[0-9]*.patch 
+  for patch in $KERNEL_SRC_DIR/[0-9]*.patch 
   do 
     patch -p1 < $patch
   done
 
-  tar xvzf $1/sources/kernel/cifs_1.44.tar.gz
+  tar xvzf $KERNEL_SRC_DIR/cifs_1.44.tar.gz
 
   # create symlink for build script
   rm build-ccm2200.sh

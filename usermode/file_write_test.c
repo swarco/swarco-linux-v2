@@ -36,15 +36,15 @@
 const int BLOCK_COUNT   = 1024*100;
 const char TEST_FILENAME[] = "/file_write_test.tmp";
 
-unsigned char test_block[BLOCK_SIZE];
+unsigned char random_buffer[12*BLOCK_SIZE];
 unsigned char read_block[BLOCK_SIZE];
 
-void generate_random_block()
+void generate_random_buffer()
 {
   register unsigned char *ptr, *end;
   
-  end = test_block+BLOCK_SIZE;
-  for (ptr = test_block; ptr!=end; ++ptr) {
+  end = random_buffer+12*BLOCK_SIZE;
+  for (ptr = random_buffer; ptr!=end; ++ptr) {
     *ptr = (unsigned char) (int) (256.0 * (rand() / (RAND_MAX + 1.0)));
   }
 }
@@ -102,14 +102,34 @@ int main(int argc, char *argv[])
   lseek(fd, BLOCK_SIZE * BLOCK_COUNT - 1, SEEK_SET);
   write(fd, "", 1);
 
+  generate_random_buffer();
   error_message("file_write_test STARTED");
   /* test loop */
-  for (block=0;; ++block) {
-    if (block >= BLOCK_COUNT) 
-      block = 0;
+  block=0;
+  for (;;) {
+    /* to speed of generating random block only choose 
+     * random start index in random_buffer
+     */
+    unsigned char *test_block = random_buffer
+      + (unsigned) (10.0 * BLOCK_SIZE * (rand() / (RAND_MAX + 1.0)));
 
-    ++blocks_total;
-    generate_random_block();
+    register unsigned char *ptr, *end;
+    unsigned char start = 7;
+    end = test_block + BLOCK_SIZE;
+
+    /* enshure jffs2 will not compress block well  */
+    for (ptr = test_block; ptr!=end; ++ptr) {
+      unsigned char temp = *ptr;
+      *ptr += ~start;
+      start = temp;
+    }
+
+    
+    if (block >= BLOCK_COUNT) {
+      block = 0;
+      generate_random_buffer();
+    }
+
     lseek(fd, BLOCK_SIZE * block, SEEK_SET);
     if (write(fd, test_block, BLOCK_SIZE) == -1) {
       error_message("write error at block %s", block);
@@ -121,11 +141,16 @@ int main(int argc, char *argv[])
     if (memcmp(read_block, test_block, BLOCK_SIZE)) {
       error_message("written data corrupt at block %s", block);
     }
-    if ((block % 1000) == 999) {
+
+    ++blocks_total;
+    ++block;
+    if ((block % 1000) == 0) {
       error_message("written %d blocks (%lld bytes)", blocks_total,
                     (long long) blocks_total * BLOCK_SIZE);
     }
-    usleep(1000000);
+    if ((block % 500) == 0) {
+      usleep(1000000);
+    }
   }
 
   close(fd);
