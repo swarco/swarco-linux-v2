@@ -1,5 +1,6 @@
 #!/bin/sh
 
+exec >/dev/console 2>&1
 
 # Start all init scripts in /etc/init.d
 # executing them in numerical order.
