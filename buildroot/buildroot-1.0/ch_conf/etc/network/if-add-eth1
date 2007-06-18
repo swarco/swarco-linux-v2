@@ -1,0 +1,2 @@
+logger if-add-eth1
+ifconfig eth1 169.254.2.2 netmask 255.255.255.0

@@ -53,6 +53,7 @@ load_module kernel/net/ipv4/netfilter/iptable_filter
 
     # don't filter eth0 and loopback interface
     iptables -A INPUT -i eth0 -j ACCEPT
+    iptables -A INPUT -i eth1 -j ACCEPT
     iptables -A INPUT -i lo -j ACCEPT   
     iptables -A INPUT -i usb0 -j ACCEPT
 

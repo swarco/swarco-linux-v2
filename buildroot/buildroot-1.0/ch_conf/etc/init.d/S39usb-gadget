@@ -7,7 +7,7 @@ start() {
  	echo "Starting USB network interface..."
 	insmod /lib/modules/`uname -r`/kernel/drivers/usb/gadget/g_ether.ko \
                 host_addr=00:dc:c8:f7:75:05 dev_addr=00:dd:dc:eb:6d:f1
-        ifconfig usb0 169.254.17.101
+        ifconfig usb0 169.254.17.101 netmask 255.255.255.0
         # start dhcp server for usb-Gadget RNDIS interface!
         udhcpd /etc/udhcp-usb0.conf
 }	

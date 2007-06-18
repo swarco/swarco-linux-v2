@@ -140,6 +140,11 @@ block_remove()
 
 }
 
+net_add()
+{
+  test -f /etc/network/if-add-$INTERFACE && . /etc/network/if-add-$INTERFACE
+}
+
 #write event to syslog for testing and debugging
 /sbin/mdev
 #log_event
@@ -163,6 +168,13 @@ case "${SUBSYSTEM}_${ACTION}" in
   "tty_remove")
 	tty_remove
         ;;
+  "net_add")
+	net_add
+        ;;
+  "net_remove")
+	net_remove
+        ;;
+
   *)
 	;;
 esac
