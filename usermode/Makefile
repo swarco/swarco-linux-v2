@@ -28,9 +28,10 @@ BASE_DIR = $(CURDIR)/..
 include	$(BASE_DIR)/directories.mk
 
 CFLAGS		+=  -I$(KERNEL_PATH)/include
+LDFLAGS         += -lpthread -lutil
 
 PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward ro rw \
-	   file_write_test
+	   file_write_test wlogin
 
 .PHONY: all
 all: $(PROGRAMS) install
@@ -38,14 +39,15 @@ all: $(PROGRAMS) install
 
 .PHONY: install
 install:
-	chmod 4770 ro
-	chmod 4770 rw
+	chmod 6770 ro
+	chmod 6770 rw
+	chmod 6770 wlogin
 	cp -a $(PROGRAMS) $(BUILDROOT_PATH)/ch_conf/usr/bin
 
 
 #simple pattern rule to compile executables from just one source file!
 %:	%.c
-	$(CROSS_CC) -o$@ $(CFLAGS) $<
+	$(CROSS_CC) -o$@ $(CFLAGS) $(LDFLAGS) $<
 	$(CROSS_STRIP) $@
 
 
