@@ -39,9 +39,6 @@ all: $(PROGRAMS) install
 
 .PHONY: install
 install:
-	chmod 6770 ro
-	chmod 6770 rw
-	chmod 6770 wlogin
 	cp -a $(PROGRAMS) $(BUILDROOT_PATH)/ch_conf/usr/bin
 
 
