@@ -13,3 +13,4 @@ nogroup:x:99:
 users:x:100:
 default:x:1000:
 ftp:x:1001:
+remount:x:1005:
