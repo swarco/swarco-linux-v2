@@ -23,8 +23,13 @@
 
 int main ()
 {
+  char *prog[] = {"mount", "-oremount,ro", "/", (char *)0};
+
+  if (setuid(0) < 0)
+    perror("Fehler bei den Rechten");
+  
   printf("Mounting root-fs readonly.\n");
-  execl("/bin/mount", "mount", "-oremount,ro", "/", NULL);
+  execve("/bin/mount", prog, NULL);
 
   return 0;
 }

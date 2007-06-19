@@ -50,9 +50,9 @@
 # uncomment this to allow starting x as non-root
 #/usr/X11R6/bin/Xfbdev		f	4755	0	0	-	-	-	-	-
 # Weiss Programme
-/usr/bin/wlogin				f	4755	0	1005	-	-	-	-	-
-/usr/bin/rw				f	4755	0	1005	-	-	-	-	-
-/usr/bin/ro				f	4755	0	1005	-	-	-	-	-       
+/usr/bin/wlogin				f	6755	0	1005	-	-	-	-	-
+/usr/bin/rw				f	6755	0	1005	-	-	-	-	-
+/usr/bin/ro				f	6755	0	1005	-	-	-	-	-       
 # Normal system devices
 /dev/mem	c	640	0	0	1	1	0	0	-
 /dev/kmem	c	640	0	0	1	2	0	0	-

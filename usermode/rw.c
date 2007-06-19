@@ -24,8 +24,13 @@
 
 int main ()
 {
+  char *prog[] = {"mount", "-oremount,rw", "/", (char *)0};
+ 
+  if (setuid(0) < 0)
+    perror("Fehler bei den Rechten");
+ 
   fprintf(stderr, "Mounting root-fs readwrite.\n");
-  execl("/bin/mount", "mount", "-oremount,rw", "/", NULL);
+  execve("/bin/mount", prog, NULL);
 
   return 0;
 }
