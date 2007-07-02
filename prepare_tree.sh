@@ -8,7 +8,6 @@ U_BOOT_BASE=u-boot
 U_BOOT_DIR=u-boot-ccm2200
 KERNEL_BASE=kernel
 KERNEL_ACTUAL=linux-2.6.12.6
-KERNEL_DIR=${KERNEL_ACTUAL}-ccm2200
 
 
 if [ "$1" == "" ] || [ ! -d "$1" ] ; then
@@ -39,8 +38,21 @@ fi
 # necessary to build u-boot
 (
   cd $BUILDROOT_BASE
-  svn export $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
+  
+  if [ -d $BUILDROOT_DIR/.svn ]
+  then 
+    svn export $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
+  fi
+
+  # fallback if svn export is not available (weiss-linux tree is 
+  # created from .tar.gz)
+  if ! [ -d $BUILDROOT_SOFT_FLOAT_DIR ]
+  then
+    cp -a $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
+  fi
+
   cp dot_config_buildroot-1.0-soft-float $BUILDROOT_SOFT_FLOAT_DIR/.config  
+  cp uClibc.config-soft-float $BUILDROOT_SOFT_FLOAT_DIR/toolchain/uClibc/uClibc.config
 )
 
 #prepare ccm2200 u-boot directory
@@ -58,37 +70,52 @@ fi
 )
 
 
+
+
 #prepare ccm2200 kernel directory
+prepare_kernel_directory() {
 (
-  KERNEL_SRC_DIR=$1/sources/kernel/2.6.12.6/
+  KERNEL_VANILLA_DIR=$1
+  KERNEL_CCM2200_DIR=$KERNEL_VANILLA_DIR-ccm2200
+  KERNEL_CD_DIR=$2
+  KERNEL_OUTPUT_DIR=output-${KERNEL_CCM2200_DIR##*linux-}
+
   cd $KERNEL_BASE
-  mkdir output
+  mkdir $KERNEL_OUTPUT_DIR
 
   # copy kernel config
-  cp $KERNEL_SRC_DIR/kernel-config-ccm2200 output/.config
+  cp $KERNEL_CD_DIR/kernel-config-${KERNEL_CCM2200_DIR##*linux-} $KERNEL_OUTPUT_DIR/.config
 
   # remove old kernel source if available
-  \rm -rf $KERNEL_ACTUAL $KERNEL_DIR
+  \rm -rf $KERNEL_VANILLA_DIR $KERNEL_CCM2200_DIR
 
   # extract kernel
-  tar xjvf $KERNEL_SRC_DIR/linux-2.6.12.6.tar.bz2
-  mv $KERNEL_ACTUAL $KERNEL_DIR
-  cd $KERNEL_DIR
+  tar xjvf $KERNEL_CD_DIR/linux-*.tar.bz2
+  mv $KERNEL_VANILLA_DIR $KERNEL_CCM2200_DIR
+  cd $KERNEL_CCM2200_DIR
 
   # apply patches
-  for patch in $KERNEL_SRC_DIR/[0-9]*.patch 
+  for patch in $KERNEL_CD_DIR/[0-9]*.patch 
   do 
     patch -p1 < $patch
   done
 
-  tar xvzf $KERNEL_SRC_DIR/cifs_1.44.tar.gz
+  if [ -f $KERNEL_CD_DIR/cifs_1.44.tar.gz ] ; then
+      tar xvzf $KERNEL_CD_DIR/cifs_1.44.tar.gz
+  fi
 
   # create symlink for build script
   rm build-ccm2200.sh
   ln -s ../build-ccm2200.sh .
 )
+}
+
+prepare_kernel_directory  $KERNEL_ACTUAL                        \
+                          $1/sources/kernel/2.6.12.6/
 
 
+prepare_kernel_directory  linux-2.6.21                          \
+                          $1/sources/kernel/2.6.21/
 
 # Local Variables:
 # mode: shell-script
