@@ -43,18 +43,21 @@ static time_t ref_time;  /* reference time, first set
 static pthread_mutex_t lock;
 static pthread_cond_t  cond;
 
-struct termios store_terminal;
+static struct termios _saved_tio;
+static int _in_raw_mode = 0;
 static int mtimeout;
 static int time_to_live;
 pid_t mpgpid;
 
+enum{ERROR=-1, SUCCESS};
+
 void mycatch(int sig);
 void *idlecounter(void *mtimeout);
-int tty_raw(int fd);
+void tty_raw();
 void *wlogin(void *prog, int mtimeout);
 
 void mycatch(int sig){
-  tcsetattr(0, TCSAFLUSH, &store_terminal);
+  tcsetattr(0, TCSAFLUSH, &_saved_tio);
   exit(1);
 }
 
@@ -142,7 +145,7 @@ void *idlecounter(void *mtimeout){
     fprintf(stderr, "%i ...\n", time_to_live);
 #endif /* DEBUG */
     if (time_to_live > *(int *)mtimeout){
-      tcsetattr(0, TCSAFLUSH, &store_terminal);
+      tcsetattr(0, TCSAFLUSH, &_saved_tio);
 #ifdef DEBUG
     printf("\n\nYour are automatically logged out by weiss-autologout\nWith pid : %i\n\n", mpgpid);
 #endif /* DEBUG */
@@ -159,28 +162,31 @@ void *idlecounter(void *mtimeout){
  * set terminal with filedescriptor fd into raw mode
  * 
  ******************************************************************/
-int tty_raw(int fd)
+void tty_raw()
 {
-  struct termios terminal;
-  if (tcgetattr(fd, &store_terminal) < 0){
-    fprintf(stderr,
-	    "Terminal settings not valid.\n");
-    return(-1);
+  struct termios tio;
+  
+  if (tcgetattr(fileno(stdin), &tio) == ERROR){
+    perror("tcgetattr");
+    return;
   }
-  terminal = store_terminal;
-  
-  terminal.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-  terminal.c_cflag &= ~(CSIZE | PARENB);
-  terminal.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-  terminal.c_cflag |= CS8;
-  
-  /*
-  terminal.c_lflag &= ~(ECHO|ICANON);
-  terminal.c_cc[VMIN] = 1;
-  terminal.c_cc[VTIME] = 0;
-  */
-  tcsetattr(fd, TCSAFLUSH, &terminal);
-  return 0;
+  _saved_tio = tio;
+  tio.c_iflag |= IGNPAR;
+  tio.c_iflag &= ~(ISTRIP | INLCR | IGNCR | ICRNL | IXON | IXANY | IXOFF);
+  //#ifdef IUCLC
+  tio.c_iflag &= ~IUCLC;
+  //#endif
+  tio.c_lflag &= ~(ISIG | ICANON | ECHO | ECHOE | ECHOK | ECHONL);
+  //#ifdef IEXTEN
+  tio.c_lflag &= ~IEXTEN;
+  //#endif
+  tio.c_oflag &= ~OPOST;
+  tio.c_cc[VMIN] = 1;
+  tio.c_cc[VTIME] = 0;
+  if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1)
+    perror("tcsetattr");
+  else
+    _in_raw_mode = 1;
 }
 
 /**********************************************************************
@@ -213,16 +219,10 @@ void *wlogin(void *prog, int mtimeout){
   FD_ZERO(&fds);
   FD_SET(STDIN_FILENO,&fds);
   FD_SET(master, &fds);
-  
-  tcgetattr(master, &store_terminal);
-  terminal = store_terminal;
-  //terminal.c_lflag &= ~(ECHO|ICANON);
-  cfmakeraw(&terminal);
-  terminal.c_iflag &= (OPOST|ICRNL);
-  tcsetattr(STDIN_FILENO, TCSAFLUSH, &terminal);
-  
-  //tty_raw(0);
-  
+ 
+  tty_raw();
+
+   
   if ((pty_pid = fork()) < 0){
     perror("error on fork");
     exit(2);
