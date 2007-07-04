@@ -178,7 +178,7 @@ void tty_raw()
   //#endif
   tio.c_lflag &= ~(ISIG | ICANON | ECHO | ECHOE | ECHOK | ECHONL);
   //#ifdef IEXTEN
-  tio.c_lflag &= ~IEXTEN;
+  // tio.c_lflag &= ~IEXTEN;
   //#endif
   tio.c_oflag &= ~OPOST;
   tio.c_cc[VMIN] = 1;
