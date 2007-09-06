@@ -1,5 +1,5 @@
 #!/bin/sh
 
-nohup /usr/bin/ntp-query.sh &
+nohup /usr/bin/ntp-query.sh >/dev/null 2>&1 &
 
 
