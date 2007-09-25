@@ -1,5 +1,5 @@
 # List of NTP servers to use  (Separate multiple servers with spaces.)
-NTPSERVERS="ptbtime1.ptb.de ptbtime2.ptb.de ntps1-0.uni-erlangen.de ntps1-0.cs.tu-berlin.de"
+NTPSERVERS="ntps1-0.cs.tu-berlin.de ntps1-1.cs.tu-berlin.de ntp0.fau.de ntp1.t-online.de pool.ntp.org"
 #NTPSERVERS="10.122.1.19 10.122.1.20"
 
 # Additional options to pass to ntpdate
