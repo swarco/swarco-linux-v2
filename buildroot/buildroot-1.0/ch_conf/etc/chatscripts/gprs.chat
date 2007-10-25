@@ -13,8 +13,10 @@ ABORT        VOICE
 ABORT	     "NO DIALTONE"
 #terminate connection, if allready established
 ""      AT
-TIMEOUT 10
+TIMEOUT 20
 OK-\d\d+++\d\d\c-OK  ATH
+OK AT+CFUN=1,1\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d
+TIMEOUT 10
 # Pruefe ob PIN eingeben
 # MC35 liefert hier "ERROR" bei AT+CPIN? wenn schon eine PIN eingegeben,
 # daher nur ausfuehren, wenn keine PIN vorliegt
