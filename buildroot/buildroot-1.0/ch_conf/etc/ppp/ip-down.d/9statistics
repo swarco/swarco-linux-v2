@@ -18,7 +18,12 @@ bytes_rcvd=0
 since=$now
 test -f $STAT_FILE && . $STAT_FILE
 
-mount -oremount,rw /
+remount_ro=
+if mount | grep /dev/root | grep '(ro)' >/dev/null 2>&1
+then
+  mount -oremount,rw /
+  remount_ro="mount -oremount,ro /"
+fi 
 
 cat >$STAT_FILE <<Stat_End
 # Statistic for Interface $PPP_IFACE
@@ -30,6 +35,4 @@ bytes_sent=$(($bytes_sent + $BYTES_SENT))
 bytes_rcvd=$(($bytes_rcvd + $BYTES_RCVD))
 Stat_End
 
-mount -oremount,ro /
-
-
+$remount_ro
