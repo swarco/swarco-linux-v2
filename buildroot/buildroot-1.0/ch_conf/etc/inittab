@@ -1,6 +1,8 @@
 # /etc/inittab
 #
 # Copyright (C) 2001 Erik Andersen <andersen@codepoet.org>
+#               2006-2007 Weiss-Electronic GmbH <info@weiss-electronic.de>
+#                         CCM2200 Weiss Embedded Linux
 #
 # Note: BusyBox init doesn't support runlevels.  The runlevels field is
 # completely ignored by BusyBox init. If you want runlevels, use
@@ -14,11 +16,8 @@
 # process   == program to run
 
 # Startup the system
-# 2006-07-26 mf: Initializes the leds for startup procedure
-#null::sysinit:/bin/mount -o remount,ro /
-null::sysinit:/bin/mount -t proc proc /proc
 null::sysinit:/bin/mount -a
-null::sysinit:/bin/mount -o remount,ro /
+null::sysinit:/bin/mount -o remount,ro,noatime,nodiratime /
 null::sysinit:/etc/hotplug/mdev.sh
 # trigger watchdog to get an additional minute for boot process!
 null::sysinit:/usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x8000
