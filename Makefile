@@ -87,23 +87,26 @@ u-boot-dist:
 
 
 KERNEL_ORIG = linux-orig
-PATCH_FILE = 201-weiss-ccm2200.patch
-
+PATCH_FILE  = 201-weiss-ccm2200.patch
+OUTPUT      = output-2.6.21-ccm2200
+KERNEL_DIR  = linux-2.6.21-ccm2200
+KERNEL_CD_DIR= $(WEISS_CD_DIR)/sources/kernel/2.6.21
+CONFIG_CD    = $(KERNEL_CD_DIR)/kernel-config-2.6.21-ccm2200
 
 .PHONY: kernel-dist
 kernel-dist:
-	cp $(KERNEL_BASE)/output/.config $(WEISS_CD_DIR)/sources/kernel/kernel-config-ccm2200 
+	cp $(KERNEL_BASE)/$(OUTPUT)/.config $(CONFIG_CD)
 	# extract a kernel with all patches except Weiss CCM2200 patch!
 	cd $(KERNEL_BASE) ; \
         ( \
 	  \rm -rf $(KERNEL_ORIG) $(KERNEL_ACTUAL) ;\
 	  # extract kernel                                      \
-	  tar xjf $(WEISS_CD_DIR)/sources/kernel/$(KERNEL_ACTUAL).tar.bz2 ;\
+	  tar xjf $(KERNEL_CD_DIR)/linux-2.6.*.tar.bz2 ;\
 	  mv $(KERNEL_ACTUAL) $(KERNEL_ORIG) ;\
 	  cd linux-orig ;\
           \
 	  # apply patches                                       \
-	  for patch in $(WEISS_CD_DIR)/sources/kernel/[0-9]*.patch ;\
+	  for patch in $(KERNEL_CD_DIR)/[0-9]*.patch ;\
 	  do \
 	    if [ "$${patch##*/}" != "$(PATCH_FILE)" ] ; then \
 	      echo applying patch: "$${patch##*/}" ;\
@@ -111,11 +114,11 @@ kernel-dist:
 	    fi ;\
 	  done ;\
           \
-	  tar xvzf $(WEISS_CD_DIR)/sources/kernel/cifs_1.44.tar.gz ;\
+#	  test -f $(KERNEL_CD_DIR)/cifs_1.44.tar.gz && tar xvzf $(KERNEL_CD_DIR)/cifs_1.44.tar.gz ;\
 	)
 	# create new Weiss CCM2200 patch
-	-cd $(KERNEL_BASE); diff -Nrub '--exclude=*~' $(KERNEL_ORIG) $(KERNEL_DIR) >$(WEISS_CD_DIR)/sources/kernel/$(PATCH_FILE)
-	\rm -rf $(KERNEL_ORIG)
+	-cd $(KERNEL_BASE); diff -Nrub '--exclude=*~' $(KERNEL_ORIG) $(KERNEL_DIR) >$(KERNEL_CD_DIR)/new_$(PATCH_FILE)
+#	\rm -rf $(KERNEL_ORIG)
 
 
 
