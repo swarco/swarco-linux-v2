@@ -24,6 +24,7 @@ goahead-source: $(DL_DIR)/$(GOAHEAD_SOURCE)
 $(GOAHEAD_DIR)/.unpacked: $(DL_DIR)/$(GOAHEAD_SOURCE)
 	$(GOAHEAD_CAT) $(DL_DIR)/$(GOAHEAD_SOURCE) | tar -C $(BUILD_DIR) $(TAR_OPTIONS) -
 	patch -l $(GOAHEAD_DIR)/LINUX/Makefile < $(GOAHEAD_PDIR)/goahead.patch
+	patch -l $(GOAHEAD_DIR)/LINUX/main.c < $(GOAHEAD_PDIR)/goahead_mainpage.patch
 	touch $(GOAHEAD_DIR)/.unpacked
 
 $(GOAHEAD_DIR)/.configured: $(GOAHEAD_DIR)/.unpacked
