@@ -6,10 +6,10 @@
 # See /LICENSE for more information.
 #
 
-COMGT_VER:=0.3
-COMGT_SOURCE:=comgt-$(COMGT_VER).tgz
-COMGT_SITE:=http://downloads.openwrt.org/sources/
-COMGT_DIR:=$(BUILD_DIR)/comgt-$(COMGT_VER)
+COMGT_VER:=0.32
+COMGT_SOURCE:=comgt.$(COMGT_VER).tgz
+COMGT_SITE:= http://downloads.sourceforge.net/comgt
+COMGT_DIR:=$(BUILD_DIR)/comgt.$(COMGT_VER)
 COMGT_CAT:=zcat
 COMGT_BINARY:=$(COMGT_DIR)/comgt
 COMGT_TARGET_BINARY:=$(TARGET_DIR)/usr/bin/comgt
@@ -32,11 +32,11 @@ $(COMGT_BINARY): $(COMGT_DIR)/.configured
 	$(MAKE) -C $(COMGT_DIR) \
 		CC="$(TARGET_CC)" \
 		CFLAGS="$(TARGET_CFLAGS)" \
-		gcom
+		comgt
 	touch $@
 
 $(COMGT_TARGET_BINARY): $(COMGT_BINARY)
-	cp -af $(COMGT_DIR)/gcom $(COMGT_TARGET_BINARY)
+	cp -af $(COMGT_BINARY) $(COMGT_TARGET_BINARY)
 	$(STRIP) $(COMGT_TARGET_BINARY)
 
 comgt: uclibc $(COMGT_TARGET_BINARY)

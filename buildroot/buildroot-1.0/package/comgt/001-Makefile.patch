@@ -1,17 +1,17 @@
---- gcom-0.3/Makefile	2006-01-04 16:05:28.000000000 +0100
-+++ gcom-0.3.new/Makefile	2006-07-11 15:09:50.000000000 +0200
-@@ -20,8 +20,6 @@
+--- comgt.0.32/Makefile	2007-11-27 18:13:03.000000000 +0100
++++ comgt.0.32-new/Makefile	2007-11-27 18:10:24.000000000 +0100
+@@ -23,8 +23,6 @@
  #
- #	$Id$
  #
+ 
 -LIB     = -L/usr/local/lib
 -INC     = -I/usr/local/include
  EXE	= /usr/local/bin
  MAN     = /usr/share/man/man1
- CPROG	= gcom
-@@ -29,9 +27,6 @@
- BIN     = $(CPROG) $(SCRIPT)
- MANP	= gcom.1 sigmon.1
+ CPROG	= comgt
+@@ -33,9 +31,6 @@
+ BIN     = $(CPROG) 
+ MANP	= comgt.1 sigmon.1
  
 -CFLAGS  = -c
 -LDFLAGS =
@@ -19,14 +19,14 @@
  all: $(BIN)
  
  install:
-@@ -53,8 +48,8 @@
+@@ -72,8 +67,8 @@
  
  
- gcom: gcom.o
--	cc gcom.o $(LDFLAGS) -o gcom
-+	$(CC) gcom.o $(LDFLAGS) -o gcom
+ comgt: comgt.o
+-	cc comgt.o $(LDFLAGS) -o comgt
++	$(CC) comgt.o $(LDFLAGS) -o comgt
  
- gcom.o: gcom.c gcom.h
--	cc gcom.c $(CFLAGS) 
-+	$(CC) -c $(CFLAGS) gcom.c
+ comgt.o: comgt.c comgt.h
+-	cc comgt.c $(CFLAGS) 
++	$(CC) -c comgt.c $(CFLAGS) 
  
