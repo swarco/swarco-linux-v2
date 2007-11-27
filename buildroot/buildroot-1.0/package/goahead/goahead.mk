@@ -55,17 +55,11 @@ $(GOAHEAD_BINARY): $(GOAHEAD_DIR)/.configured
 
 $(GOAHEAD_TARGET_BINARY): $(GOAHEAD_BINARY)
 	$(MAKE) DESTDIR=$(TARGET_DIR) CC=$(TARGET_CC) -C $(GOAHEAD_DIR)/LINUX all
-	(cp -R $(GOAHEAD_DIR)/web $(TARGET_DIR); \
-	cp $(GOAHEAD_DIR)/LINUX/webs $(GOAHEAD_TARGET_BINARY); \
-	rm -rf $(TARGET_DIR)/web/docs;)
-#	rm -rf $(TARGET_DIR)/share/locale $(TARGET_DIR)/usr/info \
-#		$(TARGET_DIR)/usr/man $(TARGET_DIR)/usr/share/doc
-#	(cd $(TARGET_DIR)/bin; \
-#	ln -snf goahead gunzip; \
-#	ln -snf goahead zcat; \
-#	ln -snf zdiff zcmp; \
-#	ln -snf zgrep zegrep; \
-#	ln -snf zgrep zfgrep;)
+	#cp -R $(GOAHEAD_DIR)/web $(TARGET_DIR)
+	#rm -rf $(TARGET_DIR)/web/docs
+	cp $(GOAHEAD_DIR)/LINUX/webs $(GOAHEAD_TARGET_BINARY)
+	mkdir $(TARGET_DIR)/web
+	mkdir $(TARGET_DIR)/web/cgi-bin
 
 goahead: uclibc $(GOAHEAD_TARGET_BINARY)
 
