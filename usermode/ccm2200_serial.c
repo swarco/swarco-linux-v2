@@ -56,6 +56,7 @@ void info(int fd)
 
   if (ioctl(fd, CCM2200_SERIAL_GET_CONF, &serial_config) == 0) {
     char mode_str[50];
+    mode_str[0] = '\0';
     switch (serial_config.mode) {
     case CCM2200_SERIAL_MODE_NORMAL:
       strcat(mode_str, "normal-RS232"); break;
