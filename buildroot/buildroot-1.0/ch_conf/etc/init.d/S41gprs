@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# Start GPRS dialin ppp network interface
+#
+
+if ! [ -f /etc/default/gprs ]
+then
+# GPRS not configured -> exit
+  exit 1
+fi
+
+. /etc/default/gprs
+
+if [ -z "$GPRS_DEVICE" -o \
+     -z "$GPRS_APN" ]
+then
+  echo "Necessary settings missing in /etc/default/gprs"
+  exit 1
+fi
+
+start() {
+	if [ -f /tmp/gprs_disable ]
+	then
+  		echo "GPRS dialin disabled"
+  		exit 1
+	fi
+
+	echo -n "Starting GPRS PPP dialin interface"
+	nohup /usr/bin/starter_gprs_dialin 2>&1 >/dev/null &
+}	
+stop() {
+	echo -n "Stopping GPRS PPP dialin interface"
+	killall starter_gprs_dialin
+}
+restart() {
+	stop
+	start
+}	
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
+

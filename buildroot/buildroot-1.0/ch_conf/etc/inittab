@@ -22,21 +22,11 @@ null::sysinit:/etc/hotplug/mdev.sh
 # trigger watchdog to get an additional minute for boot process!
 null::sysinit:/usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x8000
 null::sysinit:/bin/echo x >/dev/ccm2200_watchdog
-#null::sysinit:/root/bin/startled.sh &
 null::sysinit:/bin/hostname -F /etc/hostname
-#null::sysinit:/sbin/ifconfig lo 127.0.0.1 up
-#null::sysinit:/sbin/route add -net 127.0.0.0 netmask 255.0.0.0 lo
 
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS
-# 2006-07-26 mf: Terminates led startup procedure
-#null::sysinit:/root/bin/termled.sh &
 null::sysinit:/sbin/watchdog -t 1 /dev/ccm2200_watchdog
-
-
-# Set up a couple of getty's
-#tty1::respawn:/sbin/getty 38400 tty1
-#tty2::respawn:/sbin/getty 38400 tty2
 
 # Put a getty on the serial port
 ttySconsole::respawn:/sbin/getty -L ttySconsole 38400 ansi-ht
@@ -44,22 +34,13 @@ ttySconsole::respawn:/sbin/getty -L ttySconsole 38400 ansi-ht
 # hier kein TTY angeben, dann wird automatisch /dev/console genommen!!!
 # wieder raus, console ist kein tty und hat kein job control
 #::respawn:/sbin/getty -L console 38400 xterm
-# 2006-06-08 mf start pppd
-# null::respawn:/usr/sbin/pppd call gprs nodetach
 # 2006-09-22 mf start mgetty on ttyS1
 # ttyS1::respawn:/sbin/mgetty ttyS1
-# Logging junk not needed cause started by init.d
-#null::sysinit:/bin/touch /var/log/messages
-#null::respawn:/sbin/syslogd -s 200kb -b 1 -n -m 0
-#null::respawn:/sbin/klogd -n
-#tty3::respawn:/usr/bin/tail -f /var/log/messages
 
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot
 
 # Stuff to do before rebooting
-# 2006-07-26 mf: unmounting SRAM as logging buffer for system reboot
-#null::shutdown:/etc/init.d/S11srammount stop
 null::shutdown:/usr/bin/killall klogd
 null::shutdown:/usr/bin/killall syslogd
 null::shutdown:/bin/umount -a -r

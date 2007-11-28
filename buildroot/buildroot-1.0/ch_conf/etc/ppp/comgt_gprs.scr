@@ -1,0 +1,202 @@
+# -*- shell-script -*-
+  let $d=$env("GPRS_DEVICE")
+  if len($d)=0 let $d="/dev/com1"
+  open com $d
+#
+  let $b=$env("GPRS_BAUDRATE")
+  if len($b)=0 let $b="115200"
+  print "Baudrate: ",$b,"^j"
+  set com $b+"n81"
+  set senddelay 0.05
+#
+# Test if device is connected
+#
+  flash 0.1
+  send "AT^m"
+  waitfor 5 "OK"
+  if % = 0 goto reset_device
+  sleep 1
+  send "+++"
+  sleep 1
+  waitfor 5 "OK"
+  if % = 0 goto reset_device
+#
+  print "Terminal adapter not responding, check if device is powered on and connected properly.","^j"
+  exit 1
+#
+#
+#
+:reset_device
+  print "Reseting terminal adapter^j"
+  send "AT+CFUN=1,1^m"
+  waitquiet 1 0.2
+:start
+  flash 0.1
+  send "AT+CPIN?^m"
+  waitfor 30 "SIM PUK","SIM PIN","READY","ERROR","ERR"
+  if % = -1 goto error
+  if % = 0 goto ready
+  if % = 1 goto getpin
+  if % = 2 goto ready
+  if % = 3 goto error
+  if % = 4 goto error
+:error
+  print $s," ***SIM ERROR***","^j"
+  exit 1
+#
+:getpin
+  let $x=$env("GPRS_PIN")
+  let a=len($x)
+  if a=0 goto pinenverr
+  if a<>4 goto pinerror
+  let c=0
+:test
+  let $c=$mid($x,c,1)
+  if $c<"0" goto pinerror
+  if $c>"9" goto pinerror
+  inc c
+  if c<4 goto test
+  let a=val($x)
+  if a<0 goto pinerror
+  if a>9999 goto pinerror
+  let $c=$left($x,4)
+:enterpin
+  send "AT+CPIN=\""
+  send $c
+  send "\"^m"
+  waitfor 20 "OK","ERR"
+  if % = -1 goto timeerror
+  if % = 0 goto ready
+  if % = 1 goto pinerror
+:pinenverr
+  print "ERROR: The GPRS_PIN env variable is not set","^j"
+  exit 1
+:pinerror
+  print "ERROR: PIN code must be 4 decimal digits only","^j"
+  print "Caution! - entering the wrong PIN code three times will lock the SIM","^j"
+  exit 1
+:timeerror
+  print "ERROR: timeout, device did not respond to PIN command entry.","^j"
+  exit 1
+:ready
+  print "SIM ready","^j"
+:cont
+  print "Waiting for Registration..(120 sec max)"
+  let c = 0
+:waitreg
+  send "AT+CREG?^m"
+  waitfor 2 "+CREG: 0,1","+CREG: 0,5"
+  if % = -1 goto regagain
+  if % = 0 goto homereg
+  if % = 1 goto roamreg
+:regagain
+  if c > 120 goto regtimeout
+  let c=c+2
+  print "."
+  goto waitreg
+:regtimeout
+  print "^jFailed to register","^j"
+  exit 1
+:homereg
+  print "^j"
+  let $n="Registered on Home network: "
+  goto registered
+:roamreg
+  print "^j"
+  let $n="Registered on Roaming network: "
+  goto registered
+:registered
+  let $o=$env("GPRS_OPERATOR")
+  if len($o)=0 goto oper_OK
+  print "Setting manual selected operator to ",$o,"^j"
+  waitquiet 1 0.1
+  send "AT+COPS=1,2,\""+$o+"\"^m"
+  waitfor 20 "OK","ERR"
+  if % = 0 goto oper_OK
+:oper_error
+  print "ERROR setting manual operator","^j"
+  exit 1
+:oper_OK
+# reset operator format to alphanumeric 16 characters
+  send "AT+COPS=3,0^m"
+  waitfor 20 "OK","ERR"
+# Query current operator
+  waitquiet 1 0.1
+  send "AT+COPS?^m"
+  get 2 "^m" $s
+  get 2 "^m" $s
+  let a=len($s)
+  let b=a-12
+  if b < 1 goto regtimeout
+  let $c=$right($s,b)
+  print $n,$c,"^j"
+  let c=0
+:signal
+  waitquiet 1 0.1
+  send "AT+CSQ^m"
+  get 2 "^m" $s
+  get 2 "^m" $s
+  let a=len($s)
+  let a=a-6
+  let $s=$right($s,a)
+  if $s <> "0,0" goto sigcont
+  if c > 3 goto sigexit
+  let c=c+1
+  pause 1
+  goto signal
+:sigexit
+  print "Signal strength measure 0,0 too low!^j"
+  exit 1
+:sigcont
+  print "Signal Quality:",$s,"^j"
+  waitquiet 1 0.1
+#
+# SET APN
+#
+:getapn
+  let $x=$env("GPRS_APN")
+  let a=len($x)
+  if a=0 goto apn_error
+  if a>32 goto apn_error
+:enterapn
+  print "Entering APN: ",$x,"^j"
+  send "AT+CGDCONT=1,\"IP\",\""+$x+"\"^m"
+  waitfor 20 "OK","ERR"
+  if % = -1 goto apn_timeerror
+  if % = 0 goto apn_OK
+  if % = 1 goto apn_error
+:apn_error
+  print "ERROR entering APN","^j"
+  print "The GPRS_APN env variable is not set","^j"
+  exit 1
+:apn_timeerror
+  print "ERROR entering APN","^j"
+  print "The device timeout.","^j"
+  exit 1
+:apn_OK
+#
+# Dial GPRS
+#
+  print "Dialing","^j"
+  send "ATD *99**PPP*1#^m"
+  waitfor 90 "CONNECT","ERR"
+  if % = -1 goto dial_timeerror
+  if % = 0 goto dial_CONNECT
+  if % = 1 goto dial_error
+:dial_timeerror
+  print "Dialing Timout","^j"
+  exit 1
+:dial_error
+  print "Error calling GPRS","^j"
+  exit 1
+:dial_CONNECT
+  print "Connected, starting pppd","^j"
+  let $u=$env("GPRS_USER")
+  if len($u)>0 let $u="user "+$u
+
+  print "ppp command line: ","/usr/sbin/pppd call gprs_comgt nolog nodetach "+$d+" "+$b+" "+$u,"^j"
+  system "/usr/sbin/pppd call gprs_comgt debug nodetach "+$d+" "+$b+" "+$u
+  print "pppd terminated","^j"
+  system "fuser -k "+$d
+  print "ready","^j"
+

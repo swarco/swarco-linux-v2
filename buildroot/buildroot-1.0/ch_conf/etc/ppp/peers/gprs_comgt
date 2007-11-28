@@ -1,0 +1,19 @@
+# GPRS Konfiguration fuer pppd auf CCM2200
+# (C) 2007 Weiss-Electronic GmbH / Guido Classen
+# angepasst fuer Verwendung mit neuem comgt basiertem Einwahlscript
+# port, baudrate und user wird nun von comgt übergeben!
+
+noproxyarp 
+usehostname 
+noipdefault  
+noauth
+hide-password 
+defaultroute
+usepeerdns
+
+crtscts
+lock
+asyncmap 0
+modem
+
+

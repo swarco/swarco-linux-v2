@@ -1,0 +1,19 @@
+# Configuration GPRS/UMTS PPP dial in
+
+# uncomment GPRS_DEVICE to enable GPRS dial in,
+# comment out GPRS_DEVICE to disable GPRS dial in
+#GPRS_DEVICE=/dev/com1
+
+GPRS_BAUDRATE=115200
+#GPRS_PIN=1234
+GPRS_APN="internet.t-d1.de"
+GPRS_USER="d1"
+GPRS_DIAL=*99**PPP*1#
+
+# Operator Code:
+#   26201 T-Mobile D1
+#   26202 Vodafor D2 GmbH
+#   26203 E-Plus Mobilfunk
+#   26207 O2 Germany
+GPRS_OPERATOR=26201
+
