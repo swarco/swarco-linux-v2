@@ -58,8 +58,8 @@ $(GOAHEAD_TARGET_BINARY): $(GOAHEAD_BINARY)
 	#cp -R $(GOAHEAD_DIR)/web $(TARGET_DIR)
 	#rm -rf $(TARGET_DIR)/web/docs
 	cp $(GOAHEAD_DIR)/LINUX/webs $(GOAHEAD_TARGET_BINARY)
-	mkdir $(TARGET_DIR)/web
-	mkdir $(TARGET_DIR)/web/cgi-bin
+	mkdir -p $(TARGET_DIR)/web
+	mkdir -p $(TARGET_DIR)/web/cgi-bin
 
 goahead: uclibc $(GOAHEAD_TARGET_BINARY)
 
