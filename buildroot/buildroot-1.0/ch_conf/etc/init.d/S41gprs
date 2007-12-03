@@ -1,7 +1,23 @@
 #!/bin/sh
-#
-# Start GPRS dialin ppp network interface
-#
+#*****************************************************************************
+#* 
+#*  @file          S*grps
+#*
+#*  Start GPRS dialin ppp network interface
+#*
+#*  @version       1.0 (\$Revision$)
+#*  @author        Guido Classen <br>
+#*                 Weiss-Electronic GmbH
+#* 
+#*  $LastChangedBy$  
+#*  $Date$
+#*  $URL$
+#*
+#*  @par Modification History:
+#*    2007-12-03 gc: initial version
+#*  
+#*****************************************************************************
+
 
 if ! [ -f /etc/default/gprs ]
 then
@@ -26,12 +42,14 @@ start() {
 	fi
 
 	echo -n "Starting GPRS PPP dialin interface"
-	nohup /usr/bin/starter_gprs_dialin 2>&1 >/dev/null &
+	nohup /usr/bin/starter_gprs_dialin >/dev/null 2>&1 &
 }	
+
 stop() {
 	echo -n "Stopping GPRS PPP dialin interface"
 	killall starter_gprs_dialin
 }
+
 restart() {
 	stop
 	start

@@ -1,7 +1,23 @@
-# GPRS Konfiguration fuer pppd auf CCM2200
-# (C) 2007 Weiss-Electronic GmbH / Guido Classen
-# angepasst fuer Verwendung mit neuem comgt basiertem Einwahlscript
-# port, baudrate und user wird nun von comgt übergeben!
+#*****************************************************************************
+#* 
+#*  @file          gprs_comgt
+#*
+#*  pppd peer file for GPRS terminal adapter using 
+#*  /etc/ppp/comgt_gprs.scr comgt dial in script file!
+#*  port device, baudrate and username are given by the script file. 
+#*
+#*  @version       1.0 (\$Revision$)
+#*  @author        Guido Classen <br>
+#*                 Weiss-Electronic GmbH
+#* 
+#*  $LastChangedBy$  
+#*  $Date$
+#*  $URL$
+#*
+#*  @par Modification History:
+#*    2007-12-03 gc: initial version
+#*  
+#*****************************************************************************
 
 noproxyarp 
 usehostname 

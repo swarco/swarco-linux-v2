@@ -5,13 +5,13 @@
 #*
 #*  /etc/init.d script for proftpd FTP Server for Weiss CCM2200
 #*
-#*  @version       1.0 (\$Revision: 1818 $)
+#*  @version       1.0 (\$Revision$)
 #*  @author        Markus Forster <br>
 #*                 Weiss-Electronic GmbH
 #* 
-#*  $LastChangedBy: fom9tr $  
-#*  $Date: 2006-08-09 $
-#*  $URL:  $
+#*  $LastChangedBy$  
+#*  $Date$
+#*  $URL$
 #*
 #*  @par Modification History:
 #*    2006-08-09 mf: initial version (unixdef)

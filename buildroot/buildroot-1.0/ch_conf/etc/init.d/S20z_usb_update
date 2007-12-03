@@ -5,13 +5,13 @@
 #*
 #*  /etc/init.d script initializes the ssh keys on first system boot 
 #*
-#*  @version       1.0 (\$Revision: 1818 $)
+#*  @version       1.0 (\$Revision$)
 #*  @author        Markus Forster <br>
 #*                 Weiss-Electronic GmbH
 #* 
-#*  $LastChangedBy: fom9tr $  
-#*  $Date: 2006-08-27 $
-#*  $URL:  $
+#*  $LastChangedBy$  
+#*  $Date$
+#*  $URL$
 #*
 #*  @par Modification History:
 #*    2007-05-08 gc: initial version

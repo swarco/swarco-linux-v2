@@ -1,4 +1,24 @@
 # -*- shell-script -*-
+#*****************************************************************************
+#* 
+#*  @file          comgt_gprs.scr
+#*
+#*  comgt script file to talk to GPRS terminal adapters
+#*  (tested Siemens MC35i)
+#*
+#*  @version       1.0 (\$Revision$)
+#*  @author        Guido Classen <br>
+#*                 Weiss-Electronic GmbH
+#* 
+#*  $LastChangedBy$  
+#*  $Date$
+#*  $URL$
+#*
+#*  @par Modification History:
+#*    2007-12-03 gc: initial version
+#*  
+#*****************************************************************************
+#
   let $d=$env("GPRS_DEVICE")
   if len($d)=0 let $d="/dev/com1"
   open com $d
