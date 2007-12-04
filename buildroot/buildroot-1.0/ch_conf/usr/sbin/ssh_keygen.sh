@@ -32,9 +32,9 @@ HOST_KEY_RSA_TMP=/tmp/ssh_host_rsa_key
 LOG="logger -p auth.notice -t $0"
 
 $LOG "Starting OpenSSH key generator"
-${SSH_KEYGEN} -q -b 1024 -t rsa1 -f ${HOST_KEY_RSA1_TMP} -N "" -C ""
-${SSH_KEYGEN} -q -b 1024 -t dsa -f ${HOST_KEY_DSA_TMP} -N "" -C ""
-${SSH_KEYGEN} -q -b 1024 -t rsa -f ${HOST_KEY_RSA_TMP} -N "" -C ""
+${SSH_KEYGEN} -q -b 1024 -t rsa1 -f ${HOST_KEY_RSA1_TMP} -N "" -C ""  < /dev/null > /dev/null 2> /dev/null
+${SSH_KEYGEN} -q -b 1024 -t dsa -f ${HOST_KEY_DSA_TMP} -N "" -C ""    < /dev/null > /dev/null 2> /dev/null
+${SSH_KEYGEN} -q -b 1024 -t rsa -f ${HOST_KEY_RSA_TMP} -N "" -C ""    < /dev/null > /dev/null 2> /dev/null 
 
 $LOG "Copying newly generated OpenSSH keys to /etc"
 
