@@ -41,12 +41,12 @@ start() {
   		exit 1
 	fi
 
-	echo -n "Starting GPRS PPP dialin interface"
+	echo "Starting GPRS PPP dialin interface"
 	nohup /usr/bin/starter_gprs_dialin >/dev/null 2>&1 &
 }	
 
 stop() {
-	echo -n "Stopping GPRS PPP dialin interface"
+	echo "Stopping GPRS PPP dialin interface"
 	killall starter_gprs_dialin
 }
 
