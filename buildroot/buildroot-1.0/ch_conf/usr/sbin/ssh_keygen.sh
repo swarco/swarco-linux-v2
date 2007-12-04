@@ -1,9 +1,9 @@
 #!/bin/sh
 #*****************************************************************************
 #* 
-#*  @file          S21firstboot
+#*  @file          ssh_keygen.sh
 #*
-#*  /etc/init.d    script initializes the ssh keys on first system boot 
+#*  script to initialize the ssh keys on first system boot 
 #*
 #*  @version       1.0 (\$Revision$)
 #*  @author        Markus Forster <br>

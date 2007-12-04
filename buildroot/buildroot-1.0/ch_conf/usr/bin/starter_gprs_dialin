@@ -1,35 +1,54 @@
 #!/bin/sh
-
-if ! [ -f /etc/default/gprs ]
-then
-  echo "Config file /etc/default/gprs not found, nothing to do!"
-  exit 1
-fi
-
-. /etc/default/gprs
-
-if [ -z "$GPRS_DEVICE" -o \
-     -z "$GPRS_APN" ]
-then
-  echo "Necessary settings missing in /etc/default/gprs"
-  exit 1
-fi
-
-if [ -f /tmp/gprs_disable ]
-then
-  echo "GPRS dialin disabled"
-  exit 1
-fi
-
-
-export GPRS_DEVICE
-export GPRS_BAUDRATE
-export GPRS_PIN
-export GPRS_APN
-export GPRS_DIAL
-export GPRS_OPERATOR
+#*****************************************************************************
+#* 
+#*  @file          S21firstboot
+#*
+#*  GPRS pppd periodic starter script
+#*
+#*  @version       1.0 (\$Revision$)
+#*  @author        Markus Forster <br>
+#*                 Weiss-Electronic GmbH
+#* 
+#*  $LastChangedBy$  
+#*  $Date$
+#*  $URL$
+#*
+#*  @par Modification History:
+#*    2007-12-04 gc: initial version
+#*
+#*  
+#*****************************************************************************
 
 while true
 do
-  comgt /etc/ppp/comgt_gprs.scr -s | logger -t GPRS
+
+    if ! [ -f /etc/default/gprs ]
+    then
+        echo "Config file /etc/default/gprs not found, nothing to do!"
+        exit 1
+    fi
+
+    . /etc/default/gprs
+
+    if [ -z "$GPRS_DEVICE" -o \
+        -z "$GPRS_APN" ]
+    then
+        echo "Necessary settings missing in /etc/default/gprs"
+        exit 1
+    fi
+
+    if [ -f /tmp/gprs_disable ]
+    then
+        echo "GPRS dialin disabled"
+        exit 1
+    fi
+
+    export GPRS_DEVICE
+    export GPRS_BAUDRATE
+    export GPRS_PIN
+    export GPRS_APN
+    export GPRS_DIAL
+    export GPRS_OPERATOR
+
+    comgt /etc/ppp/comgt_gprs.scr -s | logger -p daemon.notice -t GPRS
 done
