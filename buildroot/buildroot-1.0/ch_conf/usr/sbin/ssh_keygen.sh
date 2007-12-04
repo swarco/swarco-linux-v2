@@ -14,7 +14,8 @@
 #*  $URL$
 #*
 #*  @par Modification History:
-#*    2006-08-27 mf: initial version (unixdef)
+#*    2007-12-04 gc: several improvements
+#*    2006-08-27 mf: initial version
 #*
 #*  
 #*****************************************************************************
@@ -28,14 +29,12 @@ HOST_KEY_RSA1_TMP=/tmp/ssh_host_key
 HOST_KEY_DSA_TMP=/tmp/ssh_host_dsa_key
 HOST_KEY_RSA_TMP=/tmp/ssh_host_rsa_key
 
-LOG="logger -t ssh_keygen.sh"
+LOG="logger -p auth.notice -t $0"
 
 $LOG "Starting OpenSSH key generator"
-${SSH_KEYGEN} -b 1024 -t rsa1 -f ${HOST_KEY_RSA1_TMP} -N ""
-${SSH_KEYGEN} -b 1024 -t dsa -f ${HOST_KEY_DSA_TMP} -N ""
-${SSH_KEYGEN} -b 1024 -t rsa -f ${HOST_KEY_RSA_TMP} -N ""
-# change permissions of ssh key files to non other access
-#rm /etc/.firstboot
+${SSH_KEYGEN} -q -b 1024 -t rsa1 -f ${HOST_KEY_RSA1_TMP} -N "" -C ""
+${SSH_KEYGEN} -q -b 1024 -t dsa -f ${HOST_KEY_DSA_TMP} -N "" -C ""
+${SSH_KEYGEN} -q -b 1024 -t rsa -f ${HOST_KEY_RSA_TMP} -N "" -C ""
 
 $LOG "Copying newly generated OpenSSH keys to /etc"
 
