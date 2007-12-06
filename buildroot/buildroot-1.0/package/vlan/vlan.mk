@@ -3,7 +3,7 @@
 # vlan
 #
 #############################################################
-VLAN_VER:=1.19
+VLAN_VER:=1.9
 VLAN_SOURCE:=vlan.$(VLAN_VER).tar.gz
 VLAN_SITE:=ftp://alpha.gnu.org/gnu/vlan
 VLAN_DIR:=$(BUILD_DIR)/$VLAN_SOURCE
