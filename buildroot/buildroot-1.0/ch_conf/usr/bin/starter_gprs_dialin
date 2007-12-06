@@ -1,12 +1,12 @@
 #!/bin/sh
 #*****************************************************************************
 #* 
-#*  @file          S21firstboot
+#*  @file          starter_gprs_dialin
 #*
 #*  GPRS pppd periodic starter script
 #*
 #*  @version       1.0 (\$Revision$)
-#*  @author        Markus Forster <br>
+#*  @author        Guido Classen <br>
 #*                 Weiss-Electronic GmbH
 #* 
 #*  $LastChangedBy$  
@@ -28,6 +28,7 @@ do
         exit 1
     fi
 
+    GPRS_PPP_OPTIONS=""
     . /etc/default/gprs
 
     if [ -z "$GPRS_DEVICE" -o \
@@ -43,12 +44,34 @@ do
         exit 1
     fi
 
+    if ! [ -z "$GPRS_DNS2" -a \
+           -z "$GPRS_DNS2" ]
+    then
+        #truncate file without removing it (in case of symbolic link)
+        echo "#resolv.conf file automatically created by $0" >/etc/resolv.conf
+
+        if ! [ -z "$GPRS_DNS1" ]
+        then
+            echo >>/etc/resolv.conf "nameserver $GPRS_DNS1"
+        fi
+        if ! [ -z "$GPRS_DNS2" ]
+        then
+            echo >>/etc/resolv.conf "nameserver $GPRS_DNS2"
+        fi
+    else
+        GPRS_PPP_OPTIONS="$GPRS_PPP_OPTIONS usepeerdns"
+    fi
+
     export GPRS_DEVICE
     export GPRS_BAUDRATE
     export GPRS_PIN
     export GPRS_APN
     export GPRS_DIAL
     export GPRS_OPERATOR
+    export GPRS_USER
+    export GPRS_PPP_OPTIONS
 
     comgt /etc/ppp/comgt_gprs.scr -s | logger -p daemon.notice -t GPRS
+
+    sleep 30
 done

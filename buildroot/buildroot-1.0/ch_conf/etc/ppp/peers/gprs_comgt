@@ -25,7 +25,6 @@ noipdefault
 noauth
 hide-password 
 defaultroute
-usepeerdns
 
 crtscts
 lock

@@ -33,7 +33,10 @@ include	$(BASE_DIR)/directories.mk
 
 .PHONY: all
 all: buildroot buildroot-soft-float u-boot kernel \
-     modules_install usermode buildroot
+     modules_install usermode
+# run make in buildroot again, to include the newly build kernel modules in 
+# the jffs2 images
+	cd $(BUILDROOT_PATH); make
 
 
 .PHONY: buildroot

@@ -1,14 +1,28 @@
-# Configuration GPRS/UMTS PPP dial in
+# Configuration GPRS/UMTS PPP dial in          -*- shell-script -*-
 
 # uncomment GPRS_DEVICE to enable GPRS dial in,
 # comment out GPRS_DEVICE to disable GPRS dial in
-#GPRS_DEVICE=/dev/com1
+
+if [ -c /dev/ttyACM0 ]
+then
+#  GPRS_DEVICE=/dev/ttyACM0
+else
+#  GPRS_DEVICE=/dev/com1
+fi
 
 GPRS_BAUDRATE=115200
 #GPRS_PIN=1234
 GPRS_APN="internet.t-d1.de"
 GPRS_USER="d1"
-GPRS_DIAL=*99**PPP*1#
+GPRS_DIAL="*99**PPP*1#"
+#
+# if GPRS_DNS1 ist set, use DNS specified by GPRS_DNS1 (and GPRS_DNS2)
+# if not let pppd negotiate DNS settings with peer
+#
+# T-Mobile APN "internet.t-d1.de" needs to set DNS manually if connection
+# is established over UMTS network!
+#GPRS_DNS1=193.254.160.130
+#GPRS_DNS2=193.254.160.1
 
 # Operator Code:
 #   26201 T-Mobile D1

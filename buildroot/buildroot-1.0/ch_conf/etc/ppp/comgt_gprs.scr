@@ -19,38 +19,53 @@
 #*  
 #*****************************************************************************
 #
+#
+#  $m => Terminal adapter type (Emtpy = Unknown)
+  let $m=""
   let $d=$env("GPRS_DEVICE")
   if len($d)=0 let $d="/dev/com1"
   open com $d
 #
   let $b=$env("GPRS_BAUDRATE")
   if len($b)=0 let $b="115200"
-  print "Baudrate: ",$b,"^j"
+  print "Starting GPRS connection on device ",$d," (",$b,"baud)^j"
   set com $b+"n81"
   set senddelay 0.05
 #
 # Test if device is connected
 #
+:device_detect
   flash 0.1
-  send "AT^m"
-  waitfor 5 "OK"
-  if % = 0 goto reset_device
+  send "ATi^m"
+  waitfor 5 "OK" "SIEMENS"
+  if % = -1 goto device_hangup
+  if % = 0 goto start
+  if % = 1 goto device_siemens
+#
+:device_hangup
   sleep 1
   send "+++"
   sleep 1
+  send "AT^m"
   waitfor 5 "OK"
-  if % = 0 goto reset_device
+  if % = 0 goto device_detect
 #
   print "Terminal adapter not responding, check if device is powered on and connected properly.","^j"
-  exit 1
+  sleep 5
+  goto err_exit
+#
+:device_siemens
+  waitfor 5 "MC35" "HC25"
+  if % = 0 let $m="MC35"
+  if % = 1 let $m="HC25"
+
 #
 #
 #
-:reset_device
-  print "Reseting terminal adapter^j"
-  send "AT+CFUN=1,1^m"
-  waitquiet 1 0.2
 :start
+  if $m="MC35"  print "Found Siemens MC35 GPRS terminal adapter^j"
+  if $m="HC25"  print "Found Siemens HC25 UMTS/GPRS terminal adapter^j"
+  if len($m)=0  print "Found unknown terminal adapter^j"
   flash 0.1
   send "AT+CPIN?^m"
   waitfor 30 "SIM PUK","SIM PIN","READY","ERROR","ERR"
@@ -62,7 +77,7 @@
   if % = 4 goto error
 :error
   print $s," ***SIM ERROR***","^j"
-  exit 1
+  goto err_exit
 #
 :getpin
   let $x=$env("GPRS_PIN")
@@ -90,14 +105,14 @@
   if % = 1 goto pinerror
 :pinenverr
   print "ERROR: The GPRS_PIN env variable is not set","^j"
-  exit 1
+  goto err_exit
 :pinerror
   print "ERROR: PIN code must be 4 decimal digits only","^j"
   print "Caution! - entering the wrong PIN code three times will lock the SIM","^j"
-  exit 1
+  goto err_exit
 :timeerror
   print "ERROR: timeout, device did not respond to PIN command entry.","^j"
-  exit 1
+  goto err_exit
 :ready
   print "SIM ready","^j"
 :cont
@@ -105,25 +120,29 @@
   let c = 0
 :waitreg
   send "AT+CREG?^m"
-  waitfor 2 "+CREG: 0,1","+CREG: 0,5"
-  if % = -1 goto regagain
-  if % = 0 goto homereg
-  if % = 1 goto roamreg
+  waitfor 2 "OK" "+CREG: 0,1","+CREG: 0,5"
+  if % = -1 goto reg_noresponse
+  if % = 0 goto regagain
+  if % = 1 goto homereg
+  if % = 2 goto roamreg
 :regagain
   if c > 120 goto regtimeout
   let c=c+2
   print "."
   goto waitreg
+:reg_noresponse
+  print "^jError: No response from terminal adapter on AT+CREG?","^j"
+  goto err_exit
 :regtimeout
   print "^jFailed to register","^j"
-  exit 1
+  goto err_exit
 :homereg
   print "^j"
-  let $n="Registered on Home network: "
+  let $n="Registered on home network: "
   goto registered
 :roamreg
   print "^j"
-  let $n="Registered on Roaming network: "
+  let $n="Registered on roaming network: "
   goto registered
 :registered
   let $o=$env("GPRS_OPERATOR")
@@ -135,7 +154,7 @@
   if % = 0 goto oper_OK
 :oper_error
   print "ERROR setting manual operator","^j"
-  exit 1
+  goto err_exit
 :oper_OK
 # reset operator format to alphanumeric 16 characters
   send "AT+COPS=3,0^m"
@@ -166,7 +185,7 @@
   goto signal
 :sigexit
   print "Signal strength measure 0,0 too low!^j"
-  exit 1
+  goto err_exit
 :sigcont
   print "Signal Quality:",$s,"^j"
   waitquiet 1 0.1
@@ -192,7 +211,7 @@
 :apn_timeerror
   print "ERROR entering APN","^j"
   print "The device timeout.","^j"
-  exit 1
+  goto err_exit
 :apn_OK
 #
 # Dial GPRS
@@ -205,18 +224,31 @@
   if % = 1 goto dial_error
 :dial_timeerror
   print "Dialing Timout","^j"
-  exit 1
+  goto err_exit
 :dial_error
   print "Error calling GPRS","^j"
-  exit 1
+  goto err_exit
 :dial_CONNECT
   print "Connected, starting pppd","^j"
   let $u=$env("GPRS_USER")
   if len($u)>0 let $u="user "+$u
-
-  print "ppp command line: ","/usr/sbin/pppd call gprs_comgt nolog nodetach "+$d+" "+$b+" "+$u,"^j"
-  system "/usr/sbin/pppd call gprs_comgt debug nodetach "+$d+" "+$b+" "+$u
+  let $o=$env("GPRS_PPP_OPTIONS")
+  let $o="call gprs_comgt nolog nodetach "+$o+" "+$d+" "+$b+" "+$u
+  print "ppp command line: ","/usr/sbin/pppd  "+$o,"^j"
+  system "/usr/sbin/pppd "+$o
   print "pppd terminated","^j"
   system "fuser -k "+$d
   print "ready","^j"
-
+#exit successfully
+  exit 0
+#
+#
+#
+#
+#
+:err_exit
+#
+# in case of an error send reset command to device
+  print "Reseting terminal adapter^j"
+  send "AT+CFUN=1,1^m"
+  exit 1
