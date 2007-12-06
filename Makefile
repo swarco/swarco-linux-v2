@@ -40,8 +40,8 @@ all: buildroot buildroot-soft-float u-boot kernel \
 buildroot:
 #	make -C $(BUILDROOT_PATH) #this dosn't work WHY?
 	cd $(BUILDROOT_PATH); make
-#	cp $(BUILDROOT_PATH)/rootfs-ccm2200-sp-nand.jffs2 $(TFTP_ROOT_DIR)
 	cp $(BUILDROOT_PATH)/rootfs-ccm2200-lp-nand.jffs2 $(TFTP_ROOT_DIR)
+#	cp $(BUILDROOT_PATH)/rootfs-ccm2200-sp-nand.jffs2 $(TFTP_ROOT_DIR)
 
 
 .PHONY: buildroot-soft-float
