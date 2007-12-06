@@ -7,8 +7,6 @@ BUILDROOT_SOFT_FLOAT_DIR=buildroot-1.0-soft-float
 U_BOOT_BASE=u-boot
 U_BOOT_DIR=u-boot-ccm2200
 KERNEL_BASE=kernel
-KERNEL_ACTUAL=linux-2.6.12.6
-
 
 if [ "$1" == "" ] || [ ! -d "$1" ] ; then
   echo Syntax: $0 '<directory to Weiss-Embedded-Linux CD>'
@@ -110,8 +108,8 @@ prepare_kernel_directory() {
 )
 }
 
-prepare_kernel_directory  $KERNEL_ACTUAL                        \
-                          $1/sources/kernel/2.6.12.6/
+# prepare_kernel_directory  linux-2.6.12.6                        \
+#                           $1/sources/kernel/2.6.12.6/
 
 
 prepare_kernel_directory  linux-2.6.21                          \
