@@ -1,0 +1,5 @@
+config BR2_PACKAGE_VLAN
+	bool "vconfig tool"
+	default n
+	help
+	  
