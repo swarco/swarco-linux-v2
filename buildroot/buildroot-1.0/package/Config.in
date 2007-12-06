@@ -166,4 +166,5 @@ source "package/yaffs2/Config.in"
 #source "package/imagemagick/Config.in"
 source "package/qemacs/Config.in"
 source "package/comgt/Config.in"
+source "package/vlan/Config.in"
 endmenu

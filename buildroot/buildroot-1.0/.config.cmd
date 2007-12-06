@@ -15,6 +15,7 @@ deps_config := \
 	target/cramfs/Config.in \
 	target/all/Config.in \
 	target/Config.in \
+	package/vlan/Config.in \
 	package/comgt/Config.in \
 	package/qemacs/Config.in \
 	package/yaffs2/Config.in \
