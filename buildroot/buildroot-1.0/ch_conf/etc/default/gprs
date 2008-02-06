@@ -6,8 +6,10 @@
 if [ -c /dev/ttyACM0 ]
 then
 #  GPRS_DEVICE=/dev/ttyACM0
+  true
 else
 #  GPRS_DEVICE=/dev/com1
+  true
 fi
 
 GPRS_BAUDRATE=115200
