@@ -33,7 +33,7 @@ BUSYBOX_SITE:=http://www.busybox.net/downloads/snapshots
 endif
 
 #2007-01-22 gc: 
-BUSYBOX_VER:=1.3.2
+BUSYBOX_VER:=1.9.1
 BUSYBOX_DIR:=$(BUILD_DIR)/busybox-$(BUSYBOX_VER)
 BUSYBOX_SOURCE:=busybox-$(BUSYBOX_VER).tar.bz2
 BUSYBOX_SITE:=http://www.busybox.net/downloads
