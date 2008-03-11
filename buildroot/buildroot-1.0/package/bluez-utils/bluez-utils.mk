@@ -27,11 +27,11 @@ $(BLUEZ-UTILS_DIR)/.configured: $(BLUEZ-UTILS_DIR)/.source
 		--target=$(GNU_TARGET_NAME) \
 		--host=$(GNU_TARGET_NAME) \
 		--build=$(GNU_HOST_NAME) \
-		--prefix=/usr/local \
+		--prefix=$(STAGING_DIR)/usr/ \
 		--includedir=$(STAGING_DIR)/include \
-		--oldincludedir=/usr/include \
+		--oldincludedir=$(STAGING_DIR)/usr/include \
 		--disable-alsa \
-		--sysconfdir=$(TARGET_DIR)/etc \
+		--sysconfdir=/etc \
 		--without-alsa \
 	);
 	touch $(BLUEZ-UTILS_DIR)/.configured;
@@ -40,7 +40,7 @@ $(BLUEZ-UTILS_DIR)/$(BLUEZ-UTILS_BINARY): $(BLUEZ-UTILS_DIR)/.configured
 	$(MAKE) CC=$(TARGET_CC) -C $(BLUEZ-UTILS_DIR)
 
 $(TARGET_DIR)/$(BLUEZ-UTILS_TARGET_BINARY):$(BLUEZ-UTILS_DIR)/$(BLUEZ-UTILS_BINARY)
-	$(MAKE) prefix=$(TARGET_DIR)/usr -C $(BLUEZ-UTILS_DIR) install
+	$(MAKE) prefix=$(TARGET_DIR)/usr sysconfdir=$(TARGET_DIR)/etc -C $(BLUEZ-UTILS_DIR) install
 	rm -Rf $(TARGET_DIR)/usr/man
 	# phyton script don't run on our system
 	rm -f $(TARGET_DIR)/usr/bin/bluepin
