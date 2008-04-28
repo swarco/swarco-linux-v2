@@ -96,6 +96,8 @@
   if a>9999 goto pinerror
   let $c=$left($x,4)
 :enterpin
+#  let $p="AT+CPIN=\""+$c+"\"^m"
+#  print "send pin:",$p,"^j"
   send "AT+CPIN=\""
   send $c
   send "\"^m"
@@ -115,10 +117,25 @@
   goto err_exit
 :ready
   print "SIM ready","^j"
-:cont
+#
+#
+  let $o=$env("GPRS_OPERATOR")
+  if len($o)=0 goto oper_OK
+  print "Setting manual selected operator to ",$o,"^j"
+  waitquiet 1 0.1
+  send "AT+COPS=1,2,\""+$o+"\"^m"
+  waitfor 20 "OK","ERR"
+  if % = 0 goto oper_OK
+:oper_error
+  print "ERROR setting manual operator","^j"
+  goto err_exit
+:oper_OK
+#
+#
   print "Waiting for Registration..(120 sec max)"
   let c = 0
 :waitreg
+  waitquiet 1 0.1
   send "AT+CREG?^m"
   waitfor 2 "OK" "+CREG: 0,1","+CREG: 0,5"
   if % = -1 goto reg_noresponse
@@ -145,17 +162,6 @@
   let $n="Registered on roaming network: "
   goto registered
 :registered
-  let $o=$env("GPRS_OPERATOR")
-  if len($o)=0 goto oper_OK
-  print "Setting manual selected operator to ",$o,"^j"
-  waitquiet 1 0.1
-  send "AT+COPS=1,2,\""+$o+"\"^m"
-  waitfor 20 "OK","ERR"
-  if % = 0 goto oper_OK
-:oper_error
-  print "ERROR setting manual operator","^j"
-  goto err_exit
-:oper_OK
 # reset operator format to alphanumeric 16 characters
   send "AT+COPS=3,0^m"
   waitfor 20 "OK","ERR"
