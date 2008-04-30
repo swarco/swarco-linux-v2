@@ -2,34 +2,47 @@
 
 # uncomment GPRS_DEVICE to enable GPRS dial in,
 # comment out GPRS_DEVICE to disable GPRS dial in
-
-if [ -c /dev/ttyACM0 ]
-then
-#  GPRS_DEVICE=/dev/ttyACM0
-  true
-else
-#  GPRS_DEVICE=/dev/com1
-  true
-fi
+# we need to use /dev/ttyACM* because linux kernel want release
+# the first device /dev/ttyACM0 if it is used and allocate
+# an new device /dev/ttyACM1 and so on for the same physical terminal adapter
+#GPRS_DEVICE="/dev/ttyACM* /dev/com1"
 
 GPRS_BAUDRATE=115200
 #GPRS_PIN=1234
 GPRS_APN="internet.t-d1.de"
+#GPRS_APN="web.vodafone.de"
 GPRS_USER="d1"
 GPRS_DIAL="*99**PPP*1#"
 #
 # if GPRS_DNS1 ist set, use DNS specified by GPRS_DNS1 (and GPRS_DNS2)
 # if not let pppd negotiate DNS settings with peer
 #
-# T-Mobile APN "internet.t-d1.de" needs to set DNS manually if connection
-# is established over UMTS network!
+# Bug in HC25??? needs to set DNS manually 
 #GPRS_DNS1=193.254.160.130
 #GPRS_DNS2=193.254.160.1
 
 # Operator Code:
+#       0 automatic operator selection mode
 #   26201 T-Mobile D1
-#   26202 Vodafor D2 GmbH
+#   26202 Vodafone D2 GmbH
 #   26203 E-Plus Mobilfunk
 #   26207 O2 Germany
 GPRS_OPERATOR=26201
 
+# Network access type
+# 0 GSM
+# 2 UTRAN (UMTS)
+# 3-6 reserved, not supported by HC25
+#GPRS_NET_ACCESS_TYPE=0
+
+# use supplied modem initialization AT command
+#GPRS_INIT=
+
+# user / password settings for dyndns 
+# no dyndns is used if not set
+#GPRS_DYN_DNS_USER=dyndnsuser
+#GPRS_DYN_DNS_PASSWD=dyndnspw
+
+
+GPRS_PPP_IFACE=ppp0
+GPRS_PPP_LED=/sys/class/leds/led10/brightness

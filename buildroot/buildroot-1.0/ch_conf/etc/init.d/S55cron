@@ -13,7 +13,7 @@ start)
 	;;
 stop)
 	logger "Stop periodic time command scheduler ..."
-	start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron
+	start-stop-daemon --stop --quiet --pidfile /var/run/crond.pid --name cron
 	logger "... crond stopped."
 	;;
 *)

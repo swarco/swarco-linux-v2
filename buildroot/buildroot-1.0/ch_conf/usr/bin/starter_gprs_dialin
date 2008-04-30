@@ -19,6 +19,8 @@
 #*  
 #*****************************************************************************
 
+
+
 while true
 do
 
@@ -62,16 +64,33 @@ do
         GPRS_PPP_OPTIONS="$GPRS_PPP_OPTIONS usepeerdns"
     fi
 
-    export GPRS_DEVICE
-    export GPRS_BAUDRATE
-    export GPRS_PIN
-    export GPRS_APN
-    export GPRS_DIAL
-    export GPRS_OPERATOR
-    export GPRS_USER
-    export GPRS_PPP_OPTIONS
-
-    comgt /etc/ppp/comgt_gprs.scr -s | logger -p daemon.notice -t GPRS
+    # check each device in list if it is available and an valid character device
+    for DEVICE in $GPRS_DEVICE
+    do
+        logger checking device $DEVICE
+        if [ -c $DEVICE ]; then
+            GPRS_DEVICE=$DEVICE
+            export GPRS_DEVICE
+            export GPRS_BAUDRATE
+            export GPRS_PIN
+            export GPRS_APN
+            export GPRS_DIAL
+            export GPRS_OPERATOR
+            export GPRS_NET_ACCESS_TYPE
+            export GPRS_USER
+            export GPRS_INIT
+	    export GPRS_DYN_DNS_USER
+            export GPRS_DYN_DNS_PASSWD
+            export GPRS_PPP_OPTIONS
+            export GPRS_PPP_IFACE
+            export GPRS_PPP_LED
+            
+        
+            comgt /etc/ppp/comgt_gprs.scr -s | logger -p daemon.notice -t GPRS
+            # if device is found, skip remaining devices
+            break
+        fi
+    done
 
     sleep 30
 done

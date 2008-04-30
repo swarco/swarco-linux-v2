@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ -f /etc/default/gprs ]
+then
+
+  . /etc/default/gprs
+  
+  if [ \! -z "$GPRS_PPP_IFACE" -a \! -z "$GPRS_PPP_LED" ]
+  then
+
+      if [ $PPP_IFACE = $GPRS_PPP_IFACE ] 
+      then
+          echo 100 >$GPRS_PPP_LED
+      fi
+  fi
+fi

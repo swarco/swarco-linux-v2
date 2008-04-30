@@ -20,6 +20,8 @@
 #*****************************************************************************
 #
 #
+# set echo on
+#
 #  $m => Terminal adapter type (Emtpy = Unknown)
   let $m=""
   let $d=$env("GPRS_DEVICE")
@@ -50,7 +52,7 @@
   waitfor 5 "OK"
   if % = 0 goto device_detect
 #
-  print "Terminal adapter not responding, check if device is powered on and connected properly.","^j"
+  print "Terminal adapter not responding, check if device is powered on and connected properly.\n"
   sleep 5
   goto err_exit
 #
@@ -66,6 +68,7 @@
   if $m="MC35"  print "Found Siemens MC35 GPRS terminal adapter^j"
   if $m="HC25"  print "Found Siemens HC25 UMTS/GPRS terminal adapter^j"
   if len($m)=0  print "Found unknown terminal adapter^j"
+
   flash 0.1
   send "AT+CPIN?^m"
   waitfor 30 "SIM PUK","SIM PIN","READY","ERROR","ERR"
@@ -76,7 +79,7 @@
   if % = 3 goto error
   if % = 4 goto error
 :error
-  print $s," ***SIM ERROR***","^j"
+  print $s," ***SIM ERROR***\n"
   goto err_exit
 #
 :getpin
@@ -106,30 +109,47 @@
   if % = 0 goto ready
   if % = 1 goto pinerror
 :pinenverr
-  print "ERROR: The GPRS_PIN env variable is not set","^j"
+  print "ERROR: The GPRS_PIN env variable is not set\n"
   goto err_exit
 :pinerror
-  print "ERROR: PIN code must be 4 decimal digits only","^j"
-  print "Caution! - entering the wrong PIN code three times will lock the SIM","^j"
+  print "ERROR: PIN code must be 4 decimal digits only\n"
+  print "Caution! - entering the wrong PIN code three times will lock the SIM\n"
   goto err_exit
 :timeerror
-  print "ERROR: timeout, device did not respond to PIN command entry.","^j"
+  print "ERROR: timeout, device did not respond to PIN command entry.\n"
   goto err_exit
 :ready
-  print "SIM ready","^j"
+  print "SIM ready\n"
 #
-#
+# $o operator numeric code
+# $p mode
+# $q Network access type
+  let $o=""
+  let $p="0"
   let $o=$env("GPRS_OPERATOR")
-  if len($o)=0 goto oper_OK
-  print "Setting manual selected operator to ",$o,"^j"
+  let $q=$env("GPRS_NET_ACCESS_TYPE")
+  if len($o)=0 goto oper_set
+  if val($o)<>0 let $p="1"
+:oper_set
+  if $p="1" print "Setting manual selected operator to ",$o,"^j"
+  let $a="AT+COPS="+$p+",2,\""+$o+"\""
+  if $m="HC25" goto oper_umts
+  goto skip_umts
+:oper_umts
+  if len($q)>0 let $a=$a+","+$q
+  let c=0
+:skip_umts
+  print "send oper: "+$a+"\n"
   waitquiet 1 0.1
-  send "AT+COPS=1,2,\""+$o+"\"^m"
+  send $a+"^m" 
   waitfor 20 "OK","ERR"
   if % = 0 goto oper_OK
 :oper_error
-  print "ERROR setting manual operator","^j"
+  inc c
+  if c<4 goto skip_umts
+  print "ERROR setting manual operator\n"
   goto err_exit
-:oper_OK
+:oper_ok
 #
 #
   print "Waiting for Registration..(120 sec max)"
@@ -148,10 +168,10 @@
   print "."
   goto waitreg
 :reg_noresponse
-  print "^jError: No response from terminal adapter on AT+CREG?","^j"
+  print "^jError: No response from terminal adapter on AT+CREG?\n"
   goto err_exit
 :regtimeout
-  print "^jFailed to register","^j"
+  print "^jFailed to register\n"
   goto err_exit
 :homereg
   print "^j"
@@ -176,25 +196,17 @@
   let $c=$right($s,b)
   print $n,$c,"^j"
   let c=0
-:signal
+#
+# send user supplied init string
+  let $a=$env("GPRS_INIT")
+  if len($a)=0 goto skip_init
   waitquiet 1 0.1
-  send "AT+CSQ^m"
-  get 2 "^m" $s
-  get 2 "^m" $s
-  let a=len($s)
-  let a=a-6
-  let $s=$right($s,a)
-  if $s <> "0,0" goto sigcont
-  if c > 3 goto sigexit
-  let c=c+1
-  pause 1
-  goto signal
-:sigexit
-  print "Signal strength measure 0,0 too low!^j"
-  goto err_exit
-:sigcont
-  print "Signal Quality:",$s,"^j"
-  waitquiet 1 0.1
+
+  let $t="Result User Init ("+$a+"): "
+  gosub sub_at_query
+:skip_init
+#
+  gosub sub_query_info
 #
 # SET APN
 #
@@ -211,40 +223,41 @@
   if % = 0 goto apn_OK
   if % = 1 goto apn_error
 :apn_error
-  print "ERROR entering APN","^j"
-  print "The GPRS_APN env variable is not set","^j"
+  print "ERROR entering APN\n"
+  print "The GPRS_APN env variable is not set\n"
   exit 1
 :apn_timeerror
-  print "ERROR entering APN","^j"
-  print "The device timeout.","^j"
+  print "ERROR entering APN\n"
+  print "The device timeout.\n"
   goto err_exit
 :apn_OK
 #
 # Dial GPRS
 #
-  print "Dialing","^j"
+  print "Dialing\n"
   send "ATD *99**PPP*1#^m"
   waitfor 90 "CONNECT","ERR"
   if % = -1 goto dial_timeerror
   if % = 0 goto dial_CONNECT
   if % = 1 goto dial_error
 :dial_timeerror
-  print "Dialing Timout","^j"
+  print "Dialing Timout\n"
   goto err_exit
 :dial_error
-  print "Error calling GPRS","^j"
+  print "Error calling GPRS\n"
   goto err_exit
 :dial_CONNECT
-  print "Connected, starting pppd","^j"
+  print "Connected, starting pppd\n"
   let $u=$env("GPRS_USER")
   if len($u)>0 let $u="user "+$u
   let $o=$env("GPRS_PPP_OPTIONS")
   let $o="call gprs_comgt nolog nodetach "+$o+" "+$d+" "+$b+" "+$u
   print "ppp command line: ","/usr/sbin/pppd  "+$o,"^j"
   system "/usr/sbin/pppd "+$o
-  print "pppd terminated","^j"
+  print "pppd terminated\n"
+  sleep 5
   system "fuser -k "+$d
-  print "ready","^j"
+  print "ready\n"
 #exit successfully
   exit 0
 #
@@ -258,3 +271,88 @@
   print "Reseting terminal adapter^j"
   send "AT+CFUN=1,1^m"
   exit 1
+#
+#
+# subroutine query info
+# querys various informations per at commands and write them to the console
+:sub_query_info
+#
+  print "querying status information from terminal adapater:\n"
+#
+  let $t="Terminal Adapter: "
+  let $a="ATi"
+  gosub sub_at_query
+#
+  let $t="IMEI:"
+  let $a="AT+CGSN"
+  gosub sub_at_query
+#
+  let $t="IMSI:"
+  let $a="AT+CIMI"
+  gosub sub_at_query
+#
+  let $t="SIM card id:"
+  let $a="AT^^SCID"
+  gosub sub_at_query
+#
+  let $t="Signal Quality:"
+  let $a="AT+CSQ"
+  gosub sub_at_query
+#
+  let $t="^^MONI:"
+  let $a="AT^^MONI"
+  gosub sub_at_ml_query
+#
+  let $t="^^MONP:"
+  let $a="AT^^MONP"
+  gosub sub_at_ml_query
+#
+# 
+  return
+#
+#
+#
+#
+# subroutine to query a parameter per AT-command an display
+# result string in log
+#
+#  Parameter
+#  $a AT-command
+#  $t text string
+#  $r temp variable
+:sub_at_query
+#  print "send:",$a,"\n"
+  waitquiet 1 0.1
+  send $a+"^m"
+  waitfor 1 $a
+  let $r=""
+  let $a=""
+:sub_at_loop
+  get 1 "^m" $a
+  # remove linefeeds
+  if len($a)>0 let $a=$mid($a,1,999)
+  if $a <> "OK" let $r=$r+" "+$a
+  if $a = "OK" goto sub_at_print 
+  if $a = "ERROR" goto sub_at_print 
+  goto sub_at_loop
+:sub_at_print
+  print $t,$r,"\n"
+  return
+
+# subroutine like sub_at_query, but print multi line result
+:sub_at_ml_query
+#  print "send:",$a,"\n"
+  waitquiet 1 0.1
+  send $a+"^m"
+  waitfor 1 $a
+  let $r=""
+  let $a=""
+:sub_at_loop_ml
+  get 1 "^m" $a
+  # remove linefeeds
+  if len($a)>0 let $a=$mid($a,1,999)
+  if $a = "OK" return
+  print $t,$a,"\n"
+  if $a = "ERROR" return
+  goto sub_at_loop_ml
+#

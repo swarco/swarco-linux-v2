@@ -5,7 +5,8 @@
 #logger BYTES_SENT:   $BYTES_SENT
 #logger BYTES_RCVD:   $BYTES_RCVD
 
-STAT_FILE=/etc/ppp/stat/${PPP_IFACE}
+#STAT_FILE=/etc/ppp/stat/${PPP_IFACE}
+STAT_FILE=/tmp/ppp_stat_${PPP_IFACE}
 now=`date +%Y-%m-%d_%H:%M`
 #now=`date -I`
 

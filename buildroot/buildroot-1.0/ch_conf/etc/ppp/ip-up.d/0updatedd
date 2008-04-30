@@ -1,4 +1,16 @@
 #!/bin/sh
 
-/usr/bin/updatedd dyndns -- --ipv4 $PPP_LOCAL weisselectronic:weiss-313 `cat /etc/hostname`.`cat /etc/dnsdomainname`
+if [ -f /etc/default/gprs ]
+then
+
+  . /etc/default/gprs
+  
+  if [ \! -z "$GPRS_PPP_IFACE" \
+       -a \! -z "$GPRS_DYN_DNS_USER" \
+       -a \! -z "$GPRS_DYN_DNS_PASSWD" \
+      -a "$PPP_IFACE" = "$GPRS_PPP_IFACE" ]
+  then
+      /usr/bin/updatedd dyndns -- --ipv4 $PPP_LOCAL $GPRS_DYN_DNS_USER:$GPRS_DYN_DNS_PASSWD `cat /etc/hostname`.`cat /etc/dnsdomainname`
+  fi
+fi
 

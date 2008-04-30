@@ -21,11 +21,15 @@
 
 if ! [ -f /etc/default/gprs ]
 then
+  echo "missing file /etc/default/gprs"
 # GPRS not configured -> exit
   exit 1
 fi
 
+GPRS_PPP_IFACE=ppp0
+GPRS_PPP_LED=/sys/class/leds/led10/brightness 
 . /etc/default/gprs
+export GPRS_PPP_IFACE
 
 if [ -z "$GPRS_DEVICE" -o \
      -z "$GPRS_APN" ]
@@ -42,12 +46,23 @@ start() {
 	fi
 
 	echo "Starting GPRS PPP dialin interface"
-	nohup /usr/bin/starter_gprs_dialin >/dev/null 2>&1 &
-}	
+	#nohup /usr/bin/starter_gprs_dialin >/dev/null 2>&1 &
+	start-stop-daemon --start --quiet --background \
+		--make-pidfile --pidfile /var/run/gprs.pid \
+		--exec /usr/bin/starter_gprs_dialin 
+}
 
 stop() {
 	echo "Stopping GPRS PPP dialin interface"
-	killall starter_gprs_dialin
+	#killall starter_gprs_dialin
+	start-stop-daemon --stop --quiet --signal 1 \
+		--pidfile /var/run/gprs.pid 
+
+        pid_file=/var/run/${GPRS_PPP_IFACE}.pid
+        if [ -r "$pid_file" ] ; then
+            kill -1 `cat $pid_file`
+            rm $pid_file
+        fi
 }
 
 restart() {
