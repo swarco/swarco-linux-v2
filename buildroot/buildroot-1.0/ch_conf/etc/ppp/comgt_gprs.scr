@@ -251,7 +251,7 @@
   let $u=$env("GPRS_USER")
   if len($u)>0 let $u="user "+$u
   let $o=$env("GPRS_PPP_OPTIONS")
-  let $o="call gprs_comgt nolog nodetach "+$o+" "+$d+" "+$b+" "+$u
+  let $o="call gprs_comgt nolog nodetach "+$o+" "+$u+" "+$d+" "+$b
   print "ppp command line: ","/usr/sbin/pppd  "+$o,"^j"
   system "/usr/sbin/pppd "+$o
   print "pppd terminated\n"
