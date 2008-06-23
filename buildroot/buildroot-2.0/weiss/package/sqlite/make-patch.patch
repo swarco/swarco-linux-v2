@@ -1,0 +1,20 @@
+--- Makefile_old	2006-06-30 11:19:39.000000000 +0200
++++ Makefile	2006-06-30 11:20:08.000000000 +0200
+@@ -215,7 +215,7 @@
+ # Rules to build the LEMON compiler generator
+ #
+ lemon:	$(TOP)/tool/lemon.c $(TOP)/tool/lempar.c
+-	$(BCC) -o lemon $(TOP)/tool/lemon.c
++	gcc -o lemon $(TOP)/tool/lemon.c
+ 	cp $(TOP)/tool/lempar.c .
+ 
+ btree.lo:	$(TOP)/src/btree.c $(HDR) $(TOP)/src/pager.h
+@@ -272,7 +272,7 @@
+ 	echo 'int main(){printf(' >>temp.c
+ 	echo '"#define SQLITE_PTR_SZ %d",sizeof(char*));' >>temp.c
+ 	echo 'exit(0);}' >>temp.c
+-	$(BCC) -o temp temp.c
++	gcc -o temp temp.c
+ 	./temp >config.h
+ 	echo >>config.h
+ 	rm -f temp.c temp

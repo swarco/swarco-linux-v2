@@ -1,0 +1,6 @@
+config BR2_PACKAGE_SETSERIAL
+        bool "setserial"
+	default n
+	help
+	  setserial utility: controls configuration of serial ports
+

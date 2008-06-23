@@ -1,0 +1,7 @@
+config BR2_PACKAGE_NMBD
+        bool "nmbd server"
+	default n
+	help
+	  NMBD Server
+	  derived from Samba server package.
+	  Includes only name resolution.

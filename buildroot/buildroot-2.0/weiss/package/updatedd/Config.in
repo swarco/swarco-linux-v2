@@ -1,0 +1,6 @@
+config BR2_PACKAGE_UPDATEDD
+        bool "updatedd"
+	default n
+	help
+	  DynDNS updater utilility updatedd
+

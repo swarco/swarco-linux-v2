@@ -1,0 +1,5 @@
+config BR2_PACKAGE_SAMBA_WEISS
+        bool "samba server"
+	default n
+	help
+	  SMB Server

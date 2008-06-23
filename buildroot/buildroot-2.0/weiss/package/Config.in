@@ -1,0 +1,22 @@
+#commented packages are not necessary in current buildroot
+#files are moved in old_package directory
+comment "Weiss Stuff"
+source "weiss/package/bluez-libs/Config.in"
+source "weiss/package/bluez-utils/Config.in"
+source "weiss/package/goahead/Config.in"
+#source "weiss/package/samba_weiss/Config.in"
+#source "weiss/package/nmbd/Config.in"
+# source "weiss/package/fuser/Config.in" => now in psmisc
+source "weiss/package/zeroconf/Config.in"
+source "weiss/package/updatedd/Config.in"
+source "weiss/package/sqlite/Config.in"
+source "weiss/package/cifs/Config.in"
+source "weiss/package/mgetty/Config.in"
+#source "weiss/package/proftpd/Config.in"
+#source "weiss/package/yaffs2/Config.in"
+#source "weiss/package/perl/Config.in"
+source "weiss/package/wuftpd/Config.in"
+#source "weiss/package/imagemagick/Config.in"
+source "weiss/package/qemacs/Config.in"
+source "weiss/package/comgt/Config.in"
+source "weiss/package/vlan/Config.in"
