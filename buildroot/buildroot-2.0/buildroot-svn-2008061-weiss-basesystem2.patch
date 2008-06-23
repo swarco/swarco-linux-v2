@@ -1,0 +1,77 @@
+Index: toolchain/uClibc/uClibc-0.9.29.config
+===================================================================
+--- toolchain/uClibc/uClibc-0.9.29.config	(revision 22292)
++++ toolchain/uClibc/uClibc-0.9.29.config	(working copy)
+@@ -77,7 +77,8 @@
+ MALLOC_STANDARD=y
+ MALLOC_GLIBC_COMPAT=y
+ UCLIBC_DYNAMIC_ATEXIT=y
+-# COMPAT_ATEXIT is not set
++# 2008-06-16 gc: atexit visible for compatibility with uclibc 0.9.28
++COMPAT_ATEXIT=y
+ HAS_SHADOW=y
+ # UCLIBC_SUSV3_LEGACY is not set
+ # UCLIBC_SUSV3_LEGACY_MACROS is not set
+@@ -205,6 +206,8 @@
+ # CONFIG_ARM710 is not set
+ # CONFIG_ARM7TDMI is not set
+ # CONFIG_ARM720T is not set
++#2008-06-16 gc: default
++CONFIG_ARM920T=y
+ # CONFIG_ARM920T is not set
+ # CONFIG_ARM922T is not set
+ # CONFIG_ARM926T is not set
+Index: package/mtd/mtd-utils/mtd.mk
+===================================================================
+--- package/mtd/mtd-utils/mtd.mk	(revision 22292)
++++ package/mtd/mtd-utils/mtd.mk	(working copy)
+@@ -38,6 +38,7 @@
+ 	CC="$(HOSTCC)" CROSS= CFLAGS=-I$(LINUX_HEADERS_DIR)/include \
+ 		$(MAKE) LINUXDIR=$(LINUX_DIR) \
+ 		BUILDDIR=$(MTD_HOST_DIR) \
++		WITHOUT_XATTR=1 \
+ 		-C $(MTD_HOST_DIR) mkfs.jffs2
+ 
+ $(SUMTOOL): $(MTD_HOST_DIR)/.unpacked
+Index: package/Config.in
+===================================================================
+--- package/Config.in	(revision 22292)
++++ package/Config.in	(working copy)
+@@ -499,4 +499,6 @@
+ source "package/vice/Config.in"
+ endif
+ 
++source "weiss/package/Config.in"
++
+ endmenu
+Index: package/lighttpd/lighttpd.mk
+===================================================================
+--- package/lighttpd/lighttpd.mk	(revision 22292)
++++ package/lighttpd/lighttpd.mk	(working copy)
+@@ -8,7 +8,7 @@
+ LIGHTTPD_SITE:=http://www.lighttpd.net/download
+ LIGHTTPD_INSTALL_STAGING = NO
+ LIGHTTPD_INSTALL_TARGET = YES
+-LIGHTTPD_DEPENDENCIES = uclibc
++LIGHTTPD_DEPENDENCIES = uclibc zlib
+ LIGHTTPD_CONF_ENV = 
+ LIGHTTPD_CONF_OPT = \
+ 	--target=$(GNU_TARGET_NAME) \
+@@ -20,6 +20,7 @@
+ 	--sysconfdir=/etc \
+ 	--localstatedir=/var \
+ 	--program-prefix="" \
++	--without-bzip2 \
+ 	$(DISABLE_IPV6) \
+ 	$(DISABLE_LARGEFILE)
+ 
+Index: Makefile
+===================================================================
+--- Makefile	(revision 22292)
++++ Makefile	(working copy)
+@@ -496,3 +496,5 @@
+ .PHONY: dummy subdirs release distclean clean config oldconfig \
+ 	menuconfig tags check test depend defconfig help
+ 	
++
++include weiss/Makefile

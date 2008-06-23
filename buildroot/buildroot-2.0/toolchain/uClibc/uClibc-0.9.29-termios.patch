@@ -1,0 +1,15 @@
+--- uClibc-0.9.29/libc/sysdeps/linux/common/bits/termios.h	2006-02-13 09:41:37.000000000 +0100
++++ uClibc-0.9.29-weiss//libc/sysdeps/linux/common/bits/termios.h	2008-06-17 11:20:20.000000000 +0200
+@@ -156,7 +156,11 @@
+ #endif
+ #define  B57600   0010001
+ #define  B115200  0010002
+-#if 0 /* limited on uClibc, keep in sync w/ cfsetspeed.c */
++/* 2008-06-17 enable constants needed in packages like bluez oder comgt
++ *            nevertheless this settings may not work on platforms not 
++ *            supporting high baudrates
++ */
++#if 1 /* limited on uClibc, keep in sync w/ cfsetspeed.c */
+ #define  B230400  0010003
+ #define  B460800  0010004
+ #define  B500000  0010005

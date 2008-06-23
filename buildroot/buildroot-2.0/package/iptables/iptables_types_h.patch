@@ -1,0 +1,11 @@
+diff -Nru iptables-1.3.8/include/libiptc/libiptc.h iptables-1.3.8-weiss/include/libiptc/libiptc.h
+--- iptables-1.3.8/include/libiptc/libiptc.h	2007-01-23 13:49:52.000000000 +0100
++++ iptables-1.3.8-weiss/include/libiptc/libiptc.h	2008-06-16 13:23:21.000000000 +0200
+@@ -2,6 +2,7 @@
+ #define _LIBIPTC_H
+ /* Library which manipulates filtering rules. */
+ 
++#include <linux/types.h>
+ #include <libiptc/ipt_kernel_headers.h>
+ #include <linux/netfilter_ipv4/ip_tables.h>
+ 
