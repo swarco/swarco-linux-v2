@@ -37,8 +37,8 @@ overwrite_target_device_table: $(PROJECT_BUILD_DIR)/device_table.txt
 install_chconf: 
 	echo install_chconf: 
 	(cd weiss/ch_conf; tar cf - --exclude .svn .) | (cd $(TARGET_DIR);tar xvf -)
+	-mv $(TARGET_DIR)/etc/init.d/S*ntp $(TARGET_DIR)/etc/init.d/not_started
 
 
 .PHONY: weiss_prepare_root
 weiss_prepare_root: overwrite_target_device_table install_chconf
-	echo gc:hello weiss_prepare_root
