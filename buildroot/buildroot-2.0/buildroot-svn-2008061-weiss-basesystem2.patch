@@ -69,9 +69,11 @@ Index: Makefile
 ===================================================================
 --- Makefile	(revision 22292)
 +++ Makefile	(working copy)
-@@ -496,3 +496,5 @@
- .PHONY: dummy subdirs release distclean clean config oldconfig \
- 	menuconfig tags check test depend defconfig help
- 	
-+
+@@ -248,6 +248,7 @@
+ endif
+ 
+ include package/*/*.mk
 +include weiss/Makefile
+ 
+ TARGETS+=target-devfiles
+ 
