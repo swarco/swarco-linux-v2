@@ -1,0 +1,29 @@
+#*****************************************************************************
+#* 
+#*  @file          device_table_ext.txt
+#*
+#*                 buildroot basesystem 2.0 weiss package directory
+#*                 CCM2200 root fs device table extension
+#*                 see target/device/Atmel/root/device_table.txt
+#*
+#*  @par Program:  Weiss-Embedded-Linux / Buildroot
+#*
+#*  @version       1.0 (\$Revision: 332 $)
+#*  @author        Guido Classen
+#*                 Weiss Electronic GmbH
+#* 
+#*  $LastChangedBy: clg9tr $  
+#*  $Date:  $
+#*  $URL: $
+#*
+#*  @par Modification History:
+#*   2008-06-24 gc: initial version
+#*
+#*****************************************************************************
+
+#<name>	a                       <type>	<mode>	<uid>	<gid>	<major>	<minor>	<start>	<inc>	<count>
+/etc/ssh_config				f	600	0	0	-	-	-	-	-      
+/etc/sshd_config 			f	600	0	0	-	-	-	-	-    
+/etc/ssh_host_dsa_key			f	600	0	0	-	-	-	-	-
+/etc/ssh_host_key			f	600	0	0	-	-	-	-	-    
+/etc/ssh_host_rsa_key			f	600	0	0	-	-	-	-	-
