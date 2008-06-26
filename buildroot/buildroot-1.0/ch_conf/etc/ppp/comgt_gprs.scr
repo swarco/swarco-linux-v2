@@ -235,7 +235,25 @@
 # Dial GPRS
 #
   print "Dialing\n"
+  flash 0.1
   send "ATD *99**PPP*1#^m"
+#   let $t="test"
+#   let $a="AT+GMI"
+#   gosub sub_at_query
+
+#   print "query pdp context\n"
+#   let $a="AT+CGACT?"
+#   let $t="pdp context"
+#   gosub sub_at_query
+#   waitquiet 1 0.1
+#   let $t="activate pdp context 1:"
+#   let $a="AT+CGACT=1,1"
+#   gosub sub_at_query
+#   print "enter data state (connecting):\n"
+# #
+#   waitquiet 1 0.1
+#   send "AT+CGDATA=\"PPP\",1^m"
+#   waitfor 90 "CONNECT" "ERR"
   waitfor 90 "CONNECT","ERR"
   if % = -1 goto dial_timeerror
   if % = 0 goto dial_CONNECT

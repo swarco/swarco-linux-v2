@@ -46,3 +46,8 @@ GPRS_OPERATOR=26201
 
 GPRS_PPP_IFACE=ppp0
 GPRS_PPP_LED=/sys/class/leds/led10/brightness
+
+# HC25: enable status LED
+#GPRS_INIT="AT^sled=1"
+# Telit: request CHAP authentication type
+#GPRS_INIT="AT#GAUTH=2"

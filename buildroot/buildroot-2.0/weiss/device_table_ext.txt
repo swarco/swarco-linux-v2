@@ -22,8 +22,12 @@
 #*****************************************************************************
 
 #<name>	a                       <type>	<mode>	<uid>	<gid>	<major>	<minor>	<start>	<inc>	<count>
+# SSH configs and keys
 /etc/ssh_config				f	600	0	0	-	-	-	-	-      
 /etc/sshd_config 			f	600	0	0	-	-	-	-	-    
 /etc/ssh_host_dsa_key			f	600	0	0	-	-	-	-	-
 /etc/ssh_host_key			f	600	0	0	-	-	-	-	-    
 /etc/ssh_host_rsa_key			f	600	0	0	-	-	-	-	-
+# PPP secrets
+/etc/ppp/chap-secrets			f	600	0	0	-	-	-	-	-
+/etc/ppp/ppp-secrets			f	600	0	0	-	-	-	-	-
