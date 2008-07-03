@@ -46,7 +46,7 @@ install_chconf:
 	done
 	-rm $(TARGET_DIR)/etc/resolv.conf
 	ln -s /tmp/resolv.conf $(TARGET_DIR)/etc/resolv.conf
-
+	echo "Welcome to Weiss-Electronic GmbH Embedded Linux v2.0 " ` date '+#%Y-%m-%d#' `  > $(TARGET_DIR)/etc/issue
 
 .PHONY: weiss_prepare_root
 weiss_prepare_root: overwrite_target_device_table install_chconf
