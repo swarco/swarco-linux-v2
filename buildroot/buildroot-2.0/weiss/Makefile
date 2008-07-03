@@ -38,6 +38,14 @@ install_chconf:
 	echo install_chconf: 
 	(cd weiss/ch_conf; tar cf - --exclude .svn .) | (cd $(TARGET_DIR);tar xvf -)
 	-mv $(TARGET_DIR)/etc/init.d/S*ntp $(TARGET_DIR)/etc/init.d/not_started
+	# create links from /var to /tmp
+	for dir in lock log pcmcia run spool tmp; \
+	do \
+	  rm -rf $(TARGET_DIR)/var/$$dir; \
+	  ln -s /tmp $(TARGET_DIR)/var/$$dir; \
+	done
+	-rm $(TARGET_DIR)/etc/resolv.conf
+	ln -s /tmp/resolv.conf $(TARGET_DIR)/etc/resolv.conf
 
 
 .PHONY: weiss_prepare_root
