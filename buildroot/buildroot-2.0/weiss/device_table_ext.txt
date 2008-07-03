@@ -30,4 +30,4 @@
 /etc/ssh_host_rsa_key			f	600	0	0	-	-	-	-	-
 # PPP secrets
 /etc/ppp/chap-secrets			f	600	0	0	-	-	-	-	-
-/etc/ppp/ppp-secrets			f	600	0	0	-	-	-	-	-
+/etc/ppp/pap-secrets			f	600	0	0	-	-	-	-	-
