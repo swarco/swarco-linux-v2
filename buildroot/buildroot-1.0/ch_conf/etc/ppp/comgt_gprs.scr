@@ -125,14 +125,13 @@
 # $p mode
 # $q Network access type
   let $o=""
-  let $p="0"
+  let $a="AT+COPS=0"
   let $o=$env("GPRS_OPERATOR")
   let $q=$env("GPRS_NET_ACCESS_TYPE")
   if len($o)=0 goto oper_set
-  if val($o)<>0 let $p="1"
+  if val($o)<>0 let $a="AT+COPS=1,2,\""+$o+"\""
 :oper_set
-  if $p="1" print "Setting manual selected operator to ",$o,"^j"
-  let $a="AT+COPS="+$p+",2,\""+$o+"\""
+  if val($o)<>0 print "Setting manual selected operator to ",$o,"^j"
   if $m="HC25" goto oper_umts
   goto skip_umts
 :oper_umts
