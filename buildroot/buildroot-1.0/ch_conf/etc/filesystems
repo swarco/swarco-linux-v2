@@ -1,0 +1,5 @@
+# Enforce filesystem probe order vfat before msdos and ext3 before ext2
+vfat
+msdos
+ext3
+ext2
