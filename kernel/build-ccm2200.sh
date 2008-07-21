@@ -9,7 +9,7 @@ test -d $INSTALL_MOD_PATH || mkdir -p $INSTALL_MOD_PATH
 
 CPU=arm
 TOOLCHAIN=$PWD/../../buildroot/buildroot-2.0/build_${CPU}/staging_dir/
-PATH=$PATH:$TOOLCHAIN/bin
+PATH=$PATH:$TOOLCHAIN/usr/bin
 export PATH
 
 # add path for u-boot mkimage tool
