@@ -8,7 +8,7 @@ test -d $OUTPUT_DIR || mkdir -p $OUTPUT_DIR
 test -d $INSTALL_MOD_PATH || mkdir -p $INSTALL_MOD_PATH
 
 CPU=arm
-TOOLCHAIN=$PWD/../../buildroot/buildroot-1.0/build_${CPU}/staging_dir/
+TOOLCHAIN=$PWD/../../buildroot/buildroot-2.0/build_${CPU}/staging_dir/
 PATH=$PATH:$TOOLCHAIN/bin
 export PATH
 
