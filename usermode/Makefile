@@ -39,7 +39,7 @@ all: $(PROGRAMS) install
 
 .PHONY: install
 install:
-	cp -a $(PROGRAMS) $(BUILDROOT_PATH)/ch_conf/usr/bin
+	cp -a $(PROGRAMS) $(CH_CONFIG_DIR)/usr/bin
 
 
 #simple pattern rule to compile executables from just one source file!

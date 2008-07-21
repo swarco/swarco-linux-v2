@@ -25,6 +25,7 @@ BUILDROOT_BASE  = buildroot
 BUILDROOT_DIR	= buildroot-1.0
 BUILDROOT_SOFT_FLOAT_DIR = buildroot-1.0-soft-float
 BUILDROOT_PATH  = $(BASE_DIR)/$(BUILDROOT_BASE)/$(BUILDROOT_DIR)
+CH_CONFIG_DIR	= $(BASE_DIR)/$(BUILDROOT_BASE)/weiss_ch_conf
 
 
 U_BOOT_BASE	= u-boot
