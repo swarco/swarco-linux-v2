@@ -32,6 +32,13 @@ fi
   cp -a $1/sources/userland/dl .
 )
 
+#prepare buildroot 2.0 tree
+
+(
+    cd $BUILDROOT_BASE/buildroot-2.0
+    ./prepare_tree.sh
+)
+
 #prepare a copy of buildroot to create the soft-float toolchain 
 # necessary to build u-boot
 (
