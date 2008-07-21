@@ -8,6 +8,7 @@ BUILDROOT_BASE=.
   # extract buildroot svn
   tar xvjf ../dl/buildroot-svn-20080612.tar.bz2 --exclude .svn
   patch -p0 <buildroot-svn-2008061-weiss-basesystem2.patch
+  cp weiss/uClibc-0.9.29.config toolchain/uClibc/uClibc-0.9.29.config
   make oldconfig
 )
 
