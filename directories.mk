@@ -39,7 +39,7 @@ KERNEL_PATH     = $(BASE_DIR)/$(KERNEL_BASE)/$(KERNEL_DIR)
 CROSS_CC	= arm-linux-uclibc-gcc
 CROSS_STRIP	= arm-linux-uclibc-strip
 
-PATH	       := $(PATH):$(BUILDROOT_PATH)/build_arm/staging_dir/bin/
+PATH	       := $(PATH):$(BUILDROOT_PATH)/build_arm/staging_dir/usr/bin/
 export PATH
 
 
