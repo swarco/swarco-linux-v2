@@ -45,6 +45,7 @@ install_chconf:
 	  ln -s /tmp $(TARGET_DIR)/var/$$dir; \
 	done
 	-rm $(TARGET_DIR)/etc/resolv.conf
+	ln -s /proc/mounts $(TARGET_DIR)/etc/mtab
 	ln -s /tmp/resolv.conf $(TARGET_DIR)/etc/resolv.conf
 	# buildroot installs "sftp-server" subsystem in /usr/sbin, we
 	# expect it in /usr/lib
