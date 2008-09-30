@@ -42,15 +42,15 @@ install_chconf:
 	for dir in lock log pcmcia run spool tmp; \
 	do \
 	  rm -rf $(TARGET_DIR)/var/$$dir; \
-	  ln -s /tmp $(TARGET_DIR)/var/$$dir; \
+	  ln -sf /tmp $(TARGET_DIR)/var/$$dir; \
 	done
 	-rm $(TARGET_DIR)/etc/resolv.conf
-	ln -s /proc/mounts $(TARGET_DIR)/etc/mtab
-	ln -s /tmp/resolv.conf $(TARGET_DIR)/etc/resolv.conf
+	ln -sf /proc/mounts $(TARGET_DIR)/etc/mtab
+	ln -sf /tmp/resolv.conf $(TARGET_DIR)/etc/resolv.conf
 	# buildroot installs "sftp-server" subsystem in /usr/sbin, we
 	# expect it in /usr/lib
 	-rm $(TARGET_DIR)/usr/lib/sftp-server
-	ln -s ../sbin/sftp-server $(TARGET_DIR)/usr/lib/sftp-server
+	ln -sf ../sbin/sftp-server $(TARGET_DIR)/usr/lib/sftp-server
 	echo "Welcome to Weiss-Electronic GmbH Embedded Linux v2.0 " ` date '+#%Y-%m-%d#' `  > $(TARGET_DIR)/etc/issue
 
 .PHONY: weiss_prepare_root
