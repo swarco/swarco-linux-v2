@@ -37,11 +37,17 @@ okay=0
 if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) == 0 ] && 
    [ ! -f /etc/.usb-configurated ]; then
     mount -oremount,rw /
-    mount -tvfat -oro /dev/sda1 /mnt/usb/
-    ls -l /mnt/usb
-    if [ -f /mnt/usb/.usb-config.sh ]; then
-        sh /mnt/usb/.usb-config.sh && okay=1
-    fi
+    for block_device in /dev/sd??
+    do
+        echo testing block device $block_device for usb-storage device
+        mount -tvfat -oro $block_device /mnt/usb/
+        ls -l /mnt/usb
+        if [ -f /mnt/usb/.usb-config.sh ]; then
+            sh /mnt/usb/.usb-config.sh && okay=1
+            break
+        fi
+        umount /mnt/usb
+    done
     umount /mnt/usb
 
     touch /etc/.usb-configurated
