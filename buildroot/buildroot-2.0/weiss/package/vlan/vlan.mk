@@ -26,33 +26,17 @@ $(VLAN_DIR)/.unpacked: $(DL_DIR)/$(VLAN_SOURCE)
 	touch $(VLAN_DIR)/.unpacked
 
 $(VLAN_DIR)/.configured: $(VLAN_DIR)/.unpacked
-#	(cd $(VLAN_DIR); rm -rf config.cache; \
-#		$(TARGET_CONFIGURE_OPTS) \
-#		CFLAGS="$(TARGET_CFLAGS)" \
-#		./configure \
-#		--target=$(GNU_TARGET_NAME) \
-#		--host=$(GNU_TARGET_NAME) \
-#		--build=$(GNU_HOST_NAME) \
-#		--prefix=/usr \
-#		--exec-prefix=/ \
-#		--bindir=/bin \
-#		--sbindir=/bin \
-#		--libexecdir=/usr/lib \
-#		--sysconfdir=/etc \
-#		--datadir=/usr/share/misc \
-#		--localstatedir=/var \
-#		--mandir=/usr/man \
-#		--infodir=/usr/info \
-#		$(DISABLE_NLS) \
-#		$(VLAN_LARGEFILE) \
-#	);
-	touch  $(VLAN_DIR)/.configured
+	(cd $(VLAN_DIR); \
+	$(MAKE) clean;   \
+	echo "" > MakeInclude; \
+	);
+	touch  $(VLAN_DIR)/.configured;
 
 $(VLAN_BINARY): $(VLAN_DIR)/.configured
-	$(MAKE) CC=$(TARGET_CC) -C $(VLAN_DIR)
+	-$(MAKE) CC=$(TARGET_CC) -C $(VLAN_DIR)
 
 $(VLAN_TARGET_BINARY): $(VLAN_BINARY)
-	$(MAKE) DESTDIR=$(TARGET_DIR) CC=$(TARGET_CC) -C $(VLAN_DIR) all
+	#$(MAKE) DESTDIR=$(TARGET_DIR) CC=$(TARGET_CC) -C $(VLAN_DIR) all
 	#cp -R $(VLAN_DIR)/web $(TARGET_DIR)
 	#rm -rf $(TARGET_DIR)/web/docs
 	cp $(VLAN_DIR)/vconfig $(VLAN_TARGET_BINARY)
