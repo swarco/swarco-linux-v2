@@ -2,15 +2,20 @@
 
 if ! [ -f /etc/default/mount-usb ]
 then
-  echo "missing file /etc/default/mount-usb"
-  exit 1
+  exit 0
 fi
 
 . /etc/default/mount-usb
 
+if [ -z "$USB_DEV" ]; then
+  exit 0
+fi
+
 if ! [ -b $USB_DEV ]; then
   logger "no USB-Stick plugged in"
+  exit 1
 fi
+
 
 start(){
   echo "Mounting USB Device: $USB_DEV"
