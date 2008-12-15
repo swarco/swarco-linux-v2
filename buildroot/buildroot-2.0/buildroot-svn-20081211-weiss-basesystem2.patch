@@ -1,0 +1,52 @@
+diff -Nrub buildroot-2.0/Makefile new/Makefile
+--- buildroot-2.0/Makefile	2008-11-07 09:57:59.000000000 +0100
++++ new/Makefile	2008-12-11 14:47:39.000000000 +0100
+@@ -254,6 +254,7 @@
+ endif
+ 
+ include package/*/*.mk
++include weiss/Makefile
+ 
+ TARGETS+=target-devfiles
+ 
+diff -Nrub buildroot-2.0/package/Config.in new/package/Config.in
+--- buildroot-2.0/package/Config.in	2008-12-11 01:33:30.000000000 +0100
++++ new/package/Config.in	2008-12-11 14:46:36.000000000 +0100
+@@ -430,4 +430,6 @@
+ # various games packages
+ source "package/games/Config.in"
+ 
++source "weiss/package/Config.in"
++
+ endmenu
+diff -Nrub buildroot-2.0/package/lighttpd/lighttpd.mk new/package/lighttpd/lighttpd.mk
+--- buildroot-2.0/package/lighttpd/lighttpd.mk	2008-12-08 09:15:27.000000000 +0100
++++ new/package/lighttpd/lighttpd.mk	2008-12-11 14:47:13.000000000 +0100
+@@ -8,7 +8,7 @@
+ LIGHTTPD_SITE:=http://www.lighttpd.net/download
+ LIGHTTPD_INSTALL_STAGING = NO
+ LIGHTTPD_INSTALL_TARGET = YES
+-LIGHTTPD_DEPENDENCIES = uclibc
++LIGHTTPD_DEPENDENCIES = uclibc zlib
+ LIGHTTPD_CONF_ENV =
+ 
+ ifneq ($(BR2_LARGEFILE),y)
+@@ -20,6 +20,7 @@
+ 	--libexecdir=/usr/lib \
+ 	--localstatedir=/var \
+ 	--program-prefix="" \
++	--without-bzip2 \
+ 	$(DISABLE_IPV6) \
+ 	$(LIGHTTPD_LFS)
+ 
+diff -Nrub buildroot-2.0/package/mtd/mtd-utils/mtd.mk new/package/mtd/mtd-utils/mtd.mk
+--- buildroot-2.0/package/mtd/mtd-utils/mtd.mk	2008-12-08 09:15:27.000000000 +0100
++++ new/package/mtd/mtd-utils/mtd.mk	2008-12-11 14:46:03.000000000 +0100
+@@ -38,6 +38,7 @@
+ 	CC="$(HOSTCC)" CROSS= CFLAGS=-I$(LINUX_HEADERS_DIR)/include \
+ 		$(MAKE) LINUXDIR=$(LINUX_DIR) \
+ 		BUILDDIR=$(MTD_HOST_DIR) \
++		WITHOUT_XATTR=1 \
+ 		-C $(MTD_HOST_DIR) mkfs.jffs2
+ 
+ $(SUMTOOL): $(MTD_HOST_DIR)/.unpacked
