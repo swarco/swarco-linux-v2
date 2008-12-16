@@ -50,3 +50,32 @@ diff -Nrub buildroot-2.0/package/mtd/mtd-utils/mtd.mk new/package/mtd/mtd-utils/
  		-C $(MTD_HOST_DIR) mkfs.jffs2
  
  $(SUMTOOL): $(MTD_HOST_DIR)/.unpacked
+diff -Nrub buildroot-2.0/package/stunnel/stunnel.mk new/package/stunnel/stunnel.mk
+--- buildroot-2.0/package/stunnel/stunnel.mk	2008-12-08 09:15:27.000000000 +0100
++++ new/package/stunnel/stunnel.mk	2008-12-15 15:29:04.000000000 +0100
+@@ -3,7 +3,7 @@
+ # stunnel
+ #
+ #############################################################
+-STUNNEL_VERSION:=4.16
++STUNNEL_VERSION:=4.26
+ STUNNEL_SOURCE:=stunnel-$(STUNNEL_VERSION).tar.gz
+ STUNNEL_SITE:=http://www.stunnel.org/download/stunnel/src
+ STUNNEL_CAT:=$(ZCAT)
+@@ -56,7 +56,7 @@
+ $(TARGET_DIR)/usr/bin/stunnel: $(STUNNEL_DIR)/src/stunnel
+ 	install -c $(STUNNEL_DIR)/src/stunnel $(TARGET_DIR)/usr/bin/stunnel
+ 	$(STRIPCMD) $(TARGET_DIR)/usr/bin/stunnel > /dev/null 2>&1
+-ifeq ($(BR2_CROSS_TOOLCHAIN_TARGET_UTILS),y)
++ifeq ($(strip $(BR2_CROSS_TOOLCHAIN_TARGET_UTILS)),y)
+ 	mkdir -p $(STAGING_DIR)/$(REAL_GNU_TARGET_NAME)/target_utils
+ 	install -c $(TARGET_DIR)/usr/bin/stunnel \
+ 		$(STAGING_DIR)/$(REAL_GNU_TARGET_NAME)/target_utils/stunnel
+@@ -77,6 +77,6 @@
+ # Toplevel Makefile options
+ #
+ #############################################################
+-ifeq ($(BR2_PACKAGE_STUNNEL),y)
++ifeq ($(strip $(BR2_PACKAGE_STUNNEL)),y)
+ TARGETS+=stunnel
+ endif
