@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BUILDROOT_BASE=.
+BUILDROOT_BASE=$PWD
 BUILDROOT_SVN=buildroot-svn-20081211
 #prepare buildroot-svn tree for basesystem 2.0
 (
@@ -8,7 +8,9 @@ BUILDROOT_SVN=buildroot-svn-20081211
   # extract buildroot svn
   tar xvjf ../dl/${BUILDROOT_SVN}.tar.bz2 --exclude .svn
   patch -p1 <${BUILDROOT_SVN}-weiss-basesystem2.patch
-  cp  weiss/uClibc-0.9.29.config toolchain/uClibc/uClibc-0.9.29.config
+  # copy template tree over extracted buildroot source tree
+  (cd weiss/template_tree; tar cf - --exclude .svn .) | \
+    (cd $BUILDROOT_BASE; tar xvf -)
   make oldconfig
 )
 
