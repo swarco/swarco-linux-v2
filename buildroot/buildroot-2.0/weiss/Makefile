@@ -47,10 +47,12 @@ install_chconf:
 	-rm $(TARGET_DIR)/etc/resolv.conf
 	ln -sf /proc/mounts $(TARGET_DIR)/etc/mtab
 	ln -sf /tmp/resolv.conf $(TARGET_DIR)/etc/resolv.conf
+	# 2009-02-04 gc: buildroot now installs sftp-server in
+	#                /usr/lib/sftp-server again
 	# buildroot installs "sftp-server" subsystem in /usr/sbin, we
 	# expect it in /usr/lib
-	-rm $(TARGET_DIR)/usr/lib/sftp-server
-	ln -sf ../sbin/sftp-server $(TARGET_DIR)/usr/lib/sftp-server
+	#-rm $(TARGET_DIR)/usr/lib/sftp-server
+	#ln -sf ../sbin/sftp-server $(TARGET_DIR)/usr/lib/sftp-server
 	echo "Welcome to Weiss-Electronic GmbH Embedded Linux v2.0 " ` date '+#%Y-%m-%d#' `  > $(TARGET_DIR)/etc/issue
 
 .PHONY: weiss_prepare_root
