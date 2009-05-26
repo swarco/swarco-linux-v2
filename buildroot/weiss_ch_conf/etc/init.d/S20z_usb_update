@@ -37,7 +37,8 @@ okay=0
 if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) == 0 ] && 
    [ ! -f /etc/.usb-configurated ]; then
     mount -oremount,rw /
-    for block_device in /dev/sd??
+    # 2009-05-26 gc: added support for superfloppy formated usb devices
+    for block_device in /dev/sd?? /dev/sd?
     do
         echo testing block device $block_device for usb-storage device
         mount -tvfat -oro $block_device /mnt/usb/
