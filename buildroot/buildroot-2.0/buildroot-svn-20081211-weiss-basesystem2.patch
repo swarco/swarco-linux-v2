@@ -79,3 +79,16 @@ diff -Nrub buildroot-2.0/package/stunnel/stunnel.mk new/package/stunnel/stunnel.
 +ifeq ($(strip $(BR2_PACKAGE_STUNNEL)),y)
  TARGETS+=stunnel
  endif
+diff -Nrub buildroot-2.0/package/ntp/ntp.mk new/package/ntp/ntp.mk
+--- buildroot-2.0/package/ntp/ntp.mk	2009-07-24 09:32:30.216504093 +0200
++++ new/package/ntp/ntp.mk	2009-07-24 09:31:56.601783992 +0200
+@@ -37,6 +37,9 @@
+ 		--target=$(GNU_TARGET_NAME) \
+ 		--host=$(GNU_TARGET_NAME) \
+ 		--build=$(GNU_HOST_NAME) \
++		--enable-MEINBERG \
++		--enable-RAWDCF \
++		--enable-parse-clocks \
+ 		--prefix=/usr \
+ 		--exec-prefix=/usr \
+ 		--bindir=/usr/bin \
