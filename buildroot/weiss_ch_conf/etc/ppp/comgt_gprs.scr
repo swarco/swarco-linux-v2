@@ -39,10 +39,11 @@
 :device_detect
   flash 0.1
   send "ATi^m"
-  waitfor 5 "OK" "SIEMENS"
+  waitfor 5 "OK","SIEMENS","WAVECOM"
   if % = -1 goto device_hangup
   if % = 0 goto start
   if % = 1 goto device_siemens
+  if % = 2 goto device_wavecom
 #
 :device_hangup
   sleep 1
@@ -60,6 +61,10 @@
   waitfor 5 "MC35" "HC25"
   if % = 0 let $m="MC35"
   if % = 1 let $m="HC25"
+  goto start
+
+:device_wavecom
+  let $m="WAVECOM"
 
 #
 #
@@ -67,6 +72,7 @@
 :start
   if $m="MC35"  print "Found Siemens MC35 GPRS terminal adapter^j"
   if $m="HC25"  print "Found Siemens HC25 UMTS/GPRS terminal adapter^j"
+  if $m="WAVECOM"  print "Found Wavecom GPRS terminal adapter^j"
   if len($m)=0  print "Found unknown terminal adapter^j"
 
   flash 0.1
@@ -167,6 +173,11 @@
   print "."
   goto waitreg
 :reg_noresponse
+  # wavecom modem sometimes don't respont on AT +CREG?
+  if $m="WAVECOM" print "^jIgnore response on AT+CREG? on Wavecom terminal adapter"
+  if $m="WAVECOM" sleep 20
+  if $m="WAVECOM" goto homereg
+
   print "^jError: No response from terminal adapter on AT+CREG?\n"
   goto err_exit
 :regtimeout
@@ -235,7 +246,9 @@
 #
   print "Dialing\n"
   flash 0.1
-  send "ATD *99**PPP*1#^m"
+#   for Westermo/Wavecom without PPP
+#  send "ATD *99**PPP*1#^m"
+  send "AT D*99***1#^m"
 #   let $t="test"
 #   let $a="AT+GMI"
 #   gosub sub_at_query
@@ -252,13 +265,15 @@
 # #
 #   waitquiet 1 0.1
 #   send "AT+CGDATA=\"PPP\",1^m"
+#   for Westermo/Wavecom without PPPx
+#   send "AT+CGDATA=1^m"
 #   waitfor 90 "CONNECT" "ERR"
   waitfor 90 "CONNECT","ERR"
   if % = -1 goto dial_timeerror
   if % = 0 goto dial_CONNECT
   if % = 1 goto dial_error
 :dial_timeerror
-  print "Dialing Timout\n"
+  print "Dialing Timeout\n"
   goto err_exit
 :dial_error
   print "Error calling GPRS\n"
@@ -286,7 +301,14 @@
 #
 # in case of an error send reset command to device
   print "Reseting terminal adapter^j"
+  let $c=$env("GPRS_RESET_CMD")
+  if len($c)=0 goto reset_with_at_cmd
+  print "system: "+$c
+  system "/bin/sh -c '"+$c+"'"
+  exit 1
+:reset_with_at_cmd
   send "AT+CFUN=1,1^m"
+  sleep 60
   exit 1
 #
 #
