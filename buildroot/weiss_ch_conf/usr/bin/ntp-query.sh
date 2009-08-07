@@ -30,8 +30,29 @@ test -f /etc/default/ntpdate || exit 0
 
 . /etc/default/ntpdate
 
+NTPDATA_FAIL_CMD=""
+
+if [ -f /etc/default/gprs ]
+then
+    . /etc/default/gprs
+    
+    if [ ! -z "$GPRS_DEVICE" ]
+    then
+        NTPDATE_FAIL_CMD="/bin/kill `/bin/cat /var/run/ppp0.pid`"
+    fi
+fi
+
+
 test -n "$NTPSERVERS" || exit 0
 
 logger -t $0 "Running ntpdate to synchronize clock"
-$NTPDATE $NTPOPTIONS $NTPSERVERS && $HWCLOCK -w
-logger -t $0 "ntpdate finished with: `date`"
+if $NTPDATE $NTPOPTIONS $NTPSERVERS; then
+    $HWCLOCK -w
+    logger -t $0 "ntpdate finished with: `date`"
+else
+    if [ ! -z "$NTPDATE_FAIL_CMD" ]; then
+        
+        logger -t $0 "ntpdate FAILED, executing cmd: $NTPDATE_FAIL_CMD"
+        $NTPDATE_FAIL_CMD
+    fi
+fi
