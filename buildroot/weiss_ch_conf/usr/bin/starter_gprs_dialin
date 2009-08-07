@@ -86,15 +86,9 @@ do
             export GPRS_PPP_LED
             export GPRS_RESET_CMD
             
-
-            #2009-08-06 gc: todo: check for "hanging" tty port
-            #echo -e "AT\r" >$GPRS_DEVICE&
-            #sleep 10
-            # echo process still running???
-            #if [ -d /proc/$! ]; then killall watchdog; reboot; fi
-
         
-            comgt /etc/ppp/comgt_gprs.scr -s | logger -p daemon.notice -t GPRS
+            #comgt /etc/ppp/comgt_gprs.scr -s | logger -p daemon.notice -t GPRS
+            sh /etc/ppp/shell_gprs_dial.sh | logger -p daemon.notice -t GPRS
             # if device is found, skip remaining devices
             break
         fi

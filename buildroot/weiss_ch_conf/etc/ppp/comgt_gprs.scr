@@ -107,9 +107,8 @@
 :enterpin
 #  let $p="AT+CPIN=\""+$c+"\"^m"
 #  print "send pin:",$p,"^j"
-  send "AT+CPIN=\""
-  send $c
-  send "\"^m"
+  print "sending PIN^j"
+  send "AT+CPIN=\""+$c+"\"^m"
   waitfor 20 "OK","ERR"
   if % = -1 goto timeerror
   if % = 0 goto ready
@@ -126,6 +125,7 @@
   goto err_exit
 :ready
   print "SIM ready\n"
+  sleep 5
 #
 # $o operator numeric code
 # $p mode
