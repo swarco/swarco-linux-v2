@@ -159,9 +159,15 @@ case $r in
                 TA_MODEL=MC35
                 print "Found Siemens MC35 GPRS terminal adapter"
                 ;;
-            *HC35*)
+            *HC25*)
                 TA_MODEL=HC25
                 print "Found Siemens HC25 UMTS/GPRS terminal adapter"
+                # HC25: enable network (UTMS=blue/GSM=green) status LEDs
+                at_cmd "AT^sled=1"
+                ;;
+            *)
+                print "Found unkonwn Siemens terminal adapter"
+                ;;
         esac
         ;;
     *WAVECOM*)
