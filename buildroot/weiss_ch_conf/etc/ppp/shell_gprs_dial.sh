@@ -34,6 +34,21 @@ send() {
 }
 
 
+wait_quiet() {
+  print "wait_quiet $1"
+  local wait_time=2
+  if [ "$1" -gt 0 ]; then wait_time=$1; fi
+
+  local line=""
+  while read -t$wait_time line<&3
+  do
+      #remove trailing carriage return
+      line=${line%%${cr}*}
+      print "RCV: $line"
+  done
+  return 0
+}
+
 
 # execute AT cmd and wait for "OK"
 # Params: 1 AT Command String
@@ -57,7 +72,7 @@ at_cmd() {
   
   while true
   do
-      line=""
+      local line=""
       if ! read -t$wait_time line<&3
       then
           print timeout
@@ -187,6 +202,7 @@ esac
 
 #2009-08-07 gc: Wavecom only sends result code, no "OK"
 at_cmd "AT+CPIN?" 10 "+CPIN:"|| error
+wait_quiet 1
 case $r in
     *SIM?PIN*)
         if [ -z "$GPRS_PIN" ]; then
@@ -315,6 +331,9 @@ fi
 #
       at_cmd "AT^MONP"
       print "^MONP: $r"
+
+      wait_quiet 5
+
   fi
 
 
@@ -349,6 +368,7 @@ esac
 
 at_cmd "AT+CGACT?"
 print "PDP Context attach: $r"
+wait_quiet 1
 
 #GPRS_CMD_SET=1
 if [ ! -z "$GPRS_CMD_SET" ]; then
