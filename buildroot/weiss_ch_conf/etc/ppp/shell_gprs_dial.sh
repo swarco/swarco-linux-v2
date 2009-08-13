@@ -347,8 +347,9 @@ if [ -z "$GPRS_APN" ]; then
     exit 1
 fi
 
+# entering APN may take longer time if network is busy
 print "Entering APN: $GPRS_APN"
-at_cmd "AT+CGDCONT=1,\"IP\",\"$GPRS_APN\"" 30
+at_cmd "AT+CGDCONT=1,\"IP\",\"$GPRS_APN\"" 60
 
 case $? in
     0)
