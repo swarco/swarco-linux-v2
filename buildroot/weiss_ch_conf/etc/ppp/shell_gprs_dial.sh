@@ -398,7 +398,10 @@ if [ ! -z "$GPRS_USER" ]; then
 fi
 
 print "running pppd: /usr/sbin/pppd $ppp_args"
-/usr/sbin/pppd $ppp_args <&3 >&3
+/usr/sbin/pppd $ppp_args <&3 >&3 &
+# save pppd's PID file in case of pppd hangs before it writes the PID file
+echo $! >/var/run/ppp0.pid
+wait
 print "pppd terminated"
 #fuser -k $GPRS_DEVICE
 exit 0

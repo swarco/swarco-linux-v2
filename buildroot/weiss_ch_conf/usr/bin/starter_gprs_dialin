@@ -64,6 +64,7 @@ do
         GPRS_PPP_OPTIONS="$GPRS_PPP_OPTIONS usepeerdns"
     fi
 
+
     # check each device in list if it is available and an valid character device
     for DEVICE in $GPRS_DEVICE
     do
@@ -85,6 +86,7 @@ do
             export GPRS_PPP_IFACE
             export GPRS_PPP_LED
             export GPRS_RESET_CMD
+            export GPRS_INIT_CMD
             
         
             #comgt /etc/ppp/comgt_gprs.scr -s | logger -p daemon.notice -t GPRS

@@ -38,7 +38,7 @@ then
     
     if [ ! -z "$GPRS_DEVICE" ]
     then
-        NTPDATE_FAIL_CMD="/bin/kill `/bin/cat /var/run/ppp0.pid`"
+        NTPDATE_FAIL_CMD="/bin/kill `/bin/cat /var/run/ppp0.pid`; sleep 20; /bin/kill -9 `/bin/cat /var/run/ppp0.pid`"
     fi
 fi
 
@@ -53,6 +53,6 @@ else
     if [ ! -z "$NTPDATE_FAIL_CMD" ]; then
         
         logger -t $0 "ntpdate FAILED, executing cmd: $NTPDATE_FAIL_CMD"
-        $NTPDATE_FAIL_CMD
+        /bin/sh -c "$NTPDATE_FAIL_CMD"
     fi
 fi
