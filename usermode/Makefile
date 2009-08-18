@@ -31,7 +31,7 @@ CFLAGS		+=  -I$(KERNEL_PATH)/include
 LDFLAGS         += -lpthread -lutil
 
 PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward ro rw \
-	   file_write_test wlogin
+	   file_write_test wlogin huaweiAktBbo
 
 .PHONY: all
 all: $(PROGRAMS) install
@@ -45,6 +45,10 @@ install:
 #simple pattern rule to compile executables from just one source file!
 %:	%.c
 	$(CROSS_CC) -o$@ $(CFLAGS) $(LDFLAGS) $<
+	$(CROSS_STRIP) $@
+
+huaweiAktBbo:	huaweiAktBbo.c
+	$(CROSS_CC) -o$@ $(CFLAGS) $(LDFLAGS) $< -lusb
 	$(CROSS_STRIP) $@
 
 

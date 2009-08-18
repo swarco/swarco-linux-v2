@@ -131,8 +131,34 @@ at_cmd() {
 }
 
 ##############################################################################
+# Driver loading and initiaisation of special devices
+##############################################################################
+
+for id in /sys/bus/usb/devices/*
+do
+    if [ `cat $id/idVendor` = "12d1" -a `cat $id/idProduct` = "1003" ]; then
+        echo found Huawei Technologies Co., Ltd. E220 HSDPA Modem
+        mount -tusbfs none /proc/bus/usb
+        /usr/bin/huaweiAktBbo 
+
+        sleep 1
+        rmmod usbserial; modprobe usbserial vendor=0x12d1 product=0x1003
+        for l in 1 2 3 4 5 
+        do
+            if [ -c /dev/ttyUSB0 ]; then break; fi
+            sleep 2
+        done
+
+    fi
+done
+
+
+##############################################################################
 # Check if TTY device does not block after open 
 ##############################################################################
+if [ ! -c $GPRS_DEVICE ]; then
+ exit 1
+fi
 
 print "Starting GPRS connection on device $GPRS_DEVICE ($GPRS_BAUDRATE baud)"
 
@@ -207,6 +233,19 @@ case $r in
     *WAVECOM*)
         TA_VENDOR=WAVECOM
         print "Found Wavecom GPRS terminal adapter"
+        ;;
+
+   *huawei*)
+        TA_VENDOR=HUAWEI
+        case $r in
+            *E17X*)
+                TA_MODEL=E17X
+                print "Found Huawei E17X terminal adapter"
+                ;;
+            *)
+                print "Found unkonwn Huawei terminal adapter"
+                ;;
+        esac
         ;;
 
     *)
