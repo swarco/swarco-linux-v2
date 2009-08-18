@@ -6,9 +6,29 @@
 #. /etc/default/gprs
 #GPRS_DEVICE=/dev/com1
 
+# echo file descriptor to raw AT commands and received answer from
+# terminal adapter
+# if comment out, no echo of AT command chat
+AT_VERBOSE_FD=1
+
 cr=`echo -n -e "\r"`
 
+
+
+# print log message
+print() {
+    echo $*
+}
+
+print_at_cmd()
+{
+    if [ ! -z "$AT_VERBOSE_FD" ]; then echo >&$AT_VERBOSE_FD $*; fi
+}
+
 error() {
+    at_cmd "AT+CERR"
+    print "Extended error report: $r" 
+
     print "Reseting terminal adapter"
     if [ ! -z "$GPRS_RESET_CMD" ]; then
         /bin/sh -c "$GPRS_RESET_CMD"
@@ -29,7 +49,7 @@ error() {
 }
 
 send() {
-  print "SND: $1"
+  print_at_cmd "SND: $1"
   echo -e "$1\r" >&3 &
 }
 
@@ -40,11 +60,11 @@ wait_quiet() {
   if [ "$1" -gt 0 ]; then wait_time=$1; fi
 
   local line=""
-  while read -t$wait_time line<&3
+  while read -r -t$wait_time line<&3
   do
       #remove trailing carriage return
       line=${line%%${cr}*}
-      print "RCV: $line"
+      print_at_cmd "RCV: $line"
   done
   return 0
 }
@@ -60,12 +80,13 @@ at_cmd() {
   r=""
   local wait_time=2
   local count=0
-  local wait_str="----------------------------------------------"
+  local wait_str="OK"
+  local echo_rcv=""
 
   if [ "$2" -gt 0 ]; then wait_time=$2; fi
   if [ ! -z "$3" ]; then wait_str="$3"; fi
 
-  print "SND: $1"
+  print_at_cmd "SND: $1"
   echo -e "$1\r" >&3 &
 
 #  sleep $wait_time
@@ -73,21 +94,23 @@ at_cmd() {
   while true
   do
       local line=""
-      if ! read -t$wait_time line<&3
+      if ! read -r -t$wait_time line<&3
       then
           print timeout
           return 2
-      fi
+      fi    
       #remove trailing carriage return
       line=${line%%${cr}*}
-      print "RCV: $line"
+      print_at_cmd "RCV: $line"
+      #suppress echo of AT command in result string
+      if [ -z "$echo_rcv" -a "$line" = "$1" ]; then echo_rcv="x"; continue; fi
       r="$r $line"
       case $line in
           *OK*)
               return 0
               ;;
           *${wait_str}*)
-              print "got wait: $wait_str"
+              print_at_cmd "got wait: $wait_str"
               return 0
               ;;
              
@@ -105,11 +128,6 @@ at_cmd() {
 
   if [ -d /proc/$! ]; then echo TTY driver hangs; return 3; fi
   return 0
-}
-
-# print log message
-print() {
-    echo $*
 }
 
 ##############################################################################
@@ -165,7 +183,8 @@ done
 ##############################################################################
 
 at_cmd "ATi" || error
-print res: $r
+print "Terminal adpater identification: $r"
+
 case $r in
     *SIEMENS*)
         TA_VENDOR=SIEMENS
@@ -227,6 +246,11 @@ case $r in
         ;;
 esac
 print "SIM ready"
+
+##############################################################################
+# Set verbose error reporting
+##############################################################################
+at_cmd "AT+CMEE=2" 
 
 ##############################################################################
 # Select (manually) GSM operator
@@ -347,9 +371,8 @@ if [ -z "$GPRS_APN" ]; then
     exit 1
 fi
 
-# entering APN may take longer time if network is busy
 print "Entering APN: $GPRS_APN"
-at_cmd "AT+CGDCONT=1,\"IP\",\"$GPRS_APN\"" 60
+at_cmd "AT+CGDCONT=1,\"IP\",\"$GPRS_APN\"" 30
 
 case $? in
     0)
