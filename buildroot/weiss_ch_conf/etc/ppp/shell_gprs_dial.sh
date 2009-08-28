@@ -1,4 +1,20 @@
 #!/bin/sh
+#*****************************************************************************/
+#* 
+#*  @file          shell_gprs_dial.sh
+#*
+#*  Shell script based GPRS/UMTS dial script
+#*
+#*  @version       0.1
+#*  @date          
+#*  @author        Guido Classen
+#* 
+#*  Changes:
+#*    2009-08-28 gc: initial version
+#*  
+#****************************************************************************/
+
+echo $0 [Version 2009-08-28 17:19:59 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -51,6 +67,16 @@ error() {
 send() {
   print_at_cmd "SND: $1"
   echo -e "$1\r" >&3 &
+}
+
+command_mode() {
+  sleep 2
+  print_at_cmd "SND: +++ (command mode)"
+  # IMPORTEND: To enter command mode +++ is followed by a delay of 1000ms
+  #            There must not follow a line feed character after +++
+  #            so use -n option!
+  echo -ne "+++">&3&
+  sleep 2
 }
 
 
@@ -165,10 +191,11 @@ print "Starting GPRS connection on device $GPRS_DEVICE ($GPRS_BAUDRATE baud)"
 # prevent blocking when opening the TTY device due modem status lines
 stty -F $GPRS_DEVICE clocal -crtscts
 
-echo x <$GPRS_DEVICE&
+echo . <$GPRS_DEVICE >/dev/null&
 sleep 5
 if [ -d /proc/$! ]; then 
     echo TTY driver hangs; 
+    sleep 10
     reboot
     exit 3; 
 fi
@@ -190,19 +217,24 @@ exec 3<>$GPRS_DEVICE
 
 print "ready"
 
+#command_mode
+
 for l in 1 2 3 4 5 
 do
     if at_cmd "AT"; then
         print okay
         break
     else
-        at_cmd "+++" 5 "NO CARRIER"
+        command_mode
     fi
 
     if [ $l == "5" ]; then
         error
     fi
 done
+
+# 2009-08-28 gc: hang up if there is a connection in background
+at_cmd "ATH"
 
 ##############################################################################
 # Check vendor / model of connected terminal adapter
@@ -290,22 +322,28 @@ print "SIM ready"
 # Set verbose error reporting
 ##############################################################################
 at_cmd "AT+CMEE=2" 
+wait_quiet 2
 
 ##############################################################################
 # Select (manually) GSM operator
 ##############################################################################
-op_cmd="AT+COPS=0"
 
-if [ ! -z "$GPRS_OPERATOR" ]; then
+if [ ! -z "$GPRS_OPERATOR" -a "$GPRS_OPERATOR" -gt 0 ]; then
     op_cmd="AT+COPS=1,2,\"$GPRS_OPERATOR\""
     print "Setting manual selected operator to $op_cmd"
+    if [ ! -z "$GPRS_NET_ACCESS_TYPE" ]; then
+        op_cmd="$op_cmd,$GPRS_NET_ACCESS_TYPE"
+    fi
+else
+    op_cmd="AT+COPS=0"
+
+    if [ ! -z "$GPRS_NET_ACCESS_TYPE" ]; then
+        op_cmd="AT+COPS=0,,,$GPRS_NET_ACCESS_TYPE"
+    fi
 fi
 
-if [ ! -z "$GPRS_NET_ACCESS_TYPE" ]; then
-    op_cmd="$op_cmd,$GPRS_NET_ACCESS_TYPE"
-fi
 
-at_cmd $op_cmd || error
+at_cmd $op_cmd 90 || error
 
 
 ##############################################################################
@@ -365,6 +403,56 @@ if [ ! -z "$GPRS_INIT" ]; then
     at_cmd $GPRS_INIT
     print "Result user init: $r"
 fi
+
+
+##############################################################################
+# Data/CSD initialization
+##############################################################################
+# single numbering scheme: all incoming calls without "bearer
+# capability" as DATA
+at_cmd "AT+CSNS=4"
+at_cmd "ATS0=0"
+
+##############################################################################
+# SMS initialization
+##############################################################################
+
+# read on phone number
+#at_cmd "AT+CNUM"
+#print "Own number: $r"
+
+# switch SMS to TEXT mode
+at_cmd "AT+CMGF=1"
+
+#2009-08-28 gc: enable URC on incoming SMS (and break of data/GPRS connection)
+at_cmd "AT+CNMI=3,1"
+
+# List UNREAD SMS
+local line=""
+send 'AT+CMGL="REC UNREAD"'
+while read -r -t5 line<&3
+do
+     line=${line%%${cr}*}
+      print_at_cmd "RCV: $line"
+      case $line in
+          *OK*)
+              break
+              ;;
+
+          *weisselectronic\ reboot*)
+              logger -t GPRS got reboot request per SMS
+              sleep 10
+              reboot
+              ;;
+      esac
+done
+
+#print "SMS: $r"
+#wait_quiet 10
+
+# delete all RECEIVED READ SMS from message store
+at_cmd "AT+CMGD=0,1"
+
 
 
 ##############################################################################
@@ -461,10 +549,121 @@ if [ ! -z "$GPRS_USER" ]; then
 fi
 
 print "running pppd: /usr/sbin/pppd $ppp_args"
+stty -F $GPRS_DEVICE -ignbrk brkint
 /usr/sbin/pppd $ppp_args <&3 >&3 &
 # save pppd's PID file in case of pppd hangs before it writes the PID file
 echo $! >/var/run/ppp0.pid
-wait
+
+# 2009-08-28 gc: experimental, on ring
+on_ring() {
+    local count=0;
+    kill $ppp_pid
+    while [ -d /proc/$ppp_pid ]
+    do
+        sleep 1
+    done
+    print "waiting for ring"
+    command_mode
+
+    while read -r -t120 line<&3
+    do
+        line=${line%%${cr}*}
+        print_at_cmd "RCV: $line"
+        case $line in
+            *RING*)
+
+                at_cmd "ATA" 90 "CONNECT" || return 1
+                echo starting remote_subnet_mgr
+                /usr/weiss/bin/remote_subnet_mgr /etc/weiss/sm1/rem_subnet_prm &
+                rsm_pid=$!
+                while [ -d /proc/$rsm_pid ]
+                do
+                    
+                    status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
+    #example:
+    # 1: uart:ATMEL_SERIAL mmio:0xFFFC4000 irq:7 tx:14820 rx:18025 oe:1 RTS|CTS|DTR|DSR|CD
+                    
+    #check if RI is set in status line
+                    if [ "${status##*|CD}" == "$status" ]; then
+                        echo CD lost
+                        kill $rsm_pid
+                        return 0;
+                    fi
+                done
+                
+                break;
+              ;;
+
+      esac
+
+      count=$(($count+1))
+      if [ $count -gt 15 ]
+      then
+          print timeout
+          return 2
+      fi
+
+    done
+
+}
+
+get_break_count() {
+    k=${status##*brk:}
+    if [ "$k" == "$status" ]; then
+        b=0
+    else
+        b=${k%% *}
+    fi
+#    print "brk: $b"
+}
+
+case $GPRS_DEVICE in
+    /dev/com1 | /dev/ttyAT1)
+        
+        ppp_pid=$!
+        
+        
+        status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
+        get_break_count
+        break_count=$b
+        
+        while [ -d /proc/$ppp_pid ]
+        do
+            status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
+    #example:
+    # 1: uart:ATMEL_SERIAL mmio:0xFFFC4000 irq:7 tx:14820 rx:18025 oe:1 RTS|CTS|DTR|DSR|CD
+            
+    #check if RI is set in status line
+            if [ "${status##*|RI}" != "$status" ]; then
+                echo RINGING
+                # enable if needed
+                #on_ring
+            fi
+
+            get_break_count
+            if [ "$b" -ne "$break_count" ]; then
+                echo BREAK received
+                kill $ppp_pid
+                break_count=$b
+            fi
+            
+            sleep 1
+        done
+
+        ;;
+
+    *)
+        wait
+        ;;
+esac
+
 print "pppd terminated"
 #fuser -k $GPRS_DEVICE
 exit 0
+
+
+
+# Local Variables:
+# mode: shell-script
+# time-stamp-pattern: "20/\\[Version[\t ]+%%\\]"
+# End:
