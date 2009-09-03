@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-03 14:19:59 gc]
+echo $0 [Version 2009-09-03 15:35:01 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -188,13 +188,17 @@ do
         
         for scsi in /sys/bus/scsi/devices/*
         do
+            echo check: $scsi: `cat $scsi/model`
             case `cat $scsi/model` in
                 *HC25\ flash\ disk*)
-                    local x=`readlink /sys/bus/scsi/devices/0\:0\:0\:0/block\:*`
+                    #echo path: "$scsi/block:"*
+                    local x=`readlink $scsi/block\:*`
                     local dev=${x##*/}
-                    echo ejecting /dev/$dev
-                    eject /dev/$dev
-                    exit 1
+                    if [ ! -z "$dev" ]; then
+                        echo ejecting /dev/$dev
+                        eject /dev/$dev
+                        exit 1
+                    fi
                     ;;
             esac
         done
