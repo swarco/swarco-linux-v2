@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-08-28 17:19:59 gc]
+echo $0 [Version 2009-09-03 14:19:59 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -157,13 +157,18 @@ at_cmd() {
 }
 
 ##############################################################################
-# Driver loading and initiaisation of special devices
+# Driver loading and initialisation of special (USB) devices
 ##############################################################################
-
 for id in /sys/bus/usb/devices/*
 do
+    if [ -z `cat $id/idVendor` -o  -z `cat $id/idProduct` ]; then
+        continue;
+    fi
+
+#    echo checking: id `cat $id/idVendor` idprod: `cat $id/idProduct`
+
     if [ `cat $id/idVendor` = "12d1" -a `cat $id/idProduct` = "1003" ]; then
-        echo found Huawei Technologies Co., Ltd. E220 HSDPA Modem
+        echo "found Huawei Technologies Co., Ltd. E220 HSDPA Modem"
         mount -tusbfs none /proc/bus/usb
         /usr/bin/huaweiAktBbo 
 
@@ -174,8 +179,46 @@ do
             if [ -c /dev/ttyUSB0 ]; then break; fi
             sleep 2
         done
-
     fi
+
+    if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0041" ]; then
+        echo "found Siemens HC25 in USB mass storage mode"
+        
+        sleep 1
+        
+        for scsi in /sys/bus/scsi/devices/*
+        do
+            case `cat $scsi/model` in
+                *HC25\ flash\ disk*)
+                    local x=`readlink /sys/bus/scsi/devices/0\:0\:0\:0/block\:*`
+                    local dev=${x##*/}
+                    echo ejecting /dev/$dev
+                    eject /dev/$dev
+                    exit 1
+                    ;;
+            esac
+        done
+    fi
+    
+    if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0040" ]; then
+        echo "found Siemens HC25 in USB component mode"
+        
+        sleep 1
+        
+        rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0040
+        
+        sleep 1
+        
+        for l in 1 2 3 4 5 
+        do
+            if [ -c /dev/ttyUSB0 ]; then 
+                GPRS_DEVICE=/dev/ttyUSB0
+                break
+            fi
+            sleep 2
+        done
+    fi
+    
 done
 
 
@@ -199,8 +242,6 @@ if [ -d /proc/$! ]; then
     reboot
     exit 3; 
 fi
-
-print "Terminal adapter responses on AT command"
 
 
 if ! stty -F $GPRS_DEVICE $GPRS_BAUDRATE -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -echo -echoe -echok -echoctl -echoke 2>&1 ; then
@@ -232,6 +273,9 @@ do
         error
     fi
 done
+
+print "Terminal adapter responses on AT command"
+
 
 # 2009-08-28 gc: hang up if there is a connection in background
 at_cmd "ATH"
@@ -322,26 +366,20 @@ print "SIM ready"
 # Set verbose error reporting
 ##############################################################################
 at_cmd "AT+CMEE=2" 
-wait_quiet 2
 
 ##############################################################################
 # Select (manually) GSM operator
 ##############################################################################
+op_cmd="AT+COPS=0"
 
-if [ ! -z "$GPRS_OPERATOR" -a "$GPRS_OPERATOR" -gt 0 ]; then
+if [ ! -z "$GPRS_OPERATOR" ]; then
     op_cmd="AT+COPS=1,2,\"$GPRS_OPERATOR\""
     print "Setting manual selected operator to $op_cmd"
-    if [ ! -z "$GPRS_NET_ACCESS_TYPE" ]; then
-        op_cmd="$op_cmd,$GPRS_NET_ACCESS_TYPE"
-    fi
-else
-    op_cmd="AT+COPS=0"
-
-    if [ ! -z "$GPRS_NET_ACCESS_TYPE" ]; then
-        op_cmd="AT+COPS=0,,,$GPRS_NET_ACCESS_TYPE"
-    fi
 fi
 
+if [ ! -z "$GPRS_NET_ACCESS_TYPE" ]; then
+    op_cmd="$op_cmd,$GPRS_NET_ACCESS_TYPE"
+fi
 
 at_cmd $op_cmd 90 || error
 
@@ -637,7 +675,7 @@ case $GPRS_DEVICE in
             if [ "${status##*|RI}" != "$status" ]; then
                 echo RINGING
                 # enable if needed
-                #on_ring
+                on_ring
             fi
 
             get_break_count
