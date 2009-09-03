@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-03 15:35:01 gc]
+echo $0 [Version 2009-09-03 16:06:57 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -376,7 +376,7 @@ at_cmd "AT+CMEE=2"
 ##############################################################################
 op_cmd="AT+COPS=0"
 
-if [ ! -z "$GPRS_OPERATOR" ]; then
+if [ \! -z "$GPRS_OPERATOR" -a "$GPRS_OPERATOR" -ne 0 ]; then
     op_cmd="AT+COPS=1,2,\"$GPRS_OPERATOR\""
     print "Setting manual selected operator to $op_cmd"
 fi
