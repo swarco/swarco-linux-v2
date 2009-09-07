@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-03 16:06:57 gc]
+echo $0 [Version 2009-09-07 10:44:56 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -541,7 +541,7 @@ if [ -z "$GPRS_APN" ]; then
 fi
 
 print "Entering APN: $GPRS_APN"
-at_cmd "AT+CGDCONT=1,\"IP\",\"$GPRS_APN\"" 30
+at_cmd "AT+CGDCONT=1,\"IP\",\"$GPRS_APN\"" 240
 
 case $? in
     0)
