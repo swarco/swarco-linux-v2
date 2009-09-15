@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-07 10:44:56 gc]
+echo $0 [Version 2009-09-15 18:37:05 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -520,10 +520,12 @@ at_cmd "AT+CMGD=0,1"
       print "SIM card id: $r"
 #
       at_cmd "AT^MONI"
-      print "^MONI: $r"
+#      print "^MONI: $r"
 #
       at_cmd "AT^MONP"
-      print "^MONP: $r"
+#      print "^MONP: $r"
+
+      at_cmd "AT^SMONG"
 
       wait_quiet 5
 
