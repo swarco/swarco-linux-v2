@@ -14,13 +14,15 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-15 18:37:05 gc]
+echo $0 [Version 2009-09-16 16:45:39 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
 #GPRS_BAUDRATE=115200
 #. /etc/default/gprs
 #GPRS_DEVICE=/dev/com1
+
+GPRS_STATUS_FILE=/tmp/gprs-stat
 
 # echo file descriptor to raw AT commands and received answer from
 # terminal adapter
@@ -30,15 +32,31 @@ AT_VERBOSE_FD=1
 cr=`echo -n -e "\r"`
 
 
+echo -n >$GPRS_STATUS_FILE
 
 # print log message
 print() {
     echo $*
 }
 
+status() {
+    local var=$1
+    shift
+    echo >>$GPRS_STATUS_FILE $var=\'"$*"\'
+}
+
+status GPRS_CONNECT_TIME `date "+%Y-%m-%d %H:%M:%S"`
+
 print_at_cmd()
 {
     if [ ! -z "$AT_VERBOSE_FD" ]; then echo >&$AT_VERBOSE_FD $*; fi
+}
+
+print_rcv() {
+      # echo removes leading / trailing whitespaces
+      if ! [ -z "`echo -n $1`" ]; then
+          print_at_cmd "RCV: $1"
+      fi
 }
 
 error() {
@@ -81,7 +99,7 @@ command_mode() {
 
 
 wait_quiet() {
-  print "wait_quiet $1"
+#  print "wait_quiet $1"
   local wait_time=2
   if [ "$1" -gt 0 ]; then wait_time=$1; fi
 
@@ -90,7 +108,7 @@ wait_quiet() {
   do
       #remove trailing carriage return
       line=${line%%${cr}*}
-      print_at_cmd "RCV: $line"
+      print_rcv "$line"
   done
   return 0
 }
@@ -112,11 +130,11 @@ at_cmd() {
   if [ "$2" -gt 0 ]; then wait_time=$2; fi
   if [ ! -z "$3" ]; then wait_str="$3"; fi
 
+  wait_quiet 1
+
   print_at_cmd "SND: $1"
   echo -e "$1\r" >&3 &
 
-#  sleep $wait_time
-  
   while true
   do
       local line=""
@@ -127,7 +145,7 @@ at_cmd() {
       fi    
       #remove trailing carriage return
       line=${line%%${cr}*}
-      print_at_cmd "RCV: $line"
+      print_rcv "$line"
       #suppress echo of AT command in result string
       if [ -z "$echo_rcv" -a "$line" = "$1" ]; then echo_rcv="x"; continue; fi
       r="$r $line"
@@ -271,6 +289,7 @@ do
         break
     else
         command_mode
+        wait_quiet 1
     fi
 
     if [ $l == "5" ]; then
@@ -282,7 +301,14 @@ print "Terminal adapter responses on AT command"
 
 
 # 2009-08-28 gc: hang up if there is a connection in background
-at_cmd "ATH"
+# 2009-09-16 gc: ATH may block for longer time on bad reception conditions
+#                =>Timeout 20
+if ! at_cmd "ATH" 20; then
+    # when ATH hangs, any character is used to abort command and is
+    # not interpreted by terminal adapter
+    at_cmd "AT"
+    wait_quiet 5
+fi
 
 ##############################################################################
 # Check vendor / model of connected terminal adapter
@@ -422,6 +448,9 @@ if [ -z "$network" ]; then
     fi
 fi
 
+status GPRS_ROAMING $network
+
+
 if [ $network == "no registered" ]; then
   print "Failed to register"
   error
@@ -436,6 +465,8 @@ r=${r#*\"}
 r=${r%\"*}
 
 print "Registered on $network network: $r"
+
+status GPRS_NETWORK $r
 
 ##############################################################################
 # send user init string
@@ -460,7 +491,16 @@ at_cmd "ATS0=0"
 ##############################################################################
 
 # read on phone number
-#at_cmd "AT+CNUM"
+case "$TA_VENDOR $TA_MODEL" in
+    *SIEMENS*MC35*)
+        at_cmd 'AT+CPBS="ON" +CPBR=1,4'
+        ;;
+    
+    *)
+        at_cmd "AT+CNUM"
+        ;;
+esac
+status GPRS_NUM ${r%% OK}
 #print "Own number: $r"
 
 # switch SMS to TEXT mode
@@ -475,7 +515,7 @@ send 'AT+CMGL="REC UNREAD"'
 while read -r -t5 line<&3
 do
      line=${line%%${cr}*}
-      print_at_cmd "RCV: $line"
+      print_rcv "$line"
       case $line in
           *OK*)
               break
@@ -493,6 +533,8 @@ done
 #wait_quiet 10
 
 # delete all RECEIVED READ SMS from message store
+# fails with "+CMS ERROR: unknown error" if no RECEIVED READ SMS available
+# => IGNORE Error
 at_cmd "AT+CMGD=0,1"
 
 
@@ -504,28 +546,36 @@ at_cmd "AT+CMGD=0,1"
 #
   at_cmd "ATi"
   print "Terminal Adapter: $r"
+  status GPRS_TA ${r%% OK}
 #
   at_cmd "AT+CGSN"
   print "IMEI: $r"
+  status GPRS_IMEI ${r%% OK}
 #
   at_cmd "AT+CIMI"
   print "IMSI: $r"
+  status GPRS_IMSI ${r%% OK}
 #
   at_cmd "AT+CSQ"
   print "Signal Quality: $r"
+  r=${r##*CSQ: }
+  status GPRS_CSQ ${r%%,*}
 
   if [ $TA_VENDOR == "SIEMENS" ]; then
 #
       at_cmd "AT^SCID"
       print "SIM card id: $r"
+      r=${r##*SCID: }
+      status GPRS_SCID ${r%% OK}
 #
       at_cmd "AT^MONI"
-#      print "^MONI: $r"
+      status GPRS_MONI ${r%% OK}
 #
       at_cmd "AT^MONP"
-#      print "^MONP: $r"
+      status GPRS_MONP ${r%% OK}
 
       at_cmd "AT^SMONG"
+      status GPRS_SMONG ${r%% OK}
 
       wait_quiet 5
 
@@ -587,6 +637,7 @@ else
     at_cmd "AT D*99***1#" 90 "CONNECT" || error
 fi
 
+#sleep 1
 ppp_args="call gprs_comgt nolog nodetach $GPRS_PPP_OPTIONS"
 if [ ! -z "$GPRS_USER" ]; then
     ppp_args="$ppp_args user $GPRS_USER"
@@ -612,7 +663,7 @@ on_ring() {
     while read -r -t120 line<&3
     do
         line=${line%%${cr}*}
-        print_at_cmd "RCV: $line"
+        print_rcv "$line"
         case $line in
             *RING*)
 

@@ -31,4 +31,13 @@ lock
 asyncmap 0
 modem
 
+lcp-echo-failure 5
+lcp-echo-interval 10
+lcp-max-configure 60
+lcp-restart 2
 
+ipcp-accept-local
+ipcp-accept-remote
+
+mtu 1495
+mru 1495
