@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-16 16:45:39 gc]
+echo $0 [Version 2009-09-17 19:44:09 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -23,6 +23,8 @@ echo $0 [Version 2009-09-16 16:45:39 gc]
 #GPRS_DEVICE=/dev/com1
 
 GPRS_STATUS_FILE=/tmp/gprs-stat
+GRPS_ERROR_COUNT_FILE=/tmp/gprs-error
+
 
 # echo file descriptor to raw AT commands and received answer from
 # terminal adapter
@@ -32,7 +34,9 @@ AT_VERBOSE_FD=1
 cr=`echo -n -e "\r"`
 
 
-echo -n >$GPRS_STATUS_FILE
+##############################################################################
+# Shell functions
+##############################################################################
 
 # print log message
 print() {
@@ -44,8 +48,6 @@ status() {
     shift
     echo >>$GPRS_STATUS_FILE $var=\'"$*"\'
 }
-
-status GPRS_CONNECT_TIME `date "+%Y-%m-%d %H:%M:%S"`
 
 print_at_cmd()
 {
@@ -63,6 +65,10 @@ error() {
     at_cmd "AT+CERR"
     print "Extended error report: $r" 
 
+    exit 1
+}
+
+reset_terminal_adapter() {
     print "Reseting terminal adapter"
     if [ ! -z "$GPRS_RESET_CMD" ]; then
         /bin/sh -c "$GPRS_RESET_CMD"
@@ -75,11 +81,12 @@ error() {
                 ;;
             *)
                 print "Don't known how to reset terminal adapter $TA_VENDOR"
+                #try Siemens command
+                at_cmd "AT+CFUN=1,1"
+                sleep 60
                 ;;
         esac
     fi
-
-    exit 1
 }
 
 send() {
@@ -177,71 +184,191 @@ at_cmd() {
 ##############################################################################
 # Driver loading and initialisation of special (USB) devices
 ##############################################################################
-for id in /sys/bus/usb/devices/*
-do
-    if [ -z `cat $id/idVendor` -o  -z `cat $id/idProduct` ]; then
-        continue;
-    fi
-
+init_and_load_drivers() {
+    for id in /sys/bus/usb/devices/*
+    do
+        if [ -z `cat $id/idVendor` -o  -z `cat $id/idProduct` ]; then
+            continue;
+        fi
+        
 #    echo checking: id `cat $id/idVendor` idprod: `cat $id/idProduct`
-
-    if [ `cat $id/idVendor` = "12d1" -a `cat $id/idProduct` = "1003" ]; then
-        echo "found Huawei Technologies Co., Ltd. E220 HSDPA Modem"
-        mount -tusbfs none /proc/bus/usb
-        /usr/bin/huaweiAktBbo 
-
-        sleep 1
-        rmmod usbserial; modprobe usbserial vendor=0x12d1 product=0x1003
-        for l in 1 2 3 4 5 
-        do
-            if [ -c /dev/ttyUSB0 ]; then break; fi
-            sleep 2
-        done
-    fi
-
-    if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0041" ]; then
-        echo "found Siemens HC25 in USB mass storage mode"
         
-        sleep 1
+        if [ `cat $id/idVendor` = "12d1" -a `cat $id/idProduct` = "1003" ]; then
+            echo "found Huawei Technologies Co., Ltd. E220 HSDPA Modem"
+            mount -tusbfs none /proc/bus/usb
+            /usr/bin/huaweiAktBbo 
+            
+            sleep 1
+            rmmod usbserial; modprobe usbserial vendor=0x12d1 product=0x1003
+            for l in 1 2 3 4 5 
+            do
+                if [ -c /dev/ttyUSB0 ]; then break; fi
+                sleep 2
+            done
+        fi
         
-        for scsi in /sys/bus/scsi/devices/*
-        do
-            echo check: $scsi: `cat $scsi/model`
-            case `cat $scsi/model` in
-                *HC25\ flash\ disk*)
+        if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0041" ]; then
+            echo "found Siemens HC25 in USB mass storage mode"
+            
+            sleep 1
+            
+            for scsi in /sys/bus/scsi/devices/*
+            do
+                echo check: $scsi: `cat $scsi/model`
+                case `cat $scsi/model` in
+                    *HC25\ flash\ disk*)
                     #echo path: "$scsi/block:"*
-                    local x=`readlink $scsi/block\:*`
-                    local dev=${x##*/}
-                    if [ ! -z "$dev" ]; then
-                        echo ejecting /dev/$dev
-                        eject /dev/$dev
-                        exit 1
-                    fi
-                    ;;
-            esac
-        done
-    fi
-    
-    if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0040" ]; then
-        echo "found Siemens HC25 in USB component mode"
+                        local x=`readlink $scsi/block\:*`
+                        local dev=${x##*/}
+                        if [ ! -z "$dev" ]; then
+                            echo ejecting /dev/$dev
+                            eject /dev/$dev
+                            exit 1
+                        fi
+                        ;;
+                esac
+            done
+        fi
         
-        sleep 1
+        if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0040" ]; then
+            echo "found Siemens HC25 in USB component mode"
+            
+            sleep 1
+            
+            rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0040
+            
+            sleep 1
+            
+            for l in 1 2 3 4 5 
+            do
+                if [ -c /dev/ttyUSB0 ]; then 
+                    # Modem Port
+                    GPRS_DEVICE=/dev/ttyUSB0
+                    # Application port
+                    GPRS_DEVICE_SECOND=/dev/ttyUSB2
+                    break
+                fi
+                sleep 2
+            done
+        fi
         
-        rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0040
+        if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0047" ]; then
+            echo "found Siemens HC25 in USB CDC-ACM mode"
+            
+            sleep 1
+            
+        # activate second application port (/dev/ttyUSB0)
+        rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0047
         
         sleep 1
         
         for l in 1 2 3 4 5 
         do
-            if [ -c /dev/ttyUSB0 ]; then 
-                GPRS_DEVICE=/dev/ttyUSB0
+            if [ -c /dev/ttyACM0 ]; then 
+                # Modem Port
+                GPRS_DEVICE=/dev/ttyACM0
+                # Application port
+                GPRS_DEVICE_SECOND=/dev/ttyUSB0
                 break
             fi
             sleep 2
         done
-    fi
+        fi
+    done
+}
+
+##############################################################################
+# Check vendor / model of connected terminal adapter
+##############################################################################
+identify_terminal_adapter() {
+    at_cmd "ATi" || error
+    print "Terminal adpater identification: $r"
     
-done
+    case $r in
+        *SIEMENS*)
+            TA_VENDOR=SIEMENS
+            case $r in
+                *MC35*)
+                    TA_MODEL=MC35
+                    print "Found Siemens MC35 GPRS terminal adapter"
+                    ;;
+                *HC25*)
+                    TA_MODEL=HC25
+                    print "Found Siemens HC25 UMTS/GPRS terminal adapter"
+                # HC25: enable network (UTMS=blue/GSM=green) status LEDs
+                    at_cmd "AT^sled=1"
+                    ;;
+                *)
+                    print "Found unkonwn Siemens terminal adapter"
+                    ;;
+            esac
+            ;;
+        *WAVECOM*)
+            TA_VENDOR=WAVECOM
+            print "Found Wavecom GPRS terminal adapter"
+            ;;
+        
+        *huawei*)
+            TA_VENDOR=HUAWEI
+            case $r in
+                *E17X*)
+                    TA_MODEL=E17X
+                    print "Found Huawei E17X terminal adapter"
+                    ;;
+                *)
+                    print "Found unkonwn Huawei terminal adapter"
+                    ;;
+            esac
+            ;;
+        
+        *)
+            print "Found unkonwn terminal adapter"
+            ;;
+    esac
+}
+
+
+
+##############################################################################
+# Main
+##############################################################################
+
+##############################################################################
+# check error count
+##############################################################################
+if [ -f $GRPS_ERROR_COUNT_FILE ] ; then
+    . $GRPS_ERROR_COUNT_FILE
+else
+    init_and_load_drivers
+    exit 1
+fi
+
+GPRS_ERROR_COUNT=$(($GPRS_ERROR_COUNT + 1))
+print GPRS_ERROR_COUNT: $GPRS_ERROR_COUNT
+        
+if [ $GPRS_ERROR_COUNT -gt 5 ] ; then
+    print max err count reached
+    GPRS_ERROR_COUNT=0
+    identify_terminal_adapter
+    reset_terminal_adapter
+    init_and_load_drivers
+fi
+
+cat >$GRPS_ERROR_COUNT_FILE <<FILE_END
+# GRPS-Error Count, do not edit!
+GPRS_ERROR_COUNT=$GPRS_ERROR_COUNT
+FILE_END
+
+
+
+##############################################################################
+# initalize status
+##############################################################################
+
+echo -n >$GPRS_STATUS_FILE
+status GPRS_CONNECT_TIME `date "+%Y-%m-%d %H:%M:%S"`
+
+
 
 
 ##############################################################################
@@ -293,7 +420,7 @@ do
     fi
 
     if [ $l == "5" ]; then
-        error
+        exit 1
     fi
 done
 
@@ -310,54 +437,9 @@ if ! at_cmd "ATH" 20; then
     wait_quiet 5
 fi
 
-##############################################################################
-# Check vendor / model of connected terminal adapter
-##############################################################################
 
-at_cmd "ATi" || error
-print "Terminal adpater identification: $r"
 
-case $r in
-    *SIEMENS*)
-        TA_VENDOR=SIEMENS
-        case $r in
-            *MC35*)
-                TA_MODEL=MC35
-                print "Found Siemens MC35 GPRS terminal adapter"
-                ;;
-            *HC25*)
-                TA_MODEL=HC25
-                print "Found Siemens HC25 UMTS/GPRS terminal adapter"
-                # HC25: enable network (UTMS=blue/GSM=green) status LEDs
-                at_cmd "AT^sled=1"
-                ;;
-            *)
-                print "Found unkonwn Siemens terminal adapter"
-                ;;
-        esac
-        ;;
-    *WAVECOM*)
-        TA_VENDOR=WAVECOM
-        print "Found Wavecom GPRS terminal adapter"
-        ;;
-
-   *huawei*)
-        TA_VENDOR=HUAWEI
-        case $r in
-            *E17X*)
-                TA_MODEL=E17X
-                print "Found Huawei E17X terminal adapter"
-                ;;
-            *)
-                print "Found unkonwn Huawei terminal adapter"
-                ;;
-        esac
-        ;;
-
-    *)
-        print "Found unkonwn terminal adapter"
-        ;;
-esac
+identify_terminal_adapter
 
 
 ##############################################################################
