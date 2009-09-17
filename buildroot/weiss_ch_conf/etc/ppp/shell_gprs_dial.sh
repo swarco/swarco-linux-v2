@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-17 19:44:09 gc]
+echo $0 [Version 2009-09-17 20:04:31 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -338,12 +338,12 @@ identify_terminal_adapter() {
 ##############################################################################
 if [ -f $GRPS_ERROR_COUNT_FILE ] ; then
     . $GRPS_ERROR_COUNT_FILE
+    GPRS_ERROR_COUNT=$(($GPRS_ERROR_COUNT + 1))
 else
     init_and_load_drivers
-    exit 1
+    GPRS_ERROR_COUNT=0
 fi
 
-GPRS_ERROR_COUNT=$(($GPRS_ERROR_COUNT + 1))
 print GPRS_ERROR_COUNT: $GPRS_ERROR_COUNT
         
 if [ $GPRS_ERROR_COUNT -gt 5 ] ; then
