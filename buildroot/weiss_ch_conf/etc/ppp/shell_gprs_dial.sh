@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-18 13:53:20 gc]
+echo $0 [Version 2009-09-18 16:35:04 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -181,99 +181,139 @@ at_cmd() {
   return 0
 }
 
+
+# sendsms phonenum "text"
+sendsms() {
+    send "AT+CMGS=\"$1\"" 
+    sleep 3
+    send "$2\\032"
+
+    while true
+    do
+        local line=""
+        read -r -t5 line<&3 || break;
+        
+        #remove trailing carriage return
+        line=${line%%${cr}*}
+        print_rcv "$line"
+        case $line in
+            *OK* )
+                print sending SMS sucessfully
+                return 0;
+                ;;
+            
+            *ERROR*)
+                print ERROR sending SMS
+                return 1
+                break;
+                ;;
+        esac
+    done
+    
+    return 1        
+}
+
 ##############################################################################
 # Driver loading and initialisation of special (USB) devices
 ##############################################################################
 init_and_load_drivers() {
+    local reload_modules=$1
+
     for id in /sys/bus/usb/devices/*
     do
-        if [ -z `cat $id/idVendor` -o  -z `cat $id/idProduct` ]; then
-            continue;
-        fi
+        case `cat $id/idVendor`:`cat $id/idProduct` in
+            :)
+                continue
+                ;;
         
-#    echo checking: id `cat $id/idVendor` idprod: `cat $id/idProduct`
-        
-        if [ `cat $id/idVendor` = "12d1" -a `cat $id/idProduct` = "1003" ]; then
-            echo "found Huawei Technologies Co., Ltd. E220 HSDPA Modem"
-            mount -tusbfs none /proc/bus/usb
-            /usr/bin/huaweiAktBbo 
-            
-            sleep 1
-            rmmod usbserial; modprobe usbserial vendor=0x12d1 product=0x1003
-            for l in 1 2 3 4 5 
-            do
-                if [ -c /dev/ttyUSB0 ]; then break; fi
-                sleep 2
-            done
-        fi
-        
-        if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0041" ]; then
-            echo "found Siemens HC25 in USB mass storage mode"
-            
-            sleep 1
-            
-            for scsi in /sys/bus/scsi/devices/*
-            do
-                echo check: $scsi: `cat $scsi/model`
-                case `cat $scsi/model` in
-                    *HC25\ flash\ disk*)
-                    #echo path: "$scsi/block:"*
-                        local x=`readlink $scsi/block\:*`
-                        local dev=${x##*/}
-                        if [ ! -z "$dev" ]; then
-                            echo ejecting /dev/$dev
-                            eject /dev/$dev
-                            exit 1
-                        fi
-                        ;;
-                esac
-            done
-        fi
-        
-        if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0040" ]; then
-            echo "found Siemens HC25 in USB component mode"
-            
-            sleep 1
-            
-            rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0040
-            
-            sleep 1
-            
-            for l in 1 2 3 4 5 
-            do
-                if [ -c /dev/ttyUSB0 ]; then 
-                    # Modem Port
-                    GPRS_DEVICE=/dev/ttyUSB0
-                    # Application port
-                    GPRS_DEVICE_SECOND=/dev/ttyUSB2
-                    break
+        12d1:1003)
+                echo "found Huawei Technologies Co., Ltd. E220 HSDPA Modem"
+                if [ \! -z "$reload_modules" ]; then
+                    mount -tusbfs none /proc/bus/usb
+                    /usr/bin/huaweiAktBbo 
+                    
+                    sleep 1
+                    rmmod usbserial; modprobe usbserial vendor=0x12d1 product=0x1003
                 fi
-                sleep 2
-            done
-        fi
+                for l in 1 2 3 4 5 
+                do
+                    if [ -c /dev/ttyUSB0 ]; then 
+                        GPRS_DEVICE=/dev/ttyUSB0
+                        break
+                    fi
+                    sleep 2
+                done
+                ;;
         
-        if [ `cat $id/idVendor` = "0681" -a `cat $id/idProduct` = "0047" ]; then
-            echo "found Siemens HC25 in USB CDC-ACM mode"
+        0681:0041)
+                echo "found Siemens HC25 in USB mass storage mode"
+                
+                sleep 1
+                
+                for scsi in /sys/bus/scsi/devices/*
+                do
+                    echo check: $scsi: `cat $scsi/model`
+                    case `cat $scsi/model` in
+                        *HC25\ flash\ disk*)
+                    #echo path: "$scsi/block:"*
+                            local x=`readlink $scsi/block\:*`
+                            local dev=${x##*/}
+                            if [ ! -z "$dev" ]; then
+                                echo ejecting /dev/$dev
+                                eject /dev/$dev
+                                exit 1
+                            fi
+                            ;;
+                    esac
+                done
+                ;;
+                
+            0681:0040)
+                echo "found Siemens HC25 in USB component mode"
+
+                if [ \! -z "$reload_modules" ]; then
+                    sleep 1
+                    rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0040
+                    sleep 1
+                fi
+                
+                for l in 1 2 3 4 5 
+                do
+                    if [ -c /dev/ttyUSB0 ]; then 
+                    # Modem Port
+                        GPRS_DEVICE=/dev/ttyUSB0
+                    # Application port
+                        GPRS_DEVICE_SECOND=/dev/ttyUSB2
+                        break
+                    fi
+                    sleep 2
+                done
+                ;;
             
-            sleep 1
-            
+        
+            0681:0047)
+                echo "found Siemens HC25 in USB CDC-ACM mode"
+                
+                if [ \! -z "$reload_modules" ]; then
+                    sleep 1
         # activate second application port (/dev/ttyUSB0)
-        rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0047
-        
-        sleep 1
-        
-        for l in 1 2 3 4 5 
-        do
-            if [ -c /dev/ttyACM0 ]; then 
+                    rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0047
+                    sleep 1
+                fi
+                
+                for l in 1 2 3 4 5 
+                do
+                    if [ -c /dev/ttyACM0 ]; then 
                 # Modem Port
-                GPRS_DEVICE=/dev/ttyACM0
+                        GPRS_DEVICE=/dev/ttyACM0
                 # Application port
-                GPRS_DEVICE_SECOND=/dev/ttyUSB0
-                break
-            fi
-            sleep 2
-        done
-        fi
+                        GPRS_DEVICE_SECOND=/dev/ttyUSB0
+                        break
+                    fi
+                    sleep 2
+                done
+                ;;
+            esac
     done
 }
 
@@ -281,7 +321,7 @@ init_and_load_drivers() {
 # Check vendor / model of connected terminal adapter
 ##############################################################################
 identify_terminal_adapter() {
-    at_cmd "ATi" || error
+    at_cmd "ATi" || return 1
     print "Terminal adpater identification: $r"
     
     case $r in
@@ -344,35 +384,11 @@ fi
 if [ -f $GRPS_ERROR_COUNT_FILE ] ; then
     . $GRPS_ERROR_COUNT_FILE
     GPRS_ERROR_COUNT=$(($GPRS_ERROR_COUNT + 1))
+    init_and_load_drivers
 else
-    init_and_load_drivers
+    init_and_load_drivers 1
     GPRS_ERROR_COUNT=0
 fi
-
-print GPRS_ERROR_COUNT: $GPRS_ERROR_COUNT
-        
-if [ $GPRS_ERROR_COUNT -gt 5 ] ; then
-    print max err count reached
-    GPRS_ERROR_COUNT=0
-    identify_terminal_adapter
-    reset_terminal_adapter
-    init_and_load_drivers
-fi
-
-cat >$GRPS_ERROR_COUNT_FILE <<FILE_END
-# GRPS-Error Count, do not edit!
-GPRS_ERROR_COUNT=$GPRS_ERROR_COUNT
-FILE_END
-
-
-
-##############################################################################
-# initalize status
-##############################################################################
-
-echo -n >$GPRS_STATUS_FILE
-status GPRS_CONNECT_TIME `date "+%Y-%m-%d %H:%M:%S"`
-
 
 
 
@@ -417,19 +433,37 @@ print "ready"
 for l in 1 2 3 4 5 
 do
     if at_cmd "AT"; then
-        print okay
         break
     else
         command_mode
         wait_quiet 1
     fi
-
-    if [ $l == "5" ]; then
-        exit 1
-    fi
 done
 
+##############################################################################
+# check error count
+##############################################################################
+
+print GPRS_ERROR_COUNT: $GPRS_ERROR_COUNT
+        
+if [ $GPRS_ERROR_COUNT -gt 5 ] ; then
+    print max err count reached
+    GPRS_ERROR_COUNT=0
+    identify_terminal_adapter
+    reset_terminal_adapter
+    init_and_load_drivers 1
+fi
+
+cat >$GRPS_ERROR_COUNT_FILE <<FILE_END
+# GRPS-Error Count, do not edit!
+GPRS_ERROR_COUNT=$GPRS_ERROR_COUNT
+FILE_END
+
+at_cmd "AT" || exit 1
 print "Terminal adapter responses on AT command"
+
+echo -n >$GPRS_STATUS_FILE
+status GPRS_CONNECT_TIME `date "+%Y-%m-%d %H:%M:%S"`
 
 
 # 2009-08-28 gc: hang up if there is a connection in background
@@ -441,7 +475,6 @@ if ! at_cmd "ATH" 20; then
     at_cmd "AT"
     wait_quiet 5
 fi
-
 
 
 identify_terminal_adapter
@@ -576,7 +609,6 @@ at_cmd "ATS0=0"
 ##############################################################################
 # SMS initialization
 ##############################################################################
-
 # read on phone number
 case "$TA_VENDOR $TA_MODEL" in
     *SIEMENS*MC35*)
@@ -598,6 +630,9 @@ at_cmd "AT+CNMI=3,1"
 
 # List UNREAD SMS
 local line=""
+local sms_ping=""
+local sms_reboot=""
+
 send 'AT+CMGL="REC UNREAD"'
 while read -r -t5 line<&3
 do
@@ -607,22 +642,38 @@ do
           *OK*)
               break
               ;;
+          *+CMGL:*)
+              #extract SMS phone number
+              SMS_NUM=${line##*\"REC UNREAD\",\"}
+              SMS_NUM=${SMS_NUM%%\"*}
+              print got phone $SMS_NUM
+              ;;
+
+          *weisselectronic\ ping*)
+              sms_ping=$SMS_NUM
+              ;;
 
           *weisselectronic\ reboot*)
-              logger -t GPRS got reboot request per SMS
-              sleep 10
-              reboot
+              sms_reboot=$SMS_NUM
               ;;
       esac
 done
-
-#print "SMS: $r"
-#wait_quiet 10
 
 # delete all RECEIVED READ SMS from message store
 # fails with "+CMS ERROR: unknown error" if no RECEIVED READ SMS available
 # => IGNORE Error
 at_cmd "AT+CMGD=0,1"
+wait_quiet 1
+
+if [ \! -z "$sms_ping" ]; then
+    sendsms $sms_ping "`hostname`: CSQ:$GPRS_CSQ `uptime`"
+fi
+
+if [ \! -z "$sms_reboot" ]; then
+    logger -t GPRS got reboot request per SMS
+    sleep 10
+    reboot
+fi
 
 
 
@@ -646,7 +697,8 @@ at_cmd "AT+CMGD=0,1"
   at_cmd "AT+CSQ"
   print "Signal Quality: $r"
   r=${r##*CSQ: }
-  status GPRS_CSQ ${r%%,*}
+  GPRS_CSQ=${r%%,*}
+  status GPRS_CSQ $GPRS_CSQ
 
   if [ $TA_VENDOR == "SIEMENS" ]; then
 #

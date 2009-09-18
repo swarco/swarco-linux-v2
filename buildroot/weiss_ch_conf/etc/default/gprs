@@ -51,8 +51,6 @@ GPRS_PPP_LED=/sys/class/leds/led10/brightness
 #GPRS_RESET_CMD='ccm2200_gpio_test /dev/misc/ccm2200_gpio out 0x100 0x100;sleep 5;ccm2200_gpio_test /dev/misc/ccm2200_gpio out 0x000 0x100'
 #GPRS_RESET_CMD='echo 100 >/sys/class/leds/led12/brightness;sleep 5;echo 0 >/sys/class/leds/led12/brightness'
 
-# HC25: enable status LED
-#GPRS_INIT="AT^sled=1"
 # Telit: request CHAP authentication type
 #GPRS_INIT="AT#GAUTH=2"
 
