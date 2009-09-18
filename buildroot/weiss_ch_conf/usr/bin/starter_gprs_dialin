@@ -87,7 +87,9 @@ do
             export GPRS_PPP_LED
             export GPRS_RESET_CMD
             export GPRS_INIT_CMD
-            
+            export GPRS_START_CMD
+            export GPRS_ANSWER_CSD_CMD
+
         
             #comgt /etc/ppp/comgt_gprs.scr -s | logger -p daemon.notice -t GPRS
             sh /etc/ppp/shell_gprs_dial.sh | logger -p daemon.notice -t GPRS

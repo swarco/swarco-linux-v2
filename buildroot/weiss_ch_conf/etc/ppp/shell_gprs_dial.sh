@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-17 20:04:31 gc]
+echo $0 [Version 2009-09-18 13:53:20 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -332,6 +332,11 @@ identify_terminal_adapter() {
 ##############################################################################
 # Main
 ##############################################################################
+
+if [ ! -z "$GPRS_START_CMD" ]; then
+    /bin/sh -c "$GPRS_START_CMD"
+fi
+
 
 ##############################################################################
 # check error count
@@ -750,8 +755,8 @@ on_ring() {
             *RING*)
 
                 at_cmd "ATA" 90 "CONNECT" || return 1
-                echo starting remote_subnet_mgr
-                /usr/weiss/bin/remote_subnet_mgr /etc/weiss/sm1/rem_subnet_prm &
+                echo starting $GPRS_ANSWER_CSD_CMD
+                /bin/sh -c "$GPRS_ANSWER_CSD_CMD" &
                 rsm_pid=$!
                 while [ -d /proc/$rsm_pid ]
                 do
@@ -813,8 +818,9 @@ case $GPRS_DEVICE in
     #check if RI is set in status line
             if [ "${status##*|RI}" != "$status" ]; then
                 echo RINGING
-                # enable if needed
-                on_ring
+                if [ \! -z "$GPRS_ANSWER_CSD_CMD" ] ; then
+                    on_ring
+                fi
             fi
 
             get_break_count
