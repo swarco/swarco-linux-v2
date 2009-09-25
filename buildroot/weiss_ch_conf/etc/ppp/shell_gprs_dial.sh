@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-18 16:35:04 gc]
+echo $0 [Version 2009-09-25 17:50:53 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -557,6 +557,7 @@ do
             network="not registered"
             ;;
     esac
+    loops=$(($loops+1))
 done
 
 if [ -z "$network" ]; then
@@ -570,9 +571,8 @@ fi
 
 status GPRS_ROAMING $network
 
-
-if [ $network == "no registered" ]; then
-  print "Failed to register"
+if [ "$network" == "not registered" ]; then
+  print "Failed to register on network"
   error
 fi
 
