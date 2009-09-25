@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-25 17:50:53 gc]
+echo $0 [Version 2009-09-25 17:58:50 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -666,7 +666,7 @@ at_cmd "AT+CMGD=0,1"
 wait_quiet 1
 
 if [ \! -z "$sms_ping" ]; then
-    sendsms $sms_ping "`hostname`: CSQ:$GPRS_CSQ `uptime`"
+    sendsms $sms_ping "`hostname`: CSQ: $GPRS_CSQ `uptime`"
 fi
 
 if [ \! -z "$sms_reboot" ]; then
