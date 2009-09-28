@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-25 17:58:50 gc]
+echo $0 [Version 2009-09-28 18:02:18 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -75,10 +75,16 @@ reset_terminal_adapter() {
         sleep 20
     else
         case $TA_VENDOR in
+            WAVECOM)
+                at_cmd "AT+CFUN=1"
+                sleep 60
+                ;;
+
             SIEMENS)
                 at_cmd "AT+CFUN=1,1"
                 sleep 60
                 ;;
+
             *)
                 print "Don't known how to reset terminal adapter $TA_VENDOR"
                 #try Siemens command
