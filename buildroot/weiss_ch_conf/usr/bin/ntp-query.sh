@@ -40,6 +40,7 @@ if $NTPDATE $NTPOPTIONS $NTPSERVERS; then
         sh /etc/ppp/gprs-okay.sh
     fi
 else
+    logger -t $0 "ntpdate FAILED"
     if [ -f /etc/ppp/gprs-fail.sh ]; then
         sh /etc/ppp/gprs-fail.sh
     fi
