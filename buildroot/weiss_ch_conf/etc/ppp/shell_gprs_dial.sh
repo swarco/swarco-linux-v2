@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-09-28 18:02:18 gc]
+echo $0 [Version 2009-10-06 16:50:50 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -117,6 +117,8 @@ wait_quiet() {
   if [ "$1" -gt 0 ]; then wait_time=$1; fi
 
   local line=""
+  # prevent read from separating input in different fields
+  local IFS=""
   while read -r -t$wait_time line<&3
   do
       #remove trailing carriage return
@@ -151,11 +153,14 @@ at_cmd() {
   while true
   do
       local line=""
+      # prevent read from separating input in different fields
+      local IFS=""
       if ! read -r -t$wait_time line<&3
       then
           print timeout
           return 2
-      fi    
+      fi
+      unset IFS
       #remove trailing carriage return
       line=${line%%${cr}*}
       print_rcv "$line"
@@ -197,7 +202,10 @@ sendsms() {
     while true
     do
         local line=""
+        # prevent read from separating input in different fields
+        local IFS=""
         read -r -t5 line<&3 || break;
+        unset IFS
         
         #remove trailing carriage return
         line=${line%%${cr}*}
@@ -640,9 +648,13 @@ local sms_ping=""
 local sms_reboot=""
 
 send 'AT+CMGL="REC UNREAD"'
+
+# prevent read from separating input in different fields
+local IFS=""
 while read -r -t5 line<&3
 do
-     line=${line%%${cr}*}
+      unset IFS
+      line=${line%%${cr}*}
       print_rcv "$line"
       case $line in
           *OK*)
@@ -664,6 +676,8 @@ do
               ;;
       esac
 done
+unset IFS
+
 
 # delete all RECEIVED READ SMS from message store
 # fails with "+CMS ERROR: unknown error" if no RECEIVED READ SMS available
