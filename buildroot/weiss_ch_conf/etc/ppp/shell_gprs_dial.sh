@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-10-06 18:05:48 gc]
+echo $0 [Version 2009-10-06 18:39:12 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -117,7 +117,7 @@ wait_quiet() {
   if [ "$1" -gt 0 ]; then wait_time=$1; fi
 
   local line=""
-  while read -r -t$wait_time line<&3
+  while IFS="" read -r -t$wait_time line<&3
   do
       #remove trailing carriage return
       line=${line%%${cr}*}
@@ -151,7 +151,7 @@ at_cmd() {
   while true
   do
       local line=""
-      if ! read -r -t$wait_time line<&3
+      if ! IFS="" read -r -t$wait_time line<&3
       then
           print timeout
           return 2
@@ -197,7 +197,7 @@ sendsms() {
     while true
     do
         local line=""
-        read -r -t5 line<&3 || break;
+        IFS="" read -r -t5 line<&3 || break;
         
         #remove trailing carriage return
         line=${line%%${cr}*}
@@ -640,7 +640,7 @@ local sms_ping=""
 local sms_reboot=""
 
 send 'AT+CMGL="REC UNREAD"'
-while read -r -t5 line<&3
+while IFS="" read -r -t5 line<&3
 do
      line=${line%%${cr}*}
       print_rcv "$line"
@@ -805,7 +805,7 @@ on_ring() {
     print "waiting for ring"
     command_mode
 
-    while read -r -t120 line<&3
+    while IFS="" read -r -t120 line<&3
     do
         line=${line%%${cr}*}
         print_rcv "$line"
