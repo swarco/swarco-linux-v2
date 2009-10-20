@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-10-06 18:39:12 gc]
+echo $0 [Version 2009-10-20 18:42:16 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -133,7 +133,7 @@ wait_quiet() {
 #         3 Additional WAIT string
 # Result $r Result string
 at_cmd() {
-  # r is returned to called
+  # r is returned to caller
   r=""
   local wait_time=2
   local count=0
@@ -157,7 +157,7 @@ at_cmd() {
           return 2
       fi    
       #remove trailing carriage return
-      line=${line%%${cr}*}
+      line="${line%%${cr}*}"
       print_rcv "$line"
       #suppress echo of AT command in result string
       if [ -z "$echo_rcv" -a "$line" = "$1" ]; then echo_rcv="x"; continue; fi
@@ -613,8 +613,48 @@ at_cmd "AT+CSNS=4"
 at_cmd "ATS0=0"
 
 ##############################################################################
-# SMS initialization
+# query some status information from terminal adapter
 ##############################################################################
+  print "querying status information from terminal adapater:"
+#
+  at_cmd "ATi"
+  print "Terminal Adapter: ${r%% OK}"
+  status GPRS_TA "${r%% OK}"
+#
+  at_cmd "AT+CGSN"
+  print "IMEI: ${r%% OK}"
+  status GPRS_IMEI ${r%% OK}
+#
+  at_cmd "AT+CIMI"
+  print "IMSI: ${r%% OK}"
+  status GPRS_IMSI ${r%% OK}
+#
+  at_cmd "AT+CSQ"
+  print "Signal Quality: ${r%% OK}"
+  r=${r##*CSQ: }
+  GPRS_CSQ=${r%%,*}
+  status GPRS_CSQ $GPRS_CSQ
+
+  if [ $TA_VENDOR == "SIEMENS" ]; then
+#
+      at_cmd "AT^SCID"
+      print "SIM card id: $r"
+      r=${r##*SCID: }
+      status GPRS_SCID "${r%% OK}"
+#
+      at_cmd "AT^MONI"
+      status GPRS_MONI "${r%% OK}"
+#
+      at_cmd "AT^MONP"
+      status GPRS_MONP "${r%% OK}"
+
+      at_cmd "AT^SMONG"
+      status GPRS_SMONG "${r%% OK}"
+
+      wait_quiet 5
+
+  fi
+
 # read on phone number
 case "$TA_VENDOR $TA_MODEL" in
     *SIEMENS*MC35*)
@@ -628,6 +668,11 @@ esac
 status GPRS_NUM ${r%% OK}
 #print "Own number: $r"
 
+
+
+##############################################################################
+# SMS initialization
+##############################################################################
 # switch SMS to TEXT mode
 at_cmd "AT+CMGF=1"
 
@@ -680,52 +725,6 @@ if [ \! -z "$sms_reboot" ]; then
     sleep 10
     reboot
 fi
-
-
-
-##############################################################################
-# query some status information from terminal adapter
-##############################################################################
-  print "querying status information from terminal adapater:\n"
-#
-  at_cmd "ATi"
-  print "Terminal Adapter: $r"
-  status GPRS_TA ${r%% OK}
-#
-  at_cmd "AT+CGSN"
-  print "IMEI: $r"
-  status GPRS_IMEI ${r%% OK}
-#
-  at_cmd "AT+CIMI"
-  print "IMSI: $r"
-  status GPRS_IMSI ${r%% OK}
-#
-  at_cmd "AT+CSQ"
-  print "Signal Quality: $r"
-  r=${r##*CSQ: }
-  GPRS_CSQ=${r%%,*}
-  status GPRS_CSQ $GPRS_CSQ
-
-  if [ $TA_VENDOR == "SIEMENS" ]; then
-#
-      at_cmd "AT^SCID"
-      print "SIM card id: $r"
-      r=${r##*SCID: }
-      status GPRS_SCID ${r%% OK}
-#
-      at_cmd "AT^MONI"
-      status GPRS_MONI ${r%% OK}
-#
-      at_cmd "AT^MONP"
-      status GPRS_MONP ${r%% OK}
-
-      at_cmd "AT^SMONG"
-      status GPRS_SMONG ${r%% OK}
-
-      wait_quiet 5
-
-  fi
-
 
 
 ##############################################################################
@@ -907,4 +906,5 @@ exit 0
 # Local Variables:
 # mode: shell-script
 # time-stamp-pattern: "20/\\[Version[\t ]+%%\\]"
+# backup-inhibited: t
 # End:
