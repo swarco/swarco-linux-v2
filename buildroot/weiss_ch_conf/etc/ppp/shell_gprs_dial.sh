@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-10-20 18:42:16 gc]
+echo $0 [Version 2009-11-20 15:59:19 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -352,6 +352,8 @@ identify_terminal_adapter() {
         *WAVECOM*)
             TA_VENDOR=WAVECOM
             print "Found Wavecom GPRS terminal adapter"
+            # Query WAVECOM time for log
+            at_cmd "AT+WRST?"
             ;;
         
         *huawei*)
