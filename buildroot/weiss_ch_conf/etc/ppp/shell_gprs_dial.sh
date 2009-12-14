@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-11-20 15:59:19 gc]
+echo $0 [Version 2009-12-14 18:45:35 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -528,16 +528,36 @@ at_cmd "AT+CMEE=2"
 ##############################################################################
 # Select (manually) GSM operator
 ##############################################################################
+
 op_cmd="AT+COPS=0"
 
-if [ \! -z "$GPRS_OPERATOR" -a "$GPRS_OPERATOR" -ne 0 ]; then
-    op_cmd="AT+COPS=1,2,\"$GPRS_OPERATOR\""
-    print "Setting manual selected operator to $op_cmd"
-fi
+case "$TA_VENDOR $TA_MODEL" in
+    *SIEMENS*HC25*)
+        # supply net access type (GSM or UMTS) for Siemens HC25 UMTS TA
+        if [ \! -z "$GPRS_NET_ACCESS_TYPE" ]; then
+            op_cmd="AT+COPS=0,,,$GPRS_NET_ACCESS_TYPE"
+        fi
 
-if [ ! -z "$GPRS_NET_ACCESS_TYPE" ]; then
-    op_cmd="$op_cmd,$GPRS_NET_ACCESS_TYPE"
-fi
+
+        if [ \! -z "$GPRS_OPERATOR" -a "$GPRS_OPERATOR" -ne 0 ]; then
+            if [ \! -z "$GPRS_NET_ACCESS_TYPE" ]; then
+                op_cmd="AT+COPS=1,2,\"$GPRS_OPERATOR\",$GPRS_NET_ACCESS_TYPE"
+            else
+                op_cmd="AT+COPS=1,2,\"$GPRS_OPERATOR\""
+            fi
+            print "Setting manual selected operator to $op_cmd"
+        fi
+        ;;
+    
+    *)
+        if [ \! -z "$GPRS_OPERATOR" -a "$GPRS_OPERATOR" -ne 0 ]; then
+            op_cmd="AT+COPS=1,2,\"$GPRS_OPERATOR\""
+            print "Setting manual selected operator to $op_cmd"
+        fi
+        ;;
+esac
+
+
 
 at_cmd $op_cmd 90 || error
 
