@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2009-12-14 18:45:35 gc]
+echo $0 [Version 2010-02-11 19:59:56 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -276,6 +276,7 @@ init_and_load_drivers() {
                 
             0681:0040)
                 echo "found Siemens HC25 in USB component mode"
+                local dev=/dev/ttyUSB0
 
                 if [ \! -z "$reload_modules" ]; then
                     sleep 1
@@ -285,11 +286,17 @@ init_and_load_drivers() {
                 
                 for l in 1 2 3 4 5 
                 do
-                    if [ -c /dev/ttyUSB0 ]; then 
-                    # Modem Port
-                        GPRS_DEVICE=/dev/ttyUSB0
-                    # Application port
-                        GPRS_DEVICE_SECOND=/dev/ttyUSB2
+                    echo hier $l $dev
+                    if [ -c "$dev" ]; then 
+                        # Application port
+                        GPRS_DEVICE_APP="$dev"
+                        GPRS_DEVICE=$GPRS_DEVICE_APP
+                        if [ -c /dev/ttyUSB2 ]; then 
+                            # Modem Port
+                            GPRS_DEVICE_MODEM=/dev/ttyUSB2
+                            #GPRS_DEVICE=$GPRS_DEVICE_MODEM
+                            fi
+                            break
                         break
                     fi
                     sleep 2
@@ -309,13 +316,20 @@ init_and_load_drivers() {
                 
                 for l in 1 2 3 4 5 
                 do
-                    if [ -c /dev/ttyACM0 ]; then 
+                    for d in /dev/ttyACM*
+                    do 
+                        if [ -c $d ]; then 
                 # Modem Port
-                        GPRS_DEVICE=/dev/ttyACM0
+                            GPRS_DEVICE_MODEM=$d
+                            GPRS_DEVICE=$GPRS_DEVICE_MODEM
                 # Application port
-                        GPRS_DEVICE_SECOND=/dev/ttyUSB0
-                        break
-                    fi
+                            if [ -c /dev/ttyUSB0 ]; then 
+                                GPRS_DEVICE_APP=/dev/ttyUSB0
+                                GPRS_DEVICE=$GPRS_DEVICE_APP
+                            fi
+                            break
+                        fi
+                    done
                     sleep 2
                 done
                 ;;
@@ -408,6 +422,7 @@ if [ ! -c $GPRS_DEVICE ]; then
 fi
 
 print "Starting GPRS connection on device $GPRS_DEVICE ($GPRS_BAUDRATE baud)"
+print "(Modem device: $GPRS_DEVICE_MODEM)"
 
 # prevent blocking when opening the TTY device due modem status lines
 stty -F $GPRS_DEVICE clocal -crtscts
@@ -658,11 +673,18 @@ at_cmd "ATS0=0"
   status GPRS_CSQ $GPRS_CSQ
 
   if [ $TA_VENDOR == "SIEMENS" ]; then
-#
-      at_cmd "AT^SCID"
-      print "SIM card id: $r"
-      r=${r##*SCID: }
-      status GPRS_SCID "${r%% OK}"
+
+      case "$TA_MODEL" in
+          *HC25*)
+              ;;
+
+          *)
+              at_cmd "AT^SCID"
+              print "SIM card id: $r"
+              r=${r##*SCID: }
+              status GPRS_SCID "${r%% OK}"
+              ;;
+      esac
 #
       at_cmd "AT^MONI"
       status GPRS_MONI "${r%% OK}"
@@ -670,9 +692,15 @@ at_cmd "ATS0=0"
       at_cmd "AT^MONP"
       status GPRS_MONP "${r%% OK}"
 
-      at_cmd "AT^SMONG"
-      status GPRS_SMONG "${r%% OK}"
+      case "$TA_MODEL" in
+          *HC25*)
+              ;;
 
+          *)
+              at_cmd "AT^SMONG"
+              status GPRS_SMONG "${r%% OK}"
+              ;;
+      esac
       wait_quiet 5
 
   fi
@@ -699,7 +727,21 @@ status GPRS_NUM ${r%% OK}
 at_cmd "AT+CMGF=1"
 
 #2009-08-28 gc: enable URC on incoming SMS (and break of data/GPRS connection)
-at_cmd "AT+CNMI=3,1"
+case "$TA_VENDOR $TA_MODEL" in
+    *SIEMENS*HC25*)
+        at_cmd "AT+CNMI=2,1"
+        ;;
+    *WAVECOM*)
+        at_cmd "AT+CNMI=2,1"
+        # enable Ring Indicator Line on
+        #   Bit 1: Incoming calls (RING)
+        #   Bit 2: Incoming SMS (URCs: +CMTI; +CMT)
+        at_cmd "AT+WRIM=0,$(((1<<2)+(1<<1)))"
+        ;;
+    *)
+        at_cmd "AT+CNMI=3,1"
+        ;;
+esac
 
 # List UNREAD SMS
 local line=""
@@ -782,7 +824,28 @@ print "PDP Context attach: $r"
 wait_quiet 1
 
 #GPRS_CMD_SET=1
-if [ ! -z "$GPRS_CMD_SET" ]; then
+
+
+if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
+# use a separate modem device for PPP connection, 
+# AT command interpreter on application port remains still accessible
+# connect file handle 3 with modem device
+    print "Switching to modem interface $GPRS_DEVICE_MODEM"
+    if stty -F $GPRS_DEVICE_MODEM $GPRS_BAUDRATE -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -echo -echoe -echok -echoctl -echoke 2>&1 ; then
+       
+        exec 3<>$GPRS_DEVICE_MODEM
+        for l in 1 2 3 4 5 
+        do
+            if at_cmd "AT"; then
+                break
+            fi
+        done
+    else
+        GPRS_DEVICE_MODEM=""
+    fi
+fi
+
+if [ \! -z "$GPRS_CMD_SET" ]; then
     at_cmd "AT+GMI"
     # activate PDP context
     at_cmd "AT+CGACT=1,1" 90 || error
@@ -813,7 +876,21 @@ print "running pppd: /usr/sbin/pppd $ppp_args"
 stty -F $GPRS_DEVICE -ignbrk brkint
 /usr/sbin/pppd $ppp_args <&3 >&3 &
 # save pppd's PID file in case of pppd hangs before it writes the PID file
-echo $! >/var/run/ppp0.pid
+ppp_pid=$!
+echo $ppp_pid >/var/run/ppp0.pid
+                
+
+if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
+# reconnect file handle 3 on application interface
+    print "Switching to application interface $GPRS_DEVICE"
+    exec 3<>$GPRS_DEVICE
+    for l in 1 2 3 4 5 
+    do
+        if at_cmd "AT"; then
+            break
+        fi
+    done
+fi
 
 # 2009-08-28 gc: experimental, on ring
 on_ring() {
@@ -878,46 +955,82 @@ get_break_count() {
 #    print "brk: $b"
 }
 
-case $GPRS_DEVICE in
-    /dev/com1 | /dev/ttyAT1)
-        
-        ppp_pid=$!
-        
-        
-        status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
-        get_break_count
-        break_count=$b
-        
-        while [ -d /proc/$ppp_pid ]
-        do
-            status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
+
+
+case "$TA_VENDOR $TA_MODEL" in
+    *SIEMENS*MC*)
+        case $GPRS_DEVICE in
+            /dev/com1 | /dev/ttyAT1)
+                
+                status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
+                get_break_count
+                break_count=$b
+                
+                while [ -d /proc/$ppp_pid ]
+                do
+                    status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
     #example:
     # 1: uart:ATMEL_SERIAL mmio:0xFFFC4000 irq:7 tx:14820 rx:18025 oe:1 RTS|CTS|DTR|DSR|CD
-            
+                    
     #check if RI is set in status line
-            if [ "${status##*|RI}" != "$status" ]; then
-                echo RINGING
-                if [ \! -z "$GPRS_ANSWER_CSD_CMD" ] ; then
-                    on_ring
-                fi
-            fi
-
-            get_break_count
-            if [ "$b" -ne "$break_count" ]; then
-                echo BREAK received
-                kill $ppp_pid
-                break_count=$b
-            fi
+                    if [ "${status##*|RI}" != "$status" ]; then
+                        echo ringing
+                        if [ \! -z "$GPRS_ANSWER_CSD_CMD" ] ; then
+                            on_ring
+                        fi
+                    fi
+                    
+                    get_break_count
+                    if [ "$b" -ne "$break_count" ]; then
+                        echo BREAK received
+                        kill $ppp_pid
+                        break_count=$b
+                    fi
+                    
+                    sleep 1
+                done
+                ;;
             
-            sleep 1
-        done
-
+            *)
+                # reading status while connected is currently only
+                # supported on /dev/com1
+                wait
+                ;;
+        esac
         ;;
 
+    *SIEMENS*HC25*)
+        while [ -d /proc/$ppp_pid ] 
+        do
+            # answer on ^SQPORT should be "Application" not "Modem"!
+            # at_cmd "AT^SQPORT"
+
+            while [ -d /proc/$ppp_pid ]  && IFS="" read -r -t10 line<&3
+            do
+                line=${line%%${cr}*}
+                print_rcv "APP_PORT: $line"
+                case $line in
+                    *+CMTI:* | *+CMT:*)
+                        echo SMS URC received
+                        kill $ppp_pid
+                        ;;
+
+                    *RING*)
+                        
+                        print "ringing"
+                        break;
+                        ;;
+                esac
+            done
+            sleep 1            
+        done
+        ;;
+    
     *)
         wait
         ;;
 esac
+
 
 print "pppd terminated"
 #fuser -k $GPRS_DEVICE
