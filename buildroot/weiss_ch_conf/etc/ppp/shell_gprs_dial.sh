@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2010-02-11 19:59:56 gc]
+echo $0 [Version 2010-02-12 19:21:50 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -286,7 +286,6 @@ init_and_load_drivers() {
                 
                 for l in 1 2 3 4 5 
                 do
-                    echo hier $l $dev
                     if [ -c "$dev" ]; then 
                         # Application port
                         GPRS_DEVICE_APP="$dev"
@@ -322,14 +321,20 @@ init_and_load_drivers() {
                 # Modem Port
                             GPRS_DEVICE_MODEM=$d
                             GPRS_DEVICE=$GPRS_DEVICE_MODEM
-                # Application port
-                            if [ -c /dev/ttyUSB0 ]; then 
-                                GPRS_DEVICE_APP=/dev/ttyUSB0
-                                GPRS_DEVICE=$GPRS_DEVICE_APP
-                            fi
                             break
                         fi
                     done
+                    sleep 2
+                done
+                for l in 1 2 3 4 5 
+                do
+                    local d=/dev/ttyUSB0
+                # Application port
+                    if [ -c "$d" ]; then 
+                        GPRS_DEVICE_APP=$d
+                        GPRS_DEVICE=$GPRS_DEVICE_APP
+                        break
+                    fi
                     sleep 2
                 done
                 ;;
@@ -403,6 +408,7 @@ fi
 ##############################################################################
 # check error count
 ##############################################################################
+GPRS_ERROR_COUNT_MAX=5
 if [ -f $GRPS_ERROR_COUNT_FILE ] ; then
     . $GRPS_ERROR_COUNT_FILE
     GPRS_ERROR_COUNT=$(($GPRS_ERROR_COUNT + 1))
@@ -469,7 +475,7 @@ done
 
 print GPRS_ERROR_COUNT: $GPRS_ERROR_COUNT
         
-if [ $GPRS_ERROR_COUNT -gt 5 ] ; then
+if [ $GPRS_ERROR_COUNT -ge $GPRS_ERROR_COUNT_MAX ] ; then
     print max err count reached
     GPRS_ERROR_COUNT=0
     identify_terminal_adapter
@@ -878,7 +884,8 @@ stty -F $GPRS_DEVICE -ignbrk brkint
 # save pppd's PID file in case of pppd hangs before it writes the PID file
 ppp_pid=$!
 echo $ppp_pid >/var/run/ppp0.pid
-                
+
+set -x                
 
 if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
 # reconnect file handle 3 on application interface
@@ -891,6 +898,7 @@ if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
         fi
     done
 fi
+
 
 # 2009-08-28 gc: experimental, on ring
 on_ring() {
@@ -956,7 +964,6 @@ get_break_count() {
 }
 
 
-
 case "$TA_VENDOR $TA_MODEL" in
     *SIEMENS*MC*)
         case $GPRS_DEVICE in
@@ -1000,30 +1007,74 @@ case "$TA_VENDOR $TA_MODEL" in
         ;;
 
     *SIEMENS*HC25*)
-        while [ -d /proc/$ppp_pid ] 
-        do
+        if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
+            count=360
+            while [ -d /proc/$ppp_pid ] 
+            do
             # answer on ^SQPORT should be "Application" not "Modem"!
             # at_cmd "AT^SQPORT"
-
-            while [ -d /proc/$ppp_pid ]  && IFS="" read -r -t10 line<&3
-            do
-                line=${line%%${cr}*}
-                print_rcv "APP_PORT: $line"
-                case $line in
-                    *+CMTI:* | *+CMT:*)
-                        echo SMS URC received
-                        kill $ppp_pid
+                count=$(($count+1))
+                if [ $count -gt 360 ]
+                then
+                    count=0
+            #
+            # query Packet Switched Data Information:
+                    at_cmd 'AT^SIND="psinfo",2'
+                    case "$r" in
+                        *'^SIND: psinfo,0,0'*)
+                            print "PSINFO: no (E)GPRS available in current cell"
+                            ;;
+                        *'^SIND: psinfo,0,1'*)
+                            print "PSINFO: GPRS available"
+                            ;;
+                        *'^SIND: psinfo,0,2'*)
+                            print "PSINFO: GPRS attached"
+                            ;;
+                        *'^SIND: psinfo,0,3'*)
+                            print "PSINFO: EGPRS available"
                         ;;
+                        *'^SIND: psinfo,0,4'*)
+                            print "PSINFO: EGPRS attached"
+                            ;;
+                        *'^SIND: psinfo,0,5'*)
+                            print "PSINFO: camped on WCDMA cell"
+                            ;;
+                        *'^SIND: psinfo,0,6'*)
+                            print "PSINFO: WCDMA PS attached"
+                            ;;
+                        *'^SIND: psinfo,0,7'*)
+                            print "PSINFO: camped on HSDPA-capable cell"
+                            ;;
+                        *'^SIND: psinfo,0,8'*)
+                            print "PSINFO: PS attached in HSDPA-capable cell"
+                            ;;
+                    esac
+                fi
+                
+            #
 
-                    *RING*)
+                while [ -d /proc/$ppp_pid ]  && IFS="" read -r -t10 line<&3
+                do
+                    line=${line%%${cr}*}
+                    print_rcv "APP_PORT: $line"
+                    case $line in
+                        *+CMTI:* | *+CMT:*)
+                            echo SMS URC received
+                            kill $ppp_pid
+                            ;;
                         
-                        print "ringing"
-                        break;
-                        ;;
-                esac
+                        *RING*)
+                            
+                            print "ringing"
+                            break;
+                            ;;
+                    esac
+                done
+                sleep 1            
             done
-            sleep 1            
-        done
+        else
+            wait
+        fi
         ;;
     
     *)
