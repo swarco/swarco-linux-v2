@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2010-02-12 19:25:05 gc]
+echo $0 [Version 2010-02-12 19:26:36 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -519,7 +519,7 @@ identify_terminal_adapter
 at_cmd "AT+CPIN?" 10 "+CPIN:"|| error
 wait_quiet 1
 case $r in
-    *SIM?PIN*)
+    *'SIM PIN'*)
         if [ -z "$GPRS_PIN" ]; then
             print "ERROR: The GPRS_PIN env variable is not set"
             exit 1
@@ -534,7 +534,7 @@ case $r in
         fi
         ;;
     
-    *READY* | *SIM?PUK*)
+    *READY* | *'SIM PUK'*)
         ;;
     
     *)
