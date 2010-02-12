@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2010-02-12 19:21:50 gc]
+echo $0 [Version 2010-02-12 19:25:05 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -477,6 +477,8 @@ print GPRS_ERROR_COUNT: $GPRS_ERROR_COUNT
         
 if [ $GPRS_ERROR_COUNT -ge $GPRS_ERROR_COUNT_MAX ] ; then
     print max err count reached
+    # reload drivers in case /dev/ttyUSBxx device is not present
+    init_and_load_drivers 1
     GPRS_ERROR_COUNT=0
     identify_terminal_adapter
     reset_terminal_adapter
