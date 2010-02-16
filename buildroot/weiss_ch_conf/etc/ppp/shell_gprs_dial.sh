@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2010-02-12 19:26:36 gc]
+echo $0 [Version 2010-02-16 19:08:07 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -219,6 +219,59 @@ sendsms() {
     return 1        
 }
 
+
+##############################################################################
+# load modules and detect ttyUSB* devices
+##############################################################################
+find_usb_device() {
+    local reload_modules=$1
+    local vendor=$2
+    local product=$3
+    local dev_app=$4
+    local dev_mod=$5
+    
+    if [ \! -z "$reload_modules" ]; then
+        sleep 1
+        rmmod usbserial; modprobe usbserial vendor=0x$vendor product=0x$product
+        sleep 1
+    fi
+                
+    for l in 1 2 3 4 5 
+    do
+        if [ -c "$dev_app" ]; then 
+            # Application port
+            GPRS_DEVICE_APP="$dev_app"
+            GPRS_DEVICE=$GPRS_DEVICE_APP
+            if [ \! -z "$dev_mod" -a -c "$dev_mod" ]; then 
+                # Modem Port
+                GPRS_DEVICE_MODEM="$dev_mod"
+            fi
+            break
+        fi
+        sleep 2
+    done
+
+    # force module reload if no device is found!
+    if [ -z "$GPRS_DEVICE_APP" ]; then
+        rmmod usbserial; modprobe usbserial vendor=0x$vendor product=0x$product
+        sleep 1
+        for l in 1 2 3 4 5 
+        do
+            if [ -c "$dev_app" ]; then 
+            # Application port
+                GPRS_DEVICE_APP="$dev_app"
+                GPRS_DEVICE=$GPRS_DEVICE_APP
+                if [  \! -z "$dev_mod" -a -c "$dev_mod" ]; then 
+                # Modem Port
+                    GPRS_DEVICE_MODEM="$dev_mod"
+                fi
+                break
+            fi
+            sleep 2
+        done
+    fi
+}
+
 ##############################################################################
 # Driver loading and initialisation of special (USB) devices
 ##############################################################################
@@ -237,18 +290,9 @@ init_and_load_drivers() {
                 if [ \! -z "$reload_modules" ]; then
                     mount -tusbfs none /proc/bus/usb
                     /usr/bin/huaweiAktBbo 
-                    
-                    sleep 1
-                    rmmod usbserial; modprobe usbserial vendor=0x12d1 product=0x1003
                 fi
-                for l in 1 2 3 4 5 
-                do
-                    if [ -c /dev/ttyUSB0 ]; then 
-                        GPRS_DEVICE=/dev/ttyUSB0
-                        break
-                    fi
-                    sleep 2
-                done
+
+                find_usb_device "$reload_modules" 12d1 1003 /dev/ttyUSB0
                 ;;
         
         0681:0041)
@@ -258,15 +302,15 @@ init_and_load_drivers() {
                 
                 for scsi in /sys/bus/scsi/devices/*
                 do
-                    echo check: $scsi: `cat $scsi/model`
+                    #echo check: $scsi: `cat $scsi/model`
                     case `cat $scsi/model` in
                         *HC25\ flash\ disk*)
-                    #echo path: "$scsi/block:"*
+                            #echo path: "$scsi/block:"*
                             local x=`readlink $scsi/block\:*`
                             local dev=${x##*/}
                             if [ ! -z "$dev" ]; then
-                                echo ejecting /dev/$dev
-                                eject /dev/$dev
+                                echo "ejecting Siemens HC25 in USB mass storage device: /dev/$dev"
+                                eject "/dev/$dev"
                                 exit 1
                             fi
                             ;;
@@ -276,67 +320,15 @@ init_and_load_drivers() {
                 
             0681:0040)
                 echo "found Siemens HC25 in USB component mode"
-                local dev=/dev/ttyUSB0
 
-                if [ \! -z "$reload_modules" ]; then
-                    sleep 1
-                    rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0040
-                    sleep 1
-                fi
-                
-                for l in 1 2 3 4 5 
-                do
-                    if [ -c "$dev" ]; then 
-                        # Application port
-                        GPRS_DEVICE_APP="$dev"
-                        GPRS_DEVICE=$GPRS_DEVICE_APP
-                        if [ -c /dev/ttyUSB2 ]; then 
-                            # Modem Port
-                            GPRS_DEVICE_MODEM=/dev/ttyUSB2
-                            #GPRS_DEVICE=$GPRS_DEVICE_MODEM
-                            fi
-                            break
-                        break
-                    fi
-                    sleep 2
-                done
+                find_usb_device "$reload_modules" 0681 0040 /dev/ttyUSB0 /dev/ttyUSB2
                 ;;
             
         
             0681:0047)
                 echo "found Siemens HC25 in USB CDC-ACM mode"
                 
-                if [ \! -z "$reload_modules" ]; then
-                    sleep 1
-        # activate second application port (/dev/ttyUSB0)
-                    rmmod usbserial; modprobe usbserial vendor=0x0681 product=0x0047
-                    sleep 1
-                fi
-                
-                for l in 1 2 3 4 5 
-                do
-                    for d in /dev/ttyACM*
-                    do 
-                        if [ -c $d ]; then 
-                # Modem Port
-                            GPRS_DEVICE_MODEM=$d
-                            GPRS_DEVICE=$GPRS_DEVICE_MODEM
-                            break
-                        fi
-                    done
-                    sleep 2
-                done
-                for l in 1 2 3 4 5 
-                do
-                    local d=/dev/ttyUSB0
-                # Application port
-                    if [ -c "$d" ]; then 
-                        GPRS_DEVICE_APP=$d
-                        GPRS_DEVICE=$GPRS_DEVICE_APP
-                        break
-                    fi
-                    sleep 2
-                done
+                find_usb_device "$reload_modules" 0681 0047 /dev/ttyUSB0 /dev/ttyACM0
                 ;;
             esac
     done
@@ -395,6 +387,29 @@ identify_terminal_adapter() {
 }
 
 
+initiazlize_port() {
+    local device=$1
+
+    # prevent blocking when opening the TTY device due modem status lines
+    stty -F $device clocal -crtscts
+    
+    echo . <device >/dev/null&
+    sleep 5
+    if [ -d /proc/$! ]; then 
+        echo TTY driver hangs; 
+        return 1
+    fi
+
+
+    if ! stty -F $device $GPRS_BAUDRATE -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -echo -echoe -echok -echoctl -echoke 2>&1 ; then
+
+    # stty may say "no such device"
+        print "stty failed"
+        return 1
+    fi
+
+    return 0
+}
 
 ##############################################################################
 # Main
@@ -430,28 +445,13 @@ fi
 print "Starting GPRS connection on device $GPRS_DEVICE ($GPRS_BAUDRATE baud)"
 print "(Modem device: $GPRS_DEVICE_MODEM)"
 
-# prevent blocking when opening the TTY device due modem status lines
-stty -F $GPRS_DEVICE clocal -crtscts
-
-echo . <$GPRS_DEVICE >/dev/null&
-sleep 5
-if [ -d /proc/$! ]; then 
-    echo TTY driver hangs; 
+if ! initiazlize_port $GPRS_DEVICE; then
     sleep 10
-    reboot
-    exit 3; 
-fi
-
-
-if ! stty -F $GPRS_DEVICE $GPRS_BAUDRATE -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -echo -echoe -echok -echoctl -echoke 2>&1 ; then
-
-    # stty may say "no such device"
-    print "stty failed"
     killall watchdog
-    reboot &
-    error
-
+    reboot
+    exit 3
 fi
+
 # connect file handle 3 with terminal adapter
 exec 3<>$GPRS_DEVICE
 
@@ -744,7 +744,7 @@ case "$TA_VENDOR $TA_MODEL" in
         # enable Ring Indicator Line on
         #   Bit 1: Incoming calls (RING)
         #   Bit 2: Incoming SMS (URCs: +CMTI; +CMT)
-        at_cmd "AT+WRIM=0,$(((1<<2)+(1<<1)))"
+        at_cmd "AT+WRIM=1,$(((1<<2)+(1<<1))),33"
         ;;
     *)
         at_cmd "AT+CNMI=3,1"
@@ -833,13 +833,12 @@ wait_quiet 1
 
 #GPRS_CMD_SET=1
 
-
 if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
 # use a separate modem device for PPP connection, 
 # AT command interpreter on application port remains still accessible
 # connect file handle 3 with modem device
     print "Switching to modem interface $GPRS_DEVICE_MODEM"
-    if stty -F $GPRS_DEVICE_MODEM $GPRS_BAUDRATE -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -echo -echoe -echok -echoctl -echoke 2>&1 ; then
+    if  initiazlize_port $GPRS_DEVICE_MODEM; then
        
         exec 3<>$GPRS_DEVICE_MODEM
         for l in 1 2 3 4 5 
@@ -1079,6 +1078,33 @@ case "$TA_VENDOR $TA_MODEL" in
         fi
         ;;
     
+    *WAVECOM*)
+        case $GPRS_DEVICE in
+            /dev/com1 | /dev/ttyAT1)
+                
+                while [ -d /proc/$ppp_pid ]
+                do
+                    status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
+    #example:
+    # 1: uart:ATMEL_SERIAL mmio:0xFFFC4000 irq:7 tx:14820 rx:18025 oe:1 RTS|CTS|DTR|DSR|CD
+                    
+    #check if RI is set in status line
+                    if [ "${status##*|RI}" != "$status" ]; then
+                        echo RINGING
+                        kill $ppp_pid
+                    fi
+                    
+                    sleep 1
+                done
+                ;;
+            
+            *)
+                # reading status while connected is currently only
+                # supported on /dev/com1
+                wait
+                ;;
+        esac
+        ;;
     *)
         wait
         ;;
