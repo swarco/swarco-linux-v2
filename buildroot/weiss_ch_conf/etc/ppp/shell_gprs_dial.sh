@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2010-02-19 20:00:07 gc]
+echo $0 [Version 2010-02-19 20:12:47 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -60,8 +60,7 @@ print_at_cmd()
 print_rcv() {
       # echo removes leading / trailing whitespaces
       if ! [ -z "`echo -n $1`" ]; then
-          # hide PIN-Number from log, substitute with <hidden>
-          print_at_cmd "RCV: ${1/+CPIN=????/+CPIN=<hidden>}"
+          print_at_cmd "RCV: $1"
       fi
 }
 
