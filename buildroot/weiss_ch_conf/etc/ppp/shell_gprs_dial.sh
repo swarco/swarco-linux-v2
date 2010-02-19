@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2010-02-19 19:42:14 gc]
+echo $0 [Version 2010-02-19 20:00:07 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -52,16 +52,16 @@ status() {
 print_at_cmd()
 {
     if [ ! -z "$AT_VERBOSE_FD" ]; then 
-        # hide PIN-Number from log, substitute with xxxx
-        echo >&$AT_VERBOSE_FD "${*/+CPIN=????/+CPIN=xxxx}" 
+        # hide PIN-Number from log, substitute with <hidden>
+        echo >&$AT_VERBOSE_FD "${*/+CPIN=????/+CPIN=<hidden>}" 
     fi
 }
 
 print_rcv() {
       # echo removes leading / trailing whitespaces
       if ! [ -z "`echo -n $1`" ]; then
-          # hide PIN-Number from log, substitute with xxxx
-          print_at_cmd "RCV: ${1/+CPIN=????/+CPIN=xxxx}"
+          # hide PIN-Number from log, substitute with <hidden>
+          print_at_cmd "RCV: ${1/+CPIN=????/+CPIN=<hidden>}"
       fi
 }
 
