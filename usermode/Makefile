@@ -31,7 +31,7 @@ CFLAGS		+=  -I$(KERNEL_PATH)/include
 LDFLAGS         += -lpthread -lutil
 
 PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward ro rw \
-	   file_write_test wlogin huaweiAktBbo
+	   file_write_test wlogin huaweiAktBbo led_blinkd
 
 .PHONY: all
 all: $(PROGRAMS) install
