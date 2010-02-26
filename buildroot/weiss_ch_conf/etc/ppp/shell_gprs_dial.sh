@@ -14,7 +14,7 @@
 #*  
 #****************************************************************************/
 
-echo $0 [Version 2010-02-19 20:12:47 gc]
+echo $0 [Version 2010-02-26 20:04:28 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -37,6 +37,11 @@ cr=`echo -n -e "\r"`
 ##############################################################################
 # Shell functions
 ##############################################################################
+
+set_gprs_led() {
+    echo 0 "$*" >/tmp/gprs_led 
+}
+
 
 # print log message
 print() {
@@ -417,6 +422,7 @@ initiazlize_port() {
 ##############################################################################
 # Main
 ##############################################################################
+set_gprs_led off  
 
 if [ ! -z "$GPRS_START_CMD" ]; then
     /bin/sh -c "$GPRS_START_CMD"
@@ -495,6 +501,10 @@ FILE_END
 
 at_cmd "AT" || exit 1
 print "Terminal adapter responses on AT command"
+
+# blink on pulse of 50ms for each 1000ms 
+set_gprs_led 1000 50
+
 
 echo -n >$GPRS_STATUS_FILE
 status GPRS_CONNECT_TIME `date "+%Y-%m-%d %H:%M:%S"`
@@ -641,6 +651,8 @@ r=${r%\"*}
 print "Registered on $network network: $r"
 
 status GPRS_NETWORK $r
+# blink two pulses of 50ms for each 1000ms 
+set_gprs_led 1000 50 100 50
 
 ##############################################################################
 # send user init string

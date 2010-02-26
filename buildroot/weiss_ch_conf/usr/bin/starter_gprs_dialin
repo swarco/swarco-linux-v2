@@ -20,6 +20,7 @@
 #*****************************************************************************
 
 
+blinkd_pid=""
 
 while true
 do
@@ -44,6 +45,11 @@ do
     then
         echo "GPRS dialin disabled"
         exit 1
+    fi
+
+    if [ -z "$blinkd_pid" ]; then
+        /usr/bin/led_blinkd $GPRS_PPP_LED /tmp/gprs_led &
+        blinkd_pid=$!
     fi
 
     if ! [ -z "$GPRS_DNS2" -a \

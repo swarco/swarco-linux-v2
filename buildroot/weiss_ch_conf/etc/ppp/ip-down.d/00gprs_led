@@ -1,5 +1,10 @@
 #!/bin/sh
 
+
+set_gprs_led() {
+    echo 0 "$*" >/tmp/gprs_led 
+}
+
 if [ -f /etc/default/gprs ]
 then
 
@@ -10,7 +15,8 @@ then
 
       if [ $PPP_IFACE = $GPRS_PPP_IFACE ] 
       then
-          echo 0 >$GPRS_PPP_LED
+          #echo 0 >$GPRS_PPP_LED
+          set_gprs_led off
       fi
   fi
 fi
