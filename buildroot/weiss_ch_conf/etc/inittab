@@ -26,7 +26,6 @@ null::sysinit:/bin/hostname -F /etc/hostname
 
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS
-null::sysinit:/sbin/watchdog -t 1 /dev/ccm2200_watchdog
 
 # Put a getty on the serial port
 ttySconsole::respawn:/sbin/getty -L ttySconsole 38400 ansi-ht

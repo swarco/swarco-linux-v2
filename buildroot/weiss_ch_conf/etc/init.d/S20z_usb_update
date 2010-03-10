@@ -75,3 +75,8 @@ if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) == 0 ] &&
 
     while true; do sleep 1; done
 fi
+
+# Local Variables:
+# mode: shell-script
+# backup-inhibited: t
+# End:
