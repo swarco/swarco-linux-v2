@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-03-12 13:25:42 gc]
+echo $0 [Version 2010-03-18 13:46:23 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -419,7 +419,7 @@ initiazlize_port() {
     # prevent blocking when opening the TTY device due modem status lines
     stty -F $device clocal -crtscts
 
-    echo . <device >/dev/null&
+    echo . <$device >/dev/null&
     sleep 5
     if [ -d /proc/$! ]; then
         echo TTY driver hangs;
