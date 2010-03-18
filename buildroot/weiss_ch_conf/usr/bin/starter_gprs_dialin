@@ -85,6 +85,7 @@ do
             export GPRS_OPERATOR
             export GPRS_NET_ACCESS_TYPE
             export GPRS_USER
+            export GPRS_PASSWD
             export GPRS_INIT
 	    export GPRS_DYN_DNS_USER
             export GPRS_DYN_DNS_PASSWD

@@ -12,6 +12,7 @@ GPRS_BAUDRATE=115200
 GPRS_APN="internet.t-d1.de"
 #GPRS_APN="web.vodafone.de"
 GPRS_USER="d1"
+#GPRS_PASSWD=""
 GPRS_DIAL="*99**PPP*1#"
 #
 # if GPRS_DNS1 ist set, use DNS specified by GPRS_DNS1 (and GPRS_DNS2)
@@ -50,8 +51,5 @@ GPRS_PPP_LED=/sys/class/leds/led10/brightness
 #GPRS_START_CMD='ccm2200_gpio_test /dev/misc/ccm2200_gpio out 0x000 0x100'
 #GPRS_RESET_CMD='ccm2200_gpio_test /dev/misc/ccm2200_gpio out 0x100 0x100;sleep 5;ccm2200_gpio_test /dev/misc/ccm2200_gpio out 0x000 0x100'
 #GPRS_RESET_CMD='echo 100 >/sys/class/leds/led12/brightness;sleep 5;echo 0 >/sys/class/leds/led12/brightness'
-
-# Telit: request CHAP authentication type
-#GPRS_INIT="AT#GAUTH=2"
 
 #GPRS_ANSWER_CSD_CMD="/usr/weiss/bin/remote_subnet_mgr /etc/weiss/sm1/rem_subnet_prm"
