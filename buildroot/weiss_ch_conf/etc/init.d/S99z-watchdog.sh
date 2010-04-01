@@ -30,7 +30,7 @@ start() {
  	echo "Watchdog disabled - CCM2200 in service mode"
         logger -t $0 "Watchdog disabled - CCM2200 in service mode"
         /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x0000
-        echo 100 >/sys/class/leds/led16/brightness
+        echo 100 >/sys/class/leds/led15/brightness
     fi
 }	
 
