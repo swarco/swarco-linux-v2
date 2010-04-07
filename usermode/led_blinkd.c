@@ -19,13 +19,13 @@
  *  @par Program:  
  *                 Weiss Linux Usermode
  *
- *  @version       0.1 (\$Revision: 685 $)
+ *  @version       0.1 (\$Revision$)
  *  @author        Guido Classen <br>
  *                 Weiss Electronic GmbH
  *
- *  $LastChangedBy: clg9tr $  
- *  $Date: 2009-06-03 18:26:41 +0200 (Mi, 03 Jun 2009) $
- *  $URL: svn://server-i/layer-79/src/app/unix-ht-client/src/unix-ht-client.c $
+ *  $LastChangedBy$  
+ *  $Date$
+ *  $URL$
  *
  *  @par Modification History:
  *     - 2010-02-26 gc: initial version

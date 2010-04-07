@@ -33,3 +33,16 @@ int main ()
 
   return 0;
 }
+
+
+int main ()
+{
+  char *prog[] = {"mount", , "/", (char *)0};
+ 
+  if (setuid(0) < 0)
+    perror("Fehler bei den Rechten");
+ 
+  execve("/bin/mount", prog, NULL);
+
+  return 0;
+}

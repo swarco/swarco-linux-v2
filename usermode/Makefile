@@ -30,8 +30,8 @@ include	$(BASE_DIR)/directories.mk
 CFLAGS		+=  -I$(KERNEL_PATH)/include
 LDFLAGS         += -lpthread -lutil
 
-PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward ro rw \
-	   file_write_test wlogin huaweiAktBbo led_blinkd
+PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward rw \
+	   file_write_test wlogin huaweiAktBbo led_blinkd modemstatus-wait
 
 .PHONY: all
 all: $(PROGRAMS) install
@@ -40,6 +40,8 @@ all: $(PROGRAMS) install
 .PHONY: install
 install:
 	cp -a $(PROGRAMS) $(CH_CONFIG_DIR)/usr/bin
+	test -e $(CH_CONFIG_DIR)/usr/bin/ro && rm $(CH_CONFIG_DIR)/usr/bin/ro
+	ln -s rw $(CH_CONFIG_DIR)/usr/bin/ro 
 
 
 #simple pattern rule to compile executables from just one source file!
