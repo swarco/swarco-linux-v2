@@ -34,15 +34,25 @@ int main(int argc, char *argv[])
   struct flock fl;
   int fd;
   int count=0;
-  int readwrite=0;
+  int readwrite=-1;
+  int prog_len = strlen(argv[0]);
   static const char filename[] = "/var/lock/rw_root_lock";
 
-  if (!strcmp(argv[0], "rw")) {
-    readwrite = 1;
-  } else if (!strcmp(argv[0], "ro")) {
-    readwrite = 0;
-  } else {
-    fprintf(stderr, "program must be named 'rw' or 'ro'\n");
+  if (prog_len >= 2) {
+    char prog_name[3];
+    prog_name[0] = argv[0][prog_len-2];
+    prog_name[1] = argv[0][prog_len-1];
+    prog_name[2] = '\0';
+
+    if (!strcmp(prog_name, "rw")) {
+      readwrite = 1;
+    } else if (!strcmp(prog_name, "ro")) {
+      readwrite = 0;
+    } 
+  }
+
+  if (readwrite == -1) {
+    fprintf(stderr, "program name must end with 'rw' or 'ro'\n");
     exit(1);
   }
 
