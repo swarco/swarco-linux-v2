@@ -66,10 +66,12 @@ int main(int argc, char **argv)
 {
   struct serial_icounter_struct icounter_old, icounter_new;
 
-  int res = 0;
+  int res = -1;
   struct sigaction act;
-
   int i;
+
+  memset(&icounter_old, 0, sizeof(icounter_old));
+  memset(&icounter_new, 0, sizeof(icounter_new));
   for (i=1; i<argc; ++i) {
     const char *arg = argv[i];
     if (!strncmp("-F", arg)) {
