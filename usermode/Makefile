@@ -40,7 +40,7 @@ all: $(PROGRAMS) install
 .PHONY: install
 install:
 	cp -a $(PROGRAMS) $(CH_CONFIG_DIR)/usr/bin
-	test -e $(CH_CONFIG_DIR)/usr/bin/ro && rm $(CH_CONFIG_DIR)/usr/bin/ro
+	-test -e $(CH_CONFIG_DIR)/usr/bin/ro && rm $(CH_CONFIG_DIR)/usr/bin/ro
 	ln -s rw $(CH_CONFIG_DIR)/usr/bin/ro 
 
 
