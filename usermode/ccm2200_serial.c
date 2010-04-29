@@ -26,6 +26,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -42,7 +43,7 @@
 void usage(void)
 {
   printf("usage: ccm2200_serial device info\n"
-         "       ccm2200_serial device mode <normal|rs232|rs485hw|rs485int|rs485kern> "
+         "       ccm2200_serial device mode <normal|rs232|rs485hw|rs485int|rs485kern|modemmd> "
          "                                  [turn-on-delay turn-off-delay]\n"
          "       ccm2200_serial device rxled mask delay\n"
          "       ccm2200_serial device txled mask delay\n");
@@ -64,6 +65,8 @@ void info(int fd)
       strcat(mode_str, "RS485 (controlled by UART hardware)"); break;
     case CCM2200_SERIAL_MODE_RS485KERN:
       strcat(mode_str, "RS485 (controlled by kernel)"); break;
+    case CCM2200_SERIAL_MODE_MODEM_MD:
+      strcat(mode_str, "Multi-drop modem mode"); break;
     default:
       sprintf(mode_str, "%d", (int) serial_config.mode);             
     };
@@ -123,6 +126,8 @@ int main(int argc, char *argv[])
         serial_config.mode = CCM2200_SERIAL_MODE_RS485INT;
       } else if (!strcmp(argv[3], "rs485") || !strcmp(argv[3], "rs485kern")) {
         serial_config.mode = CCM2200_SERIAL_MODE_RS485KERN;
+      } else if (!strcmp(argv[3], "modemmd")) {
+        serial_config.mode = CCM2200_SERIAL_MODE_MODEM_MD;
       } else {
         printf("unknown mode specified\n");
         usage();
