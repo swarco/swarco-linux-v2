@@ -17,10 +17,20 @@
 
 export KERNEL_VER=`uname -r`
 
-#bluetooth_services="modules hcid sdpd serial_port"
-bluetooth_services="modules hcid sdpd dun_server"
+# to enable bluetooth put a line like this in /etc/default/bluetooth:
+#BLUETOOTH_SERVICES="modules hcid sdpd serial_port"
+#BLUETOOTH_SERVICES="modules hcid sdpd dun_server"
 
+if ! [ -f /etc/default/bluetooth ]
+then
+# bluetooth not configured, nothing to do
+  exit 0
+fi
+
+BLUETOOTH_SERVICES=""
 . /etc/init_common.sh
+. /etc/default/bluetooth
+
 
 ebegin()
 {
@@ -55,7 +65,6 @@ stop_modules() {
     rmmod bluetooth
     eend $?
 }
-
 
 start_hcid() {
     ebegin "Starting Bluetooth hcid"
@@ -188,12 +197,12 @@ stopit()
 }
 
 
-bluetooth_stop_services=`echo $bluetooth_services | 
+bluetooth_stop_services=`echo $BLUETOOTH_SERVICES | 
 	awk 'BEGIN { RS = " " } { r = $1 " " r; } END { print r }' `
 
 case "$1" in
   start)
-	for item in $bluetooth_services
+	for item in $BLUETOOTH_SERVICES
         do
           start_$item
         done
@@ -211,7 +220,7 @@ case "$1" in
         do
           stop_$item
         done
-	for item in $bluetooth_services
+	for item in $BLUETOOTH_SERVICES
         do
           start_$item
         done
@@ -221,3 +230,8 @@ case "$1" in
 	echo $"Usage: $0 {start|stop|restart}"
 	exit 1
 esac
+
+# Local Variables:
+# mode: shell-script
+# backup-inhibited: t
+# End:

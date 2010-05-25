@@ -59,3 +59,8 @@ case "$1" in
     exit 1
     ;;
 esac
+
+# Local Variables:
+# mode: shell-script
+# backup-inhibited: t
+# End:

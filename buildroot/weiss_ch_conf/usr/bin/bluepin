@@ -1,2 +1,16 @@
 #!/bin/sh
-echo "PIN:"`cat /etc/bluetooth/pin`
+
+if [ -f /etc/bluetooth/pin ]
+then
+    echo "PIN:"`cat /etc/bluetooth/pin`
+    exit 0
+fi
+
+if [ -f /etc/default/bluetooth ]
+then
+    echo "PIN:$BLUETOOTH_PIN"
+    exit 0
+fi
+
+
+echo "PIN:0000"

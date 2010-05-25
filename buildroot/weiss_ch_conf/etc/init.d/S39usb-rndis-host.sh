@@ -36,3 +36,7 @@ esac
 
 exit $?
 
+# Local Variables:
+# mode: shell-script
+# backup-inhibited: t
+# End:

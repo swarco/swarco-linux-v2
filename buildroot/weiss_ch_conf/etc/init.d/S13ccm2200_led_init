@@ -35,3 +35,7 @@ echo nand-disk > /sys/class/leds/led11/trigger
 
 
 
+# Local Variables:
+# mode: shell-script
+# backup-inhibited: t
+# End:

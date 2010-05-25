@@ -102,3 +102,7 @@ ccm2200_serial /dev/com3 mode rs485kern 0 0
 
 
 
+# Local Variables:
+# mode: shell-script
+# backup-inhibited: t
+# End:

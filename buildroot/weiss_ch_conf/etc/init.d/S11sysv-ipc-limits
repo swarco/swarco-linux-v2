@@ -60,3 +60,8 @@ sysctl -w kernel/msgmnb=1048576
 #maximal number of message queues in system
 sysctl -w kernel/msgmni=256
 
+
+# Local Variables:
+# mode: shell-script
+# backup-inhibited: t
+# End:

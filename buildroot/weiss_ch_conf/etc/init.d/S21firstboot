@@ -26,3 +26,8 @@ if [ ! -f /etc/.firstboot ]; then
 else
     /usr/sbin/ssh_keygen.sh &
 fi
+
+# Local Variables:
+# mode: shell-script
+# backup-inhibited: t
+# End:
