@@ -8,6 +8,7 @@ fi
 
 if [ -f /etc/bluetooth/pin ]
 then
+    . /etc/bluetooth/pin
     echo "PIN:"`cat /etc/bluetooth/pin`
     exit 0
 fi
