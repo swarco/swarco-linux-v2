@@ -2,13 +2,13 @@
 
 if [ -f /etc/default/bluetooth ]
 then
+    . /etc/default/bluetooth
     echo "PIN:$BLUETOOTH_PIN"
     exit 0
 fi
 
 if [ -f /etc/bluetooth/pin ]
 then
-    . /etc/bluetooth/pin
     echo "PIN:"`cat /etc/bluetooth/pin`
     exit 0
 fi
