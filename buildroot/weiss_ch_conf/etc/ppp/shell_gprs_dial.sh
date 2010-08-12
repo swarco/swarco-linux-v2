@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-04-07 17:31:13 gc]
+echo $0 [Version 2010-08-12 19:08:26 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -1176,8 +1176,12 @@ do
 
                 *)
                 # error
-                    kill -TERM $ppp_pid
-                    do_restart=0
+                    # modemstatus-wait fails on TIOCGICOUNT ioctrl on devices
+                    # not supporting it (for instance ttyACM)
+                    # so we wait here for pppd's termination
+
+                    #kill -TERM $ppp_pid
+                    #do_restart=0
                     ;;
             esac
 
