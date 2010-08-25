@@ -98,8 +98,8 @@ PasswordAuthentication no
 #MaxStartups 10
 #PermitTunnel no
 
-# no default banner path
-#Banner /some/path
+# default banner to issue file
+Banner /etc/issue
 
 # override default of no subsystems
 Subsystem	sftp	/usr/lib/sftp-server
