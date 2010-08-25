@@ -31,6 +31,12 @@ BLUETOOTH_SERVICES=""
 . /etc/init_common.sh
 . /etc/default/bluetooth
 
+if [ -r $MODULE_PATH/kernel/drivers/bluetooth/btusb.ko ] ; then
+    bluetooth_mod_btusb=btusb
+else
+    bluetooth_mod_btusb=hci_usb
+fi
+
 
 ebegin()
 {
@@ -48,10 +54,11 @@ eend()
 
 start_modules() {
     ebegin "Loading Bluetooth modules"
+    load_module kernel/lib/crc16
     load_module kernel/net/bluetooth/bluetooth
     load_module kernel/net/bluetooth/l2cap
     load_module kernel/net/bluetooth/rfcomm/rfcomm
-    load_module kernel/drivers/bluetooth/hci_usb
+    load_module kernel/drivers/bluetooth/$bluetooth_mod_btusb
     load_module kernel/net/bluetooth/bnep/bnep
     eend $?
 }
@@ -59,10 +66,11 @@ start_modules() {
 stop_modules() {
     ebegin "Unloading Bluetooth modules"
     rmmod bnep
-    rmmod hci_usb
+    rmmod $bluetooth_mod_btusb
     rmmod rfcomm
     rmmod l2cap
     rmmod bluetooth
+    rmmod crc16
     eend $?
 }
 
