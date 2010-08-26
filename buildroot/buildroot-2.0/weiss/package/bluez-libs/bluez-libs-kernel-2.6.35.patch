@@ -1,6 +1,6 @@
-diff -Nru bluez-libs-2.25.org//include/l2cap.h bluez-libs-2.25/include/l2cap.h
---- bluez-libs-2.25.org//include/l2cap.h	2006-01-08 03:03:05.000000000 +0100
-+++ bluez-libs-2.25/include/l2cap.h	2010-08-26 15:15:10.000000000 +0200
+diff -Nrub '--exclude=*~' bluez-libs-2.25-org//include/l2cap.h bluez-libs-2.25/include/l2cap.h
+--- bluez-libs-2.25-org//include/l2cap.h	2006-01-08 03:03:05.000000000 +0100
++++ bluez-libs-2.25/include/l2cap.h	2010-08-26 17:34:46.000000000 +0200
 @@ -4,7 +4,7 @@
   *
   *  Copyright (C) 2000-2001  Qualcomm Incorporated
@@ -61,3 +61,14 @@ diff -Nru bluez-libs-2.25.org//include/l2cap.h bluez-libs-2.25/include/l2cap.h
  } __attribute__ ((packed)) l2cap_info_req;
  #define L2CAP_INFO_REQ_SIZE 2
  
+diff -Nrub '--exclude=*~' bluez-libs-2.25-org//src/sdp.c bluez-libs-2.25/src/sdp.c
+--- bluez-libs-2.25-org//src/sdp.c	2006-01-18 01:14:59.000000000 +0100
++++ bluez-libs-2.25/src/sdp.c	2010-08-26 17:27:12.000000000 +0200
+@@ -3289,6 +3289,7 @@
+ 		session->sock = socket(PF_BLUETOOTH, SOCK_SEQPACKET, BTPROTO_L2CAP);
+ 		session->local = 0;
+ 		if (session->sock >= 0) {
++                        memset(&sa, 0, sizeof(sa));
+ 			sa.l2_family = AF_BLUETOOTH;
+ 			sa.l2_psm = 0;
+ 			if (bacmp(src, BDADDR_ANY) != 0) {

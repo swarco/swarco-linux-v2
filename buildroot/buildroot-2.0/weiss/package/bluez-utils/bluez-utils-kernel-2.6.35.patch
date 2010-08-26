@@ -1,6 +1,6 @@
-diff -Nru bluez-utils-2.25.org/sdpd/main.c bluez-utils-2.25/sdpd/main.c
---- bluez-utils-2.25.org/sdpd/main.c	2006-01-18 01:15:00.000000000 +0100
-+++ bluez-utils-2.25/sdpd/main.c	2010-08-26 15:17:56.000000000 +0200
+diff -Nrub '--exclude=*~' bluez-utils-2.25.org//sdpd/main.c bluez-utils-2.25/sdpd/main.c
+--- bluez-utils-2.25.org//sdpd/main.c	2006-01-18 01:15:00.000000000 +0100
++++ bluez-utils-2.25/sdpd/main.c	2010-08-26 17:30:08.000000000 +0200
 @@ -241,6 +241,7 @@
  		return -1;
  	}
@@ -9,3 +9,32 @@ diff -Nru bluez-utils-2.25.org/sdpd/main.c bluez-utils-2.25/sdpd/main.c
  	l2addr.l2_bdaddr = *BDADDR_ANY;
  	l2addr.l2_family = AF_BLUETOOTH;
  	l2addr.l2_psm    = htobs(SDP_PSM);
+@@ -296,6 +297,8 @@
+ 	sdp_req_t req;
+ 
+ 	size = sizeof(sa);
++        memset(&sa, 0, sizeof(sa));
++
+ 	if (getpeername(sk, (struct sockaddr *) &sa, &size) < 0)
+ 		return;
+ 
+@@ -444,6 +447,7 @@
+ 			/* New L2CAP connection  */
+ 			struct sockaddr_l2 caddr;
+ 			socklen_t len = sizeof(caddr);
++                        memset(&caddr, 0, sizeof(caddr));
+ 
+ 			nfd = accept(l2cap_sock, (struct sockaddr *)&caddr, &len);
+ 			if (nfd >= 0) {
+diff -Nrub '--exclude=*~' bluez-utils-2.25.org//test/l2test.c bluez-utils-2.25/test/l2test.c
+--- bluez-utils-2.25.org//test/l2test.c	2006-01-08 03:03:05.000000000 +0100
++++ bluez-utils-2.25/test/l2test.c	2010-08-26 17:30:30.000000000 +0200
+@@ -298,6 +298,8 @@
+ 	}
+ 
+ 	/* Bind to local address */
++        memset(&addr, 0, sizeof(addr));
++
+ 	addr.l2_family = AF_BLUETOOTH;
+ 	bacpy(&addr.l2_bdaddr, &bdaddr);
+ 	addr.l2_psm = htobs(psm);
