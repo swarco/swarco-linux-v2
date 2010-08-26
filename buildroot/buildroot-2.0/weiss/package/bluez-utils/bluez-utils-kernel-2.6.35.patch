@@ -1,0 +1,11 @@
+diff -Nru bluez-utils-2.25.org/sdpd/main.c bluez-utils-2.25/sdpd/main.c
+--- bluez-utils-2.25.org/sdpd/main.c	2006-01-18 01:15:00.000000000 +0100
++++ bluez-utils-2.25/sdpd/main.c	2010-08-26 15:17:56.000000000 +0200
+@@ -241,6 +241,7 @@
+ 		return -1;
+ 	}
+ 
++	memset(&l2addr, 0, sizeof(l2addr));
+ 	l2addr.l2_bdaddr = *BDADDR_ANY;
+ 	l2addr.l2_family = AF_BLUETOOTH;
+ 	l2addr.l2_psm    = htobs(SDP_PSM);

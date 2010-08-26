@@ -1,0 +1,63 @@
+diff -Nru bluez-libs-2.25.org//include/l2cap.h bluez-libs-2.25/include/l2cap.h
+--- bluez-libs-2.25.org//include/l2cap.h	2006-01-08 03:03:05.000000000 +0100
++++ bluez-libs-2.25/include/l2cap.h	2010-08-26 15:15:10.000000000 +0200
+@@ -4,7 +4,7 @@
+  *
+  *  Copyright (C) 2000-2001  Qualcomm Incorporated
+  *  Copyright (C) 2002-2003  Maxim Krasnyansky <maxk@qualcomm.com>
+- *  Copyright (C) 2002-2006  Marcel Holtmann <marcel@holtmann.org>
++ *  Copyright (C) 2002-2010  Marcel Holtmann <marcel@holtmann.org>
+  *
+  *
+  *  This program is free software; you can redistribute it and/or modify
+@@ -36,13 +36,12 @@
+ #define L2CAP_DEFAULT_MTU	672
+ #define L2CAP_DEFAULT_FLUSH_TO	0xFFFF
+ 
+-#define L2CAP_CONN_TIMEOUT	(HZ * 40)
+-
+ /* L2CAP socket address */
+ struct sockaddr_l2 {
+ 	sa_family_t	l2_family;
+ 	unsigned short	l2_psm;
+ 	bdaddr_t	l2_bdaddr;
++	unsigned short	l2_cid;
+ };
+ 
+ /* L2CAP socket options */
+@@ -52,6 +51,9 @@
+ 	uint16_t	imtu;
+ 	uint16_t	flush_to;
+ 	uint8_t		mode;
++	uint8_t		fcs;
++	uint8_t		max_tx;
++	uint16_t	txwin_size;
+ };
+ 
+ #define L2CAP_CONNINFO	0x02
+@@ -157,10 +159,16 @@
+ #define L2CAP_CONF_FLUSH_TO	0x02
+ #define L2CAP_CONF_QOS		0x03
+ #define L2CAP_CONF_RFC		0x04
+-#define L2CAP_CONF_RFC_MODE	0x04
++#define L2CAP_CONF_FCS		0x05
+ 
+ #define L2CAP_CONF_MAX_SIZE	22
+ 
++#define L2CAP_MODE_BASIC	0x00
++#define L2CAP_MODE_RETRANS	0x01
++#define L2CAP_MODE_FLOWCTL	0x02
++#define L2CAP_MODE_ERTM		0x03
++#define L2CAP_MODE_STREAMING	0x04
++
+ typedef struct {
+ 	uint16_t	dcid;
+ 	uint16_t	scid;
+@@ -175,7 +183,6 @@
+ 
+ typedef struct {
+ 	uint16_t	type;
+-	uint8_t		data[0];
+ } __attribute__ ((packed)) l2cap_info_req;
+ #define L2CAP_INFO_REQ_SIZE 2
+ 
