@@ -100,7 +100,7 @@ diff -Nrub buildroot-2.0/package/openssh/openssh.mk buildroot-2.0-new/package/op
  #
  #############################################################
 -OPENSSH_VERSION=5.1p1
-+OPENSSH_VERSION=5.3p1
++OPENSSH_VERSION=5.6p1
  OPENSSH_SITE=ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
  
  OPENSSH_CONF_ENV = LD=$(TARGET_CC)
@@ -112,7 +112,7 @@ diff -Nrub buildroot-2.0/package/openssl/openssl.mk buildroot-2.0-new/package/op
  #
  #############################################################
 -OPENSSL_VERSION:=0.9.8g
-+OPENSSL_VERSION:=0.9.8k
++OPENSSL_VERSION:=1.0.0a
  OPENSSL_SITE:=http://www.openssl.org/source
  
  OPENSSL_TARGET_ARCH=generic32
