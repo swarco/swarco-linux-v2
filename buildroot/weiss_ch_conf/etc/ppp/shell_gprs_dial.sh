@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-08-12 19:08:26 gc]
+echo $0 [Version 2010-09-01 17:30:25 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -88,7 +88,7 @@ reset_terminal_adapter() {
                 sleep 60
                 ;;
 
-            SIEMENS)
+            SIEMENS | Cinterion )
                 at_cmd "AT+CFUN=1,1"
                 sleep 60
                 ;;
@@ -368,7 +368,33 @@ identify_terminal_adapter() {
     print "Terminal adpater identification: $r"
 
     case $r in
-        *SIEMENS*)
+        *Cinterion* )
+            TA_VENDOR=Cinterion
+            case $r in
+                *MC35*)
+                    TA_MODEL=MC35
+                    print "Found Cinterion MC35 GPRS terminal adapter"
+                    ;;
+                *MC52*)
+                    TA_MODEL=MC52
+                    print "Found Cinterion MC35 GPRS terminal adapter"
+                    ;;
+                *MC55*)
+                    TA_MODEL=MC55
+                    print "Found Cinterion MC35 GPRS terminal adapter"
+                    ;;
+                *HC25*)
+                    TA_MODEL=HC25
+                    print "Found Cinterion HC25 UMTS/GPRS terminal adapter"
+                # HC25: enable network (UTMS=blue/GSM=green) status LEDs
+                    at_cmd "AT^sled=1"
+                    ;;
+                *)
+                    print "Found unkonwn Cinterion terminal adapter"
+                    ;;
+            esac
+            ;;
+        *SIEMENS* )
             TA_VENDOR=SIEMENS
             case $r in
                 *MC35*)
@@ -722,7 +748,7 @@ at_cmd "AT+CMEE=2"
 op_cmd="AT+COPS=0"
 
 case "$TA_VENDOR $TA_MODEL" in
-    *SIEMENS*HC25*)
+    *SIEMENS*HC25* | *Cinterion*HC25* )
         # supply net access type (GSM or UMTS) for Siemens HC25 UMTS TA
         if [ \! -z "$GPRS_NET_ACCESS_TYPE" ]; then
             op_cmd="AT+COPS=0,,,$GPRS_NET_ACCESS_TYPE"
@@ -849,38 +875,40 @@ at_cmd "ATS0=0"
   GPRS_CSQ=${r%%,*}
   status GPRS_CSQ $GPRS_CSQ
 
-  if [ $TA_VENDOR == "SIEMENS" ]; then
+  case $TA_VENDOR in
+      SIEMENS | *Cinterion* )
 
-      case "$TA_MODEL" in
-          *HC25*)
-              ;;
-
-          *)
-              at_cmd "AT^SCID"
-              print "SIM card id: $r"
-              r=${r##*SCID: }
-              status GPRS_SCID "${r%% OK}"
-              ;;
-      esac
+          case "$TA_MODEL" in
+              *HC25*)
+                  ;;
+              
+              *)
+                  at_cmd "AT^SCID"
+                  print "SIM card id: $r"
+                  r=${r##*SCID: }
+                  status GPRS_SCID "${r%% OK}"
+                  ;;
+          esac
 #
-      at_cmd "AT^MONI"
-      status GPRS_MONI "${r%% OK}"
+          at_cmd "AT^MONI"
+          status GPRS_MONI "${r%% OK}"
 #
-      at_cmd "AT^MONP"
-      status GPRS_MONP "${r%% OK}"
+          at_cmd "AT^MONP"
+          status GPRS_MONP "${r%% OK}"
+          
+          case "$TA_MODEL" in
+              *HC25*)
+                  ;;
+              
+              *)
+                  at_cmd "AT^SMONG"
+                  status GPRS_SMONG "${r%% OK}"
+                  ;;
+          esac
+          wait_quiet 5
+          ;;
 
-      case "$TA_MODEL" in
-          *HC25*)
-              ;;
-
-          *)
-              at_cmd "AT^SMONG"
-              status GPRS_SMONG "${r%% OK}"
-              ;;
-      esac
-      wait_quiet 5
-
-  fi
+  esac
 
 # read on phone number
 case "$TA_VENDOR $TA_MODEL" in
@@ -905,7 +933,7 @@ at_cmd "AT+CMGF=1"
 
 #2009-08-28 gc: enable URC on incoming SMS (and break of data/GPRS connection)
 case "$TA_VENDOR $TA_MODEL" in
-    *SIEMENS*HC25*)
+    *SIEMENS*HC25* | *Cinterion*HC25*)
         at_cmd "AT+CNMI=2,1"
         ;;
     *WAVECOM*)
@@ -997,7 +1025,7 @@ do
             WAVECOM)
                 at_cmd "AT+CGDATA=1" 90 "CONNECT" || error
                 ;;
-            SIEMENS | *)
+            SIEMENS | Cinterion | *)
                 at_cmd "AT+CGDATA=\"PPP\",1" 90 "CONNECT" || error
                 ;;
         esac
