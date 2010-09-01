@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-09-01 17:30:25 gc]
+echo $0 [Version 2010-09-01 18:40:46 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -377,11 +377,11 @@ identify_terminal_adapter() {
                     ;;
                 *MC52*)
                     TA_MODEL=MC52
-                    print "Found Cinterion MC35 GPRS terminal adapter"
+                    print "Found Cinterion MC52 GPRS terminal adapter"
                     ;;
                 *MC55*)
                     TA_MODEL=MC55
-                    print "Found Cinterion MC35 GPRS terminal adapter"
+                    print "Found Cinterion MC55 GPRS terminal adapter"
                     ;;
                 *HC25*)
                     TA_MODEL=HC25
@@ -443,9 +443,14 @@ initiazlize_port() {
     local device=$1
 
     # prevent blocking when opening the TTY device due modem status lines
-    stty -F $device clocal -crtscts
+    if ! stty -F $device $GPRS_BAUDRATE clocal -crtscts -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -echo -echoe -echok -echoctl -echoke 2>&1 ; then
 
-    echo . <$device >/dev/null&
+    # stty may say "no such device"
+        print "stty failed"
+        return 1
+    fi
+
+    echo -n AT${cr} >$device &
     sleep 5
     if [ -d /proc/$! ]; then
         echo TTY driver hangs;
@@ -453,12 +458,6 @@ initiazlize_port() {
     fi
 
 
-    if ! stty -F $device $GPRS_BAUDRATE -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -echo -echoe -echok -echoctl -echoke 2>&1 ; then
-
-    # stty may say "no such device"
-        print "stty failed"
-        return 1
-    fi
 
     return 0
 }
