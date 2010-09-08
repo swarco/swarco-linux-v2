@@ -53,7 +53,7 @@ install_chconf:
 	# expect it in /usr/lib
 	#-rm $(TARGET_DIR)/usr/lib/sftp-server
 	#ln -sf ../sbin/sftp-server $(TARGET_DIR)/usr/lib/sftp-server
-	echo "Welcome zu SWARCO Traffic Systems GmbH Embedded Linux v2.01 " ` date '+#%Y-%m-%d#' `  > $(TARGET_DIR)/etc/issue
+	echo "Welcome to SWARCO Traffic Systems GmbH Embedded Linux v2.01 " ` date '+#%Y-%m-%d#' `  > $(TARGET_DIR)/etc/issue
 
 .PHONY: weiss_prepare_root
 weiss_prepare_root: overwrite_target_device_table install_chconf
