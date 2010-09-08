@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-09-01 18:40:46 gc]
+echo $0 [Version 2010-09-08 20:09:08 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -40,6 +40,21 @@ cr=`echo -n -e "\r"`
 
 set_gprs_led() {
     echo 0 "$*" >/tmp/gprs_led
+}
+
+SYS_MESG=/usr/weiss/bin/sys-mesg
+sys_mesg() {
+    test -x $SYS_MESG && $SYS_MESG -n GPRS "$@"
+
+}
+sys_mesg_net() {
+    test -x $SYS_MESG && $SYS_MESG -n GPRS_NET "$@"
+
+}
+
+
+sys_mesg_remove() {
+    test -x $SYS_MESG && $SYS_MESG -n GPRS -r
 }
 
 
@@ -178,6 +193,7 @@ at_cmd() {
       local line=""
       if ! IFS="" read -r -t$wait_time line <&3
       then
+          sys_mesg -e TA_AT -p warning "AT command timeout"
           print timeout
           return 2
       fi
@@ -203,6 +219,7 @@ at_cmd() {
       count=$(($count+1))
       if [ $count -gt 15 ]
       then
+          sys_mesg -e TA_AT -p warning "AT command timeout"
           print timeout
           return 2
       fi
@@ -678,8 +695,12 @@ cat >$GRPS_ERROR_COUNT_FILE <<FILE_END
 GPRS_ERROR_COUNT=$GPRS_ERROR_COUNT
 FILE_END
 
-at_cmd "AT" || exit 1
+if ! at_cmd "AT"; then
+    sys_mesg -e TA -p error "no response from terminal adapter, check connection"
+    exit 1
+fi
 print "Terminal adapter responses on AT command"
+sys_mesg -e TA -p okay
 
 # blink on pulse of 50ms for each 1000ms
 set_gprs_led 1000 50
@@ -708,11 +729,17 @@ identify_terminal_adapter
 ##############################################################################
 
 #2009-08-07 gc: Wavecom only sends result code, no "OK"
-at_cmd "AT+CPIN?" 10 "+CPIN:"|| error
+if ! at_cmd "AT+CPIN?" 10 "+CPIN:"; then
+    print result: $r
+    sys_mesg -e SIM -p error "SIM card error $r"
+    error
+fi
 wait_quiet 1
+
 case $r in
     *'SIM PIN'*)
         if [ -z "$GPRS_PIN" ]; then
+            sys_mesg -e SIM -p error "SIM card requires PIN"
             print "ERROR: The GPRS_PIN env variable is not set"
             exit 1
         fi
@@ -726,7 +753,12 @@ case $r in
         fi
         ;;
 
-    *READY* | *'SIM PUK'*)
+    *READY*)
+        ;;
+
+    *'SIM PUK'*)
+        sys_mesg -e SIM -p error "SIM card requires PUK"
+        exit 1
         ;;
 
     *)
@@ -734,6 +766,7 @@ case $r in
         ;;
 esac
 print "SIM ready"
+sys_mesg -e SIM -p okay
 
 ##############################################################################
 # Set verbose error reporting
@@ -798,6 +831,7 @@ do
 
         *CREG:*)
             network="not registered"
+            sys_mesg -e NET -p error "Failed to register on network"
             ;;
     esac
     loops=$(($loops+1))
@@ -828,6 +862,7 @@ r=${r#*\"}
 r=${r%\"*}
 
 print "Registered on $network network: $r"
+sys_mesg -e NET -p okay
 
 status GPRS_NETWORK $r
 # blink two pulses of 50ms for each 1000ms
@@ -872,6 +907,11 @@ at_cmd "ATS0=0"
   print "Signal Quality: ${r%% OK}"
   r=${r##*CSQ: }
   GPRS_CSQ=${r%%,*}
+  if [ $GPRS_CSQ -lt 10 ]; then
+      sys_mesg_net -e NET -p warning "Low GSM/UMTS Signal Quality (CSQ=$GPRS_CSQ)"
+  else
+      sys_mesg_net -e NET -p okay
+  fi
   status GPRS_CSQ $GPRS_CSQ
 
   case $TA_VENDOR in
@@ -966,6 +1006,7 @@ do
 
     if [ -z "$GPRS_APN" ]; then
         print "The GPRS_APN env variable is not set"
+        sys_mesg -e APN -p error "The GPRS_APN env variable is not set"
         exit 1
     fi
 

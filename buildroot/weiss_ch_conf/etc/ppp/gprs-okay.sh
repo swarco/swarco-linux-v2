@@ -19,6 +19,7 @@
 #*  
 #*****************************************************************************
 
+SYS_MESG=/usr/weiss/bin/sys-mesg
 
 if [ -f /etc/default/gprs ]
 then
@@ -29,6 +30,7 @@ then
   then
 
 	echo GPRS_ERROR_COUNT=0 >/tmp/gprs-error
+        test -x $SYS_MESG && $SYS_MESG -n GPRS -r
   fi
 
 fi
