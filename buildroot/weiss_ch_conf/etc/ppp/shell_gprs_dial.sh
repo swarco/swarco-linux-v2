@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-09-08 20:09:08 gc]
+echo $0 [Version 2010-09-10 17:22:44 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -172,6 +172,7 @@ wait_quiet() {
 #         2 Wait time in seconds (default 10)
 #         3 Additional WAIT string
 # Result $r Result string
+line_break=" "
 at_cmd() {
   # r is returned to caller
   r=""
@@ -202,7 +203,11 @@ at_cmd() {
       print_rcv "$line"
       #suppress echo of AT command in result string
       if [ -z "$echo_rcv" -a "$line" = "$1" ]; then echo_rcv="x"; continue; fi
-      r="$r $line"
+      if [ -z "$r" ]; then
+	r="$line"
+      else
+        r="$r$line_break$line"
+      fi
       case $line in
           *OK*)
               return 0
@@ -929,6 +934,7 @@ at_cmd "ATS0=0"
                   ;;
           esac
 #
+	  line_break="<br>"
           at_cmd "AT^MONI"
           status GPRS_MONI "${r%% OK}"
 #
@@ -944,6 +950,8 @@ at_cmd "ATS0=0"
                   status GPRS_SMONG "${r%% OK}"
                   ;;
           esac
+
+  	  line_break=" "
           wait_quiet 5
           ;;
 
