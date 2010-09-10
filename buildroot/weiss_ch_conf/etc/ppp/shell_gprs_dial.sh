@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-09-10 17:22:44 gc]
+echo $0 [Version 2010-09-10 19:40:04 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -23,6 +23,8 @@ echo $0 [Version 2010-09-10 17:22:44 gc]
 #GPRS_DEVICE=/dev/com1
 
 GPRS_STATUS_FILE=/tmp/gprs-stat
+echo -n >$GPRS_STATUS_FILE
+
 GRPS_ERROR_COUNT_FILE=/tmp/gprs-error
 
 
@@ -58,6 +60,11 @@ sys_mesg_remove() {
 }
 
 
+# extract part of string by regular expression
+re_extract() {
+   awk "/$1/ {print gensub(/.*$1.*/,\"\\\\1\",1)}"                              
+}                                                                               
+
 # print log message
 print() {
     echo "$*"
@@ -85,8 +92,9 @@ print_rcv() {
 }
 
 error() {
-    at_cmd "AT+CERR"
-    print "Extended error report: $r"
+# not supported by most TAs
+#    at_cmd "AT+CERR"
+#    print "Extended error report: $r"
 
     exit 1
 }
@@ -320,6 +328,11 @@ find_usb_device() {
     fi
 }
 
+print_usb_device() {
+    echo "found $1"
+    status GPRS_DEVICE_USB "$1"
+}
+
 ##############################################################################
 # Driver loading and initialisation of special (USB) devices
 ##############################################################################
@@ -334,7 +347,8 @@ init_and_load_drivers() {
                 ;;
 
         12d1:1003)
-                echo "found Huawei Technologies Co., Ltd. E220 HSDPA Modem"
+                local d=
+                print_usb_device "Huawei Technologies Co., Ltd. E220 HSDPA Modem"
                 if [ \! -z "$reload_modules" ]; then
                     mount -tusbfs none /proc/bus/usb
                     /usr/bin/huaweiAktBbo
@@ -344,7 +358,7 @@ init_and_load_drivers() {
                 ;;
 
         0681:0041)
-                echo "found Siemens HC25 in USB mass storage mode"
+                print_usb_device "Siemens HC25 in USB mass storage mode"
 
                 sleep 1
 
@@ -367,16 +381,20 @@ init_and_load_drivers() {
                 ;;
 
             0681:0040)
-                echo "found Siemens HC25 in USB component mode"
+                print_usb_device "Siemens HC25 in USB component mode"
 
                 find_usb_device "$reload_modules" 0681 0040 /dev/ttyUSB0 /dev/ttyUSB2
                 ;;
 
 
             0681:0047)
-                echo "found Siemens HC25 in USB CDC-ACM mode"
+                print_usb_device "Siemens HC25 in USB CDC-ACM mode"
 
                 find_usb_device "$reload_modules" 0681 0047 /dev/ttyUSB0 /dev/ttyACM0
+                ;;
+
+            114f:1234)
+                print_usb_device "Wavecom Fastrack Extend FXT003 CDC-ACM Modem"
                 ;;
             esac
     done
@@ -655,6 +673,9 @@ fi
 print "Starting GPRS connection on device $GPRS_DEVICE ($GPRS_BAUDRATE baud)"
 print "(Modem device: $GPRS_DEVICE_MODEM)"
 
+status GPRS_DEVICE_CMD   "$GPRS_DEVICE"
+status GPRS_DEVICE_MODEM "$GPRS_DEVICE_MODEM"
+
 if ! initiazlize_port $GPRS_DEVICE; then
     sleep 10
     killall watchdog
@@ -711,7 +732,6 @@ sys_mesg -e TA -p okay
 set_gprs_led 1000 50
 
 
-echo -n >$GPRS_STATUS_FILE
 status GPRS_CONNECT_TIME `date "+%Y-%m-%d %H:%M:%S"`
 
 
@@ -728,6 +748,11 @@ fi
 
 identify_terminal_adapter
 
+##############################################################################
+# Set verbose error reporting
+##############################################################################
+at_cmd "AT+CMEE=2"
+
 
 ##############################################################################
 # Check and enter PIN
@@ -736,7 +761,9 @@ identify_terminal_adapter
 #2009-08-07 gc: Wavecom only sends result code, no "OK"
 if ! at_cmd "AT+CPIN?" 10 "+CPIN:"; then
     print result: $r
-    sys_mesg -e SIM -p error "SIM card error $r"
+    err_msg=`echo $r | re_extract '\+CME ERROR: (.*)'`
+    if [ \! -z "$err_msg" ]; then err_msg=": $err_msg"; fi
+    sys_mesg -e SIM -p error "SIM card error$err_msg"
     error
 fi
 wait_quiet 1
@@ -772,11 +799,6 @@ case $r in
 esac
 print "SIM ready"
 sys_mesg -e SIM -p okay
-
-##############################################################################
-# Set verbose error reporting
-##############################################################################
-at_cmd "AT+CMEE=2"
 
 ##############################################################################
 # Select (manually) GSM operator
@@ -936,10 +958,10 @@ at_cmd "ATS0=0"
 #
 	  line_break="<br>"
           at_cmd "AT^MONI"
-          status GPRS_MONI "${r%% OK}"
+          status GPRS_MONI "${r%%<br>OK}"
 #
           at_cmd "AT^MONP"
-          status GPRS_MONP "${r%% OK}"
+          status GPRS_MONP "${r%%<br>OK}"
           
           case "$TA_MODEL" in
               *HC25*)
@@ -947,12 +969,20 @@ at_cmd "ATS0=0"
               
               *)
                   at_cmd "AT^SMONG"
-                  status GPRS_SMONG "${r%% OK}"
+                  status GPRS_SMONG "${r%%<br>OK}"
                   ;;
           esac
 
   	  line_break=" "
           wait_quiet 5
+          ;;
+
+      WAVECOM)
+          # query cell environment description 
+          # @todo the output must be reformated
+          # 2010-09-10 gc: dosn't work properly
+          #at_cmd "AT+CCED=0,16" 60
+          #status GPRS_CCED "${r%% OK}"
           ;;
 
   esac
@@ -961,14 +991,21 @@ at_cmd "ATS0=0"
 case "$TA_VENDOR $TA_MODEL" in
     *SIEMENS*MC35*)
         at_cmd 'AT+CPBS="ON" +CPBR=1,4'
+# +CPBR: 1,"+491752928173",145,"Eigene Rufnummer"  OK
+        cnum=`echo $r | re_extract '\+CPBR: [0-9]+,"(\+?[0-9]+)",.*'`
         ;;
 
     *)
         at_cmd "AT+CNUM"
+# +CNUM: "Eigene Rufnummer","+491752928173",145 OK
+        cnum=`echo $r | re_extract '\+CNUM: "[^"]*","(\+?[0-9]+)",[.0-9]+.*'`
         ;;
 esac
-status GPRS_NUM ${r%% OK}
-#print "Own number: $r"
+
+print "Own number: $r, num: $cnum"
+status GPRS_NUM ${cnum}
+
+
 
 
 
