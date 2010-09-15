@@ -24,6 +24,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>             /* memset() */
 #include <errno.h>
 
 #include <termios.h>
@@ -47,6 +48,7 @@ enum ExitCode {
 void usage(void)
 {
   printf("usage: modemstatus-wait [-F device] [ri] [break] [pid <pid>]\n");
+  printf("or     modemstatus-wait -r [-F device]\n");
 }
 
 
@@ -55,6 +57,51 @@ static void alarm_handler(int sig, siginfo_t *si, void *data)
   //printf("signal\n");
 }
 
+void print_status(int tty_fd)
+{
+  struct serial_icounter_struct icounter_new;
+  int status;
+
+  memset(&icounter_new, 0, sizeof(icounter_new));
+  
+  if (ioctl(tty_fd, TIOCGICOUNT, &icounter_new) != 0)
+  {
+    perror (" TIOCGICOUNT failed.");
+    exit(EC_ERROR);
+  }
+
+  if (ioctl(tty_fd, TIOCMGET, &status) != 0) {
+    perror (" TIOCMGET failed.");
+    exit(EC_ERROR);
+  }
+
+  printf("status=%08x\n", status);
+  printf("CTS=%d\n", (status & TIOCM_CTS) ? 1 : 0);
+  printf("DSR=%d\n", (status & TIOCM_DSR) ? 1 : 0);
+  printf("RI=%d\n", (status & TIOCM_RNG) ? 1 : 0);
+  printf("DCD=%d\n", (status & TIOCM_CAR) ? 1 : 0);
+  printf("RTS=%d\n", (status & TIOCM_RTS) ? 1 : 0);
+  printf("DTR=%d\n", (status & TIOCM_DTR) ? 1 : 0);
+
+  printf("RI_COUNT='%d'\n"
+         "CD_COUNT='%d'\n"
+         "CTS_COUNT='%d'\n"
+         "DSR_COUNT='%d'\n",
+         icounter_new.rng, icounter_new.dcd,
+         icounter_new.cts, icounter_new.dsr);
+  printf("RX_COUNT='%d'\n"
+         "TX_COUNT='%d'\n"
+         "FE_COUNT='%d'\n"
+         "OVERR_COUNT='%d'\n"
+         "PARITY_ERR_COUNT='%d'\n"
+         "BRK_COUNT='%d'\n"
+         "BUF_OVERR_COUNT='%d'\n",
+         icounter_new.rx, icounter_new.tx,
+         icounter_new.frame, icounter_new.overrun,
+         icounter_new.parity, icounter_new.brk,
+         icounter_new.buf_overrun);
+
+}
 
 int wait_ri = 0;
 int wait_break = 0;
@@ -69,12 +116,15 @@ int main(int argc, char **argv)
   int res = -1;
   struct sigaction act;
   int i;
+  int do_print_status = 0;
 
   memset(&icounter_old, 0, sizeof(icounter_old));
   memset(&icounter_new, 0, sizeof(icounter_new));
   for (i=1; i<argc; ++i) {
     const char *arg = argv[i];
-    if (!strncmp("-F", arg)) {
+    if (!strcmp("-s", arg)) {
+      do_print_status = 1;
+    } else if (!strcmp("-F", arg)) {
       if (i == argc-1) {
         fprintf(stderr, "-F: expect argument: device name\n");
         exit(EC_ERROR);
@@ -84,11 +134,11 @@ int main(int argc, char **argv)
         fprintf(stderr, "can not open device %s\n", argv[i]);
         exit(EC_ERROR);
       }
-    } else if (!strncmp("ri", arg)) {
+    } else if (!strcmp("ri", arg)) {
       wait_ri = 1;
-    } else if (!strncmp("break", arg)) {
+    } else if (!strcmp("break", arg)) {
       wait_break = 1;
-    } else if (!strncmp("pid", arg)) {
+    } else if (!strcmp("pid", arg)) {
       if (i == argc-1) {
         fprintf(stderr, "pid: expect argument: device name\n");
         exit(EC_ERROR);
@@ -97,6 +147,11 @@ int main(int argc, char **argv)
     }
   }
 
+  /* print status  */
+  if (do_print_status) {
+    print_status(tty_fd);
+    exit(0);
+  }
 
   act.sa_sigaction = alarm_handler;
   sigemptyset(&act.sa_mask);
