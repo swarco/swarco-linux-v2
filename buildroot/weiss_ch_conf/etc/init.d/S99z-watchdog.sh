@@ -29,6 +29,10 @@ start() {
         # dont start watchdog trigger process if CCM2200 is in service mode
  	echo "Watchdog disabled - CCM2200 in service mode"
         logger -t $0 "Watchdog disabled - CCM2200 in service mode"
+        if [ -x /usr/weiss/bin/sys-mesg ]; then
+          /usr/weiss/bin/sys-mesg -n "watchdog" -e service-mode -p warning $N"CCM2200 in service mode. Watchdog disabled! Please set DIP-switches 4 and 5 to the OFF position."
+        fi
+
         /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x0000
         echo 100 >/sys/class/leds/led15/brightness
     fi
