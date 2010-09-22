@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-09-22 15:44:10 gc]
+echo $0 [Version 2010-09-22 17:00:20 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -941,11 +941,11 @@ at_cmd "ATS0=0"
   status GPRS_IMSI ${r%% OK}
 #
   at_cmd "AT+CSQ"
-  print "Signal Quality: ${r%% OK}"
+  print "Signal quality: ${r%% OK}"
   r=${r##*CSQ: }
   GPRS_CSQ=${r%%,*}
   if [ $GPRS_CSQ -lt 10 ]; then
-      sys_mesg_net -e NET -p warning `M_ "Low GSM/UMTS Signal Quality" `
+      sys_mesg_net -e NET -p warning `M_ "Low GSM/UMTS signal quality" `
   else
       sys_mesg_net -e NET -p `M_ "No error" `
   fi
@@ -1061,7 +1061,7 @@ do
 
     if [ -z "$GPRS_APN" ]; then
         print "The GPRS_APN env variable is not set"
-        sys_mesg -e APN -p error `M_ "The GPRS_APN env variable is not set" `
+        sys_mesg -e APN -p error `M_ "The GPRS_APN env variable is not set. Configuration error" `
         exit 1
     fi
 
