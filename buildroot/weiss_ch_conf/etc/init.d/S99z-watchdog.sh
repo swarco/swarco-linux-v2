@@ -19,6 +19,11 @@
 #*  
 #*****************************************************************************
 
+# internationalization functions for messages (identity)
+M_() {
+  echo "$@"
+}
+
 start() {
     #check DIP switch 5
     if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) != 0 ]; then
@@ -30,7 +35,7 @@ start() {
  	echo "Watchdog disabled - CCM2200 in service mode"
         logger -t $0 "Watchdog disabled - CCM2200 in service mode"
         if [ -x /usr/weiss/bin/sys-mesg ]; then
-          /usr/weiss/bin/sys-mesg -n "watchdog" -e service-mode -p warning $N"CCM2200 in service mode. Watchdog disabled! Please set DIP-switches 4 and 5 to the OFF position."
+          /usr/weiss/bin/sys-mesg -n "watchdog" -e service-mode -p warning `M_ "CCM2200 in service mode. Watchdog disabled! Please set DIP-switches 4 and 5 to the OFF position." `
         fi
 
         /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x0000
@@ -59,7 +64,7 @@ case "$1" in
   	restart
 	;;
   *)
-	echo $"Usage: $0 {start|stop|restart}"
+	echo "Usage: $0 {start|stop|restart}"
 	exit 1
 esac
 

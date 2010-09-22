@@ -24,6 +24,9 @@ sys_mesg() {
     test -x $SYS_MESG && $SYS_MESG -n GPRS "$@"
 
 }
+M_() {
+  echo "$@"
+}
 
 if [ -f /etc/default/gprs ]
 then
@@ -34,7 +37,7 @@ then
         /bin/kill `/bin/cat /var/run/ppp0.pid`
         sleep 20
         /bin/kill -9 `/bin/cat /var/run/ppp0.pid`
-        sys_mesg -e NTL -p error "NTP time sync over GPRS failed, probably no connection"
+        sys_mesg -e NTL -p error `M_ "NTP time sync over GPRS failed, probably no connection" `
 
     fi
 fi
