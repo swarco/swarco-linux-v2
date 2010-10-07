@@ -9,7 +9,7 @@ do
   fi
 done
 
-for dir in /usr/weiss/lib /usr/local/lib
+for dir in /usr/swarco/lib /usr/weiss/lib /usr/local/lib
 do
   if [ -d $dir ]; then
       LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$dir
