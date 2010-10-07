@@ -2,7 +2,7 @@
 
 #umask 022
 
-for dir in /sbin /bin /usr/bin /usr/weiss/bin /root/scripts /root/bin 
+for dir in /sbin /bin /usr/bin /usr/swarco/bin /usr/weiss/bin /root/scripts /root/bin 
 do
   if [ -d $dir ]; then
       PATH=$PATH:$dir
