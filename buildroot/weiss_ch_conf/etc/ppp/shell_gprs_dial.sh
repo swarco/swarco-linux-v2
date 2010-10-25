@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-09-22 17:00:20 gc]
+echo $0 [Version 2010-10-25 19:16:27 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -431,6 +431,11 @@ identify_terminal_adapter() {
                 *MC55*)
                     TA_MODEL=MC55
                     print "Found Cinterion MC55 GPRS terminal adapter"
+                    ;;
+                *EGS5*)
+                    TA_MODEL=EGS5
+                    print "Found Cinterion EGS5 (MC88i) GPRS terminal adapter"
+                    GPRS_CMD_SET=1
                     ;;
                 *HC25*)
                     TA_MODEL=HC25
