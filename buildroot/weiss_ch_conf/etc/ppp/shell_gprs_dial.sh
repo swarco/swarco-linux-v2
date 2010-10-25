@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-10-25 19:16:27 gc]
+echo $0 [Version 2010-10-25 20:23:54 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -1118,7 +1118,7 @@ do
         at_cmd "AT+GMI"
     # activate PDP context
         at_cmd "AT+CGACT=1,1" 90 || error
-        at_cmd "" 2
+        at_cmd "AT" 2
 
     #enter data state
         case $TA_VENDOR in
