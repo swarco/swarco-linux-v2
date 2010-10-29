@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-10-29 14:24:25 gc]
+echo $0 [Version 2010-10-29 14:28:48 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -741,6 +741,8 @@ if ! at_cmd "AT"; then
 fi
 print "Terminal adapter responses on AT command"
 sys_mesg -e TA -p okay `M_ "No error" `
+sys_mesg -e TA_AT -p okay `M_ "No error" `
+
 # blink on pulse of 50ms for each 1000ms
 set_gprs_led 1000 50
 
