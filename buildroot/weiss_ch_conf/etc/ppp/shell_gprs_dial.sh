@@ -14,7 +14,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-10-25 20:23:54 gc]
+echo $0 [Version 2010-10-29 14:24:25 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -740,7 +740,7 @@ if ! at_cmd "AT"; then
     exit 1
 fi
 print "Terminal adapter responses on AT command"
-sys_mesg -e TA -p `M_ "No error" `
+sys_mesg -e TA -p okay `M_ "No error" `
 # blink on pulse of 50ms for each 1000ms
 set_gprs_led 1000 50
 
@@ -813,7 +813,7 @@ case $r in
         ;;
 esac
 print "SIM ready"
-sys_mesg -e SIM -p `M_ "No error" `
+sys_mesg -e SIM -p okay `M_ "No error" `
 
 ##############################################################################
 # Select (manually) GSM operator
@@ -904,7 +904,7 @@ r=${r#*\"}
 r=${r%\"*}
 
 print "Registered on $network network: $r"
-sys_mesg -e NET -p `M_ "No error" `
+sys_mesg -e NET -p okay `M_ "No error" `
 
 status GPRS_NETWORK $r
 # blink two pulses of 50ms for each 1000ms
@@ -952,7 +952,7 @@ at_cmd "ATS0=0"
   if [ $GPRS_CSQ -lt 10 ]; then
       sys_mesg_net -e NET -p warning `M_ "Low GSM/UMTS signal quality" `
   else
-      sys_mesg_net -e NET -p `M_ "No error" `
+      sys_mesg_net -e NET -p okay `M_ "No error" `
   fi
   status GPRS_CSQ $GPRS_CSQ
 
