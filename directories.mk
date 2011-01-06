@@ -29,7 +29,7 @@ CH_CONFIG_DIR	= $(BASE_DIR)/$(BUILDROOT_BASE)/weiss_ch_conf
 
 
 U_BOOT_BASE	= u-boot
-U_BOOT_DIR	= u-boot-ccm2200
+U_BOOT_DIR	= u-boot-v2010.09-ccm2200
 U_BOOT_PATH     = $(BASE_DIR)/$(U_BOOT_BASE)/$(U_BOOT_DIR)
 KERNEL_BASE	= kernel
 KERNEL_ACTUAL   = linux-2.6.21

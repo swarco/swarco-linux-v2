@@ -2,17 +2,17 @@
 #* 
 #*  @file          Makefile
 #*
-#*                 Weiss-Embedded-Linux Repository
+#*                 SWARCO Traffic Systems Embdedded Linux Repository
 #*
-#*  @par Program:  Weiss-Embedded-Linux Repository
+#*  @par Program:  SWARCO Traffic Systems Linux Repository
 #*
-#*  @version       1.0 (\$Revision: 332 $)
+#*  @version       1.0 (\$Revision$)
 #*  @author        Guido Classen
-#*                 Weiss Electronic GmbH
+#*                 SWARCO Traffic Systems
 #* 
-#*  $LastChangedBy: clg9tr $  
-#*  $Date: 2006-11-24 18:21:01 +0100 (Fr, 24 Nov 2006) $
-#*  $URL: svn://server-i/layer-79/makefile $
+#*  $LastChangedBy$  
+#*  $Date$
+#*  $URL$
 #*
 #*  @par Modification History:
 #*   2007-01-18 gc: initial version

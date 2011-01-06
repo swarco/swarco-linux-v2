@@ -1,4 +1,24 @@
-#! /bin/sh
+#!/bin/sh
+#*****************************************************************************
+#* 
+#*  @file          prepare_tree.sh
+#*
+#*                 Unpacks packages from SWARCO Traffic Systems
+#*                 Embdedded Linux CD and
+#*                 prepares Linux build tree 
+#*                 2010 SWARCO Traffic Systems GmbH
+#*
+#*  @version       0.1 (\$Revision$)
+#*  @author        Guido Classen
+#*
+#*  $LastChangedBy$
+#*  $Date$
+#*  $URL$
+#* 
+#*  @par change history:
+#*    2006-12-07 gc: initial version 
+#*  
+#*****************************************************************************
 
 TFTP_ROOT_DIR=tftp_root
 BUILDROOT_BASE=buildroot
@@ -63,15 +83,25 @@ fi
 #prepare ccm2200 u-boot directory
 (
   cd $U_BOOT_BASE
+
   \rm -rf $U_BOOT_DIR
   # warning, only example, this is not current u-boot-release
   # DO NOT USE THIS VERSION
-  tar xvzf $1/sources/u-boot/u-boot-ccm2200-20070209.tar.gz
+  #tar xvzf $1/sources/u-boot/u-boot-ccm2200-20070209.tar.gz
+
+
+
 
   # create symlink for build script
-  cd $U_BOOT_DIR
-  rm build-ccm2200.sh
-  ln -s ../build-ccm2200.sh .
+  #cd $U_BOOT_DIR
+  #rm build-ccm2200.sh
+  #ln -s ../build-ccm2200.sh .
+
+
+  tar xvzf $1//sources/u-boot/v2010.09/u-boot-git-v2010.09.tar.gz 
+  mv u-boot-git ${U_BOOT_DIR}
+  cd ${U_BOOT_DIR} ;patch -p1 <$1/sources/u-boot/v2010.09/u-boot-v2010.09-ccm2200-redu-20110106.patch
+
 )
 
 
