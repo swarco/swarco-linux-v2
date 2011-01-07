@@ -69,7 +69,7 @@ fi
     cp -a $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
   fi
 
-  cd $BUILDROOT_SOFT_FLOAT_DIR; ./prepare_tree_soft_float.sh
+  ( cd $BUILDROOT_SOFT_FLOAT_DIR; ./prepare_tree_soft_float.sh )
   cp dot_config_buildroot-2.0-soft-float $BUILDROOT_SOFT_FLOAT_DIR/.config  
 )
 
