@@ -29,7 +29,7 @@ U_BOOT_DIR=u-boot-ccm2200
 KERNEL_BASE=kernel
 
 if [ "$1" == "" ] || [ ! -d "$1" ] ; then
-  echo Syntax: $0 '<directory to Weiss-Embedded-Linux CD>'
+  echo Syntax: $0 '<directory to SWARCO Traffic Systems Embedded-Linux CD>'
   exit
 fi
 
@@ -52,18 +52,11 @@ fi
   cp -a $1/sources/userland/dl .
 )
 
-#prepare buildroot 2.0 tree
-
-(
-    cd $BUILDROOT_BASE/buildroot-2.0
-    ./prepare_tree.sh
-)
-
-#prepare a copy of buildroot to create the soft-float toolchain 
-# necessary to build u-boot
+# 2011-01-07 gc: prepare a copy of buildroot 2 to create the soft-float
+# toolchain necessary to build u-boot
 (
   cd $BUILDROOT_BASE
-  
+
   if [ -d $BUILDROOT_DIR/.svn ]
   then 
     svn export $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
@@ -76,9 +69,39 @@ fi
     cp -a $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
   fi
 
-  cp dot_config_buildroot-1.0-soft-float $BUILDROOT_SOFT_FLOAT_DIR/.config  
-  cp uClibc.config-soft-float $BUILDROOT_SOFT_FLOAT_DIR/toolchain/uClibc/uClibc.config
+  cd $BUILDROOT_SOFT_FLOAT_DIR; ./prepare_tree_soft_float.sh
+  cp dot_config_buildroot-2.0-soft-float $BUILDROOT_SOFT_FLOAT_DIR/.config  
 )
+
+
+#prepare buildroot 2.0 tree
+
+(
+    cd $BUILDROOT_BASE/buildroot-2.0
+    ./prepare_tree.sh
+)
+
+#prepare a copy of buildroot to create the soft-float toolchain 
+# necessary to build u-boot
+# (
+#   cd $BUILDROOT_BASE
+  
+#   if [ -d $BUILDROOT_DIR/.svn ]
+#   then 
+#     svn export $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
+#   fi
+
+#   # fallback if svn export is not available (weiss-linux tree is 
+#   # created from .tar.gz)
+#   if ! [ -d $BUILDROOT_SOFT_FLOAT_DIR ]
+#   then
+#     cp -a $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
+#   fi
+
+#   cp dot_config_buildroot-1.0-soft-float $BUILDROOT_SOFT_FLOAT_DIR/.config  
+#   cp uClibc.config-soft-float $BUILDROOT_SOFT_FLOAT_DIR/toolchain/uClibc/uClibc.config
+# )
+
 
 #prepare ccm2200 u-boot directory
 (
@@ -90,17 +113,15 @@ fi
   #tar xvzf $1/sources/u-boot/u-boot-ccm2200-20070209.tar.gz
 
 
-
-
   # create symlink for build script
   #cd $U_BOOT_DIR
   #rm build-ccm2200.sh
   #ln -s ../build-ccm2200.sh .
 
 
-  tar xvzf $1//sources/u-boot/v2010.09/u-boot-git-v2010.09.tar.gz 
+  tar xvzf $1/sources/u-boot/v2010.09/u-boot-git-v2010.09.tar.gz 
   mv u-boot-git ${U_BOOT_DIR}
-  cd ${U_BOOT_DIR} ;patch -p1 <$1/sources/u-boot/v2010.09/u-boot-v2010.09-ccm2200-redu-20110106.patch
+  cd ${U_BOOT_DIR} ;patch -p1 <$1/sources/u-boot/v2010.09/u-boot-v2010.09-ccm2200-redu-20110107.patch
 
 )
 

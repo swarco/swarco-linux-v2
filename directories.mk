@@ -23,7 +23,7 @@ TFTP_ROOT_DIR	= tftp_root
 
 BUILDROOT_BASE  = buildroot
 BUILDROOT_DIR	= buildroot-2.0
-BUILDROOT_SOFT_FLOAT_DIR = buildroot-1.0-soft-float
+BUILDROOT_SOFT_FLOAT_DIR = buildroot-2.0-soft-float
 BUILDROOT_PATH  = $(BASE_DIR)/$(BUILDROOT_BASE)/$(BUILDROOT_DIR)
 CH_CONFIG_DIR	= $(BASE_DIR)/$(BUILDROOT_BASE)/weiss_ch_conf
 

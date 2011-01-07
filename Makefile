@@ -31,8 +31,15 @@ WEISS_CD_DIR = $(HOME)/mnt/daten/WeissEmbeddedLinux_lokal/DistriCD
 
 include	$(BASE_DIR)/directories.mk
 
+# soft float toolchain neccessary for building u-boot boot-loader
+SOFT_FLOAT_TOOLCHAIN_DIR = buildroot/buildroot-2.0-soft-float/build_arm/staging_dir/usr/bin
+SOFT_FLOAT_TOOLCHAIN = $(SOFT_FLOAT_TOOLCHAIN_DIR)/arm-linux-gcc	\
+			$(SOFT_FLOAT_TOOLCHAIN_DIR)/arm-linux-ar	\
+			$(SOFT_FLOAT_TOOLCHAIN_DIR)/arm-linux-ld	\
+			$(SOFT_FLOAT_TOOLCHAIN_DIR)/arm-linux-objcopy
+
 .PHONY: all
-all: buildroot buildroot-soft-float u-boot kernel \
+all: buildroot u-boot kernel \
      modules_install usermode
 # run make in buildroot again, to include the newly build kernel modules in 
 # the jffs2 images
@@ -47,13 +54,17 @@ buildroot:
 #	cp $(BUILDROOT_PATH)/rootfs-ccm2200-sp-nand.jffs2 $(TFTP_ROOT_DIR)
 
 
-.PHONY: buildroot-soft-float
-buildroot-soft-float:
-	-make -C $(BUILDROOT_BASE)/$(BUILDROOT_SOFT_FLOAT_DIR)
+# .PHONY: buildroot-soft-float
+# buildroot-soft-float:
+# 	-make -C $(BUILDROOT_BASE)/$(BUILDROOT_SOFT_FLOAT_DIR)
+
+$(SOFT_FLOAT_TOOLCHAIN):
+	make -C $(BUILDROOT_BASE)/$(BUILDROOT_SOFT_FLOAT_DIR)
+	rm -rf   $(BUILDROOT_BASE)/$(BUILDROOT_SOFT_FLOAT_DIR)/toolchain_build_arm
 
 
 .PHONY: u-boot
-u-boot:
+u-boot: $(SOFT_FLOAT_TOOLCHAIN)
 	cd $(U_BOOT_PATH); sh build-ccm2200.sh
 
 
