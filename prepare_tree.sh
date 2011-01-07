@@ -25,7 +25,7 @@ BUILDROOT_BASE=buildroot
 BUILDROOT_DIR=buildroot-2.0
 BUILDROOT_SOFT_FLOAT_DIR=buildroot-2.0-soft-float
 U_BOOT_BASE=u-boot
-U_BOOT_DIR=u-boot-ccm2200
+U_BOOT_DIR=u-boot-v2010.09-ccm2200
 KERNEL_BASE=kernel
 
 if [ "$1" == "" ] || [ ! -d "$1" ] ; then
