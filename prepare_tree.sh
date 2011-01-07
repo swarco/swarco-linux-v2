@@ -22,8 +22,8 @@
 
 TFTP_ROOT_DIR=tftp_root
 BUILDROOT_BASE=buildroot
-BUILDROOT_DIR=buildroot-1.0
-BUILDROOT_SOFT_FLOAT_DIR=buildroot-1.0-soft-float
+BUILDROOT_DIR=buildroot-2.0
+BUILDROOT_SOFT_FLOAT_DIR=buildroot-2.0-soft-float
 U_BOOT_BASE=u-boot
 U_BOOT_DIR=u-boot-ccm2200
 KERNEL_BASE=kernel
