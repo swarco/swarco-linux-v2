@@ -21,9 +21,7 @@
 
 umask 022
 
-if [ ! -f /etc/.firstboot ]; then
-    exit 0
-else
+if [ -f /etc/.firstboot ]; then
     /usr/sbin/ssh_keygen.sh &
 fi
 

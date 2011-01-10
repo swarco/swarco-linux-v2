@@ -1,7 +1,7 @@
 #! /bin/sh
 #*****************************************************************************/
 #* 
-#*  @file          S11hwclock.sh
+#*  @file          S*hwclock.sh
 #*
 #*  sets system clock to hardware clock
 #*  

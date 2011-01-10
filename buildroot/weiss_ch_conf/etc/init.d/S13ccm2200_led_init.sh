@@ -23,7 +23,7 @@ case "$1" in
   	exit 0
 	;;
   restart|reload)
-  	restart
+  	# break
 	;;
   *)
 	echo $"Usage: $0 {start|stop|restart}"

@@ -1,14 +1,14 @@
 #!/bin/sh
 #*****************************************************************************
 #* 
-#*  @file          /etc/S10hw-init
+#*  @file          /etc/S*sysv-ipc-limits
 #*
-#*                 Initialize LS2000CP Hardware
-#*                 Buildroot uclibc linux
+#*                 Setze Linux Kernel Sys-V interprocess communication limits
 #*                 2005 Weiss-Electronic GmbH
+#*                 2010 SWARCO Traffic Systems GmbH
 #*
-#*  @version       0.2
-#*  @date          <2005-05-18 17:03:03 gc>
+#*  @version       0.3
+#*  @date          <2011-01-10 19:33:25 gc>
 #*  @author        Guido Classen
 #* 
 #*  @par change history:
@@ -63,5 +63,6 @@ sysctl -w kernel/msgmni=256
 
 # Local Variables:
 # mode: shell-script
+# time-stamp-pattern: "20/@date[\t ]+<%%>"
 # backup-inhibited: t
 # End:
