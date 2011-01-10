@@ -103,10 +103,9 @@ u-boot-dist:
 
 KERNEL_ORIG = linux-orig
 PATCH_FILE  = 201-weiss-ccm2200.patch
-OUTPUT      = output-2.6.21-ccm2200
-KERNEL_DIR  = linux-2.6.21-ccm2200
-KERNEL_CD_DIR= $(WEISS_CD_DIR)/sources/kernel/2.6.21
-CONFIG_CD    = $(KERNEL_CD_DIR)/kernel-config-2.6.21-ccm2200
+OUTPUT      = output-$(KERNEL_VERS)-ccm2200
+KERNEL_CD_DIR= $(WEISS_CD_DIR)/sources/kernel/$(KERNEL_VERS)
+CONFIG_CD    = $(KERNEL_CD_DIR)/kernel-config-$(KERNEL_VERS)-ccm2200
 
 .PHONY: kernel-dist
 kernel-dist:
