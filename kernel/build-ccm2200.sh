@@ -13,7 +13,7 @@ PATH=$PATH:$TOOLCHAIN/usr/bin
 export PATH
 
 # add path for u-boot mkimage tool
-PATH=$PATH:$PWD/../../u-boot/u-boot-ccm2200/tools
+PATH=$PATH:$PWD/../../u-boot/u-boot-v2010.09-ccm2200/tools
 export PATH
 
 if [ "$1" == "" ]; then
