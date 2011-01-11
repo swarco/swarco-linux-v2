@@ -1,6 +1,0 @@
-config BR2_PACKAGE_ZEROCONF
-	bool "zeroconf"
-	default n
-	help
-		IPv4LL implementation.
-	  

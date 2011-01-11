@@ -1,5 +1,0 @@
-config BR2_PACKAGE_SQLITE
-        bool "sqlite"
-	default n
-	help
-	  Small SQL-Database

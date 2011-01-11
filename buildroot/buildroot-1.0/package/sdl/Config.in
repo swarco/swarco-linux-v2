@@ -1,6 +1,0 @@
-config BR2_PACKAGE_SDL
-	bool "SDL"
-	default n
-	help
-
-	  http://www.libsdl.org/

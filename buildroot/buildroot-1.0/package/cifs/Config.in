@@ -1,5 +1,0 @@
-config BR2_PACKAGE_CIFS
-	bool "cifs"
-	default n
-	help
-	  Common Internet File System client

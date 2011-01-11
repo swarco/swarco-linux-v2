@@ -1,5 +1,0 @@
-config BR2_PACKAGE_MGETTY
-        bool "mgetty"
-	default n
-	help
-	  GETTY for external connections via modem (dialin).

@@ -1,5 +1,0 @@
-config BR2_PACKAGE_BLUEZ-UTILS
-        bool "bluez-utils"
-	default n
-	help
-	  Bluetooth Utils

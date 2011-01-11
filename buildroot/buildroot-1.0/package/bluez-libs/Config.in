@@ -1,5 +1,0 @@
-config BR2_PACKAGE_BLUEZ-LIBS
-	bool "bluez-libs"
-	default n
-	help
-	  Bluetooth libs

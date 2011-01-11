@@ -1,5 +1,0 @@
-config BR2_PACKAGE_IMAGEMAGICK
-        bool "imagemagick"
-	default n
-	help
-	  imagemagick programm to manipulate jpeg files

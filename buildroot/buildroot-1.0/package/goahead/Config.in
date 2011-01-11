@@ -1,5 +1,0 @@
-config BR2_PACKAGE_GOAHEAD
-	bool "goahead"
-	default n
-	help
-	  

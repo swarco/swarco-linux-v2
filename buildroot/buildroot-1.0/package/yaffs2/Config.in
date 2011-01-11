@@ -1,5 +1,0 @@
-config BR2_PACKAGE_YAFFS2
-        bool "yaffs2 NAND FS"
-	default n
-	help
-	  YAFFS2 NAND FS

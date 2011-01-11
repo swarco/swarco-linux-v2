@@ -1,6 +1,0 @@
-config BR2_PACKAGE_FUSER
-        bool "fuser (from psmisc package)"
-	default n
-	help
-	  fuser utility from psmisc package
-

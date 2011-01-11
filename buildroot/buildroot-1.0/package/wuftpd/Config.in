@@ -1,5 +1,0 @@
-config BR2_PACKAGE_WUFTPD
-        bool "wuftpd"
-	default n
-	help
-	  WU-FTPD Server
