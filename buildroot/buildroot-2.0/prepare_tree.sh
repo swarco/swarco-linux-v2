@@ -9,7 +9,7 @@ BUILDROOT_SVN=buildroot-svn-20081211
   tar xvjf ../dl/${BUILDROOT_SVN}.tar.bz2 --exclude .svn
   patch -p1 <${BUILDROOT_SVN}-swarco-basesystem2.patch
   # copy template tree over extracted buildroot source tree
-  (cd weiss/template_tree; tar cf - --exclude .svn .) | \
+  (cd swarco/template_tree; tar cf - --exclude .svn .) | \
     (cd $BUILDROOT_BASE; tar xvf -)
   make oldconfig
 )
