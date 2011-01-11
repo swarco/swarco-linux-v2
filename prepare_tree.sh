@@ -169,11 +169,11 @@ prepare_kernel_directory() {
 # prepare_kernel_directory  linux-2.6.12.6                        \
 #                           $1/sources/kernel/2.6.12.6/
 
-prepare_kernel_directory  linux-2.6.21                          \
-                          $1/sources/kernel/2.6.21/
+# prepare_kernel_directory  linux-2.6.21                          \
+#                           $1/sources/kernel/2.6.21/
 
-# prepare_kernel_directory  linux-2.6.35                            \
-#                           $1/sources/kernel/2.6.35/
+prepare_kernel_directory  linux-2.6.35                            \
+                          $1/sources/kernel/2.6.35/
 
 # Local Variables:
 # mode: shell-script
