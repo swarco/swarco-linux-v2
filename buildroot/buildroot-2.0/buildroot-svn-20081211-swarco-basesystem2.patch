@@ -5,7 +5,7 @@ diff -Nrub buildroot-2.0/Makefile new/Makefile
  endif
  
  include package/*/*.mk
-+include weiss/Makefile
++include swarco/Makefile
  
  TARGETS+=target-devfiles
  
@@ -16,7 +16,7 @@ diff -Nrub buildroot-2.0/package/Config.in new/package/Config.in
  # various games packages
  source "package/games/Config.in"
  
-+source "weiss/package/Config.in"
++source "swarco/package/Config.in"
 +
  endmenu
 diff -Nrub buildroot-2.0/package/lighttpd/lighttpd.mk new/package/lighttpd/lighttpd.mk
