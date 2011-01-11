@@ -15,7 +15,7 @@ $(DL_DIR)/$(BLUEZ-LIBS_SOURCE):
 
 $(BLUEZ-LIBS_DIR)/.source: $(DL_DIR)/$(BLUEZ-LIBS_SOURCE)
 	zcat $(DL_DIR)/$(BLUEZ-LIBS_SOURCE) | tar -C $(BUILD_DIR) $(TAR_OPTIONS) -
-	toolchain/patch-kernel.sh $(BLUEZ-LIBS_DIR) weiss/package/bluez-libs/ bluez-libs\*.patch
+	toolchain/patch-kernel.sh $(BLUEZ-LIBS_DIR) swarco/package/bluez-libs/ bluez-libs\*.patch
 	touch $(BLUEZ-LIBS_DIR)/.source
 
 $(BLUEZ-LIBS_DIR)/.configured: $(BLUEZ-LIBS_DIR)/.source
