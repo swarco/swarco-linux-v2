@@ -121,7 +121,7 @@ fi
 
   tar xvzf $1/sources/u-boot/v2010.09/u-boot-git-v2010.09.tar.gz 
   mv u-boot-git ${U_BOOT_DIR}
-  cd ${U_BOOT_DIR} ;patch -p1 <$1/sources/u-boot/v2010.09/u-boot-v2010.09-ccm2200-redu-20110107.patch
+  cd ${U_BOOT_DIR} ;patch -p1 <$1/sources/u-boot/v2010.09/u-boot-v2010.09-ccm2200-redu-20110111.patch
 
 )
 
