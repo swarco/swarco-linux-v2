@@ -20,9 +20,9 @@
 #*****************************************************************************
 
 
-include weiss/package/*/*.mk
+include swarco/package/*/*.mk
 
-TARGETS+=weiss_prepare_root
+TARGETS+=swarco_prepare_root
 
 
 $(PROJECT_BUILD_DIR)/device_table.txt: target/device/Atmel/root/device_table.txt weiss/device_table_ext.txt
@@ -55,5 +55,5 @@ install_chconf:
 	#ln -sf ../sbin/sftp-server $(TARGET_DIR)/usr/lib/sftp-server
 	echo "Welcome to SWARCO Traffic Systems GmbH Embedded Linux v2.01 " ` date '+#%Y-%m-%d#' `  > $(TARGET_DIR)/etc/issue
 
-.PHONY: weiss_prepare_root
-weiss_prepare_root: overwrite_target_device_table install_chconf
+.PHONY: swarco_prepare_root
+swarco_prepare_root: overwrite_target_device_table install_chconf
