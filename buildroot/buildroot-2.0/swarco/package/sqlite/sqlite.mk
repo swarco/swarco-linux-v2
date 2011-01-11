@@ -9,7 +9,7 @@ SQLITE_SITE:=http://bluez.sourceforge.net/download
 SQLITE_DIR:=$(BUILD_DIR)/sqlite-$(SQLITE_VER)
 SQLITE_BINARY:=sqlite
 SQLITE_TARGET_BINARY:=/usr/bin/sqlite
-PDIR=$(PWD)/weiss/package/sqlite
+PDIR=$(PWD)/swarco/package/sqlite
 
 
 $(DL_DIR)/$(SQLITE_SOURCE):

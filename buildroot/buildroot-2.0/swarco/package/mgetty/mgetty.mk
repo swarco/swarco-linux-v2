@@ -10,7 +10,7 @@ MGETTY_DIR:=$(BUILD_DIR)/mgetty-$(MGETTY_VER)
 MGETTY_BINARY:=$(MGETTY_DIR)/mgetty
 MGETTY_CONFDIR:=$(TARGET_DIR)/etc/mgetty
 MGETTY_TARGET_BINARY:=$(TARGET_DIR)/bin/mgetty
-MGETTY_P_DIR:=$(BUILD_DIR)/../weiss/package/mgetty
+MGETTY_P_DIR:=$(BUILD_DIR)/../swarco/package/mgetty
 $(DL_DIR)/$(MGETTY_SOURCE):
 	 $(WGET) -P $(DL_DIR) $(MGETTY_SITE)/$(MGETTY_SOURCE)
 

@@ -13,7 +13,7 @@ COMGT_DIR:=$(BUILD_DIR)/comgt.$(COMGT_VER)
 COMGT_CAT:=zcat
 COMGT_BINARY:=$(COMGT_DIR)/comgt
 COMGT_TARGET_BINARY:=$(TARGET_DIR)/usr/bin/comgt
-COMGT_PDIR=weiss/package/comgt
+COMGT_PDIR=swarco/package/comgt
 
 $(DL_DIR)/$(COMGT_SOURCE):
 	 $(WGET) -P $(DL_DIR) $(COMGT_SITE)/$(COMGT_SOURCE)

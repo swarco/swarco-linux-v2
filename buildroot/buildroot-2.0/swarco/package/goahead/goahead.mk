@@ -10,7 +10,7 @@ GOAHEAD_DIR:=$(BUILD_DIR)/ws031202
 GOAHEAD_CAT:=zcat
 GOAHEAD_BINARY:=$(GOAHEAD_DIR)/webs
 GOAHEAD_TARGET_BINARY:=$(TARGET_DIR)/sbin/goahead
-GOAHEAD_PDIR=weiss/package/goahead
+GOAHEAD_PDIR=swarco/package/goahead
 
 #ifneq ($(BR2_LARGEFILE),y)
 #GOAHEAD_LARGEFILE="--disable-largefile"
