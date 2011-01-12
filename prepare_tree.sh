@@ -28,7 +28,7 @@ U_BOOT_BASE=u-boot
 U_BOOT_DIR=u-boot-v2010.09-ccm2200
 KERNEL_BASE=kernel
 
-if [ "$1" == "" ] || [ ! -d "$1" ] ; then
+if [ -z "$1" ] || [ ! -d "$1" ] ; then
   echo Syntax: $0 '<directory to SWARCO Traffic Systems Embedded-Linux CD>'
   exit
 fi
@@ -39,7 +39,7 @@ if [ ! -f /mnt/weiss/weiss-linux/prepare_tree.sh ] ||
   echo Warning: recommended installation place for Weiss-Embedded-Linux Repository
   echo          is /mnt/weiss/weiss-linux
   echo          Press Return to continue, Ctrl-C to abort
-  read 
+  read line
 fi
 
 
