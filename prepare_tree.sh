@@ -179,7 +179,7 @@ prepare_kernel_directory() {
 
 prepare_kernel_directory  linux-2.6.35                            \
                           $1/sources/kernel/2.6.35/               \
-                          $1/source/userland/dl/linux-2.6.35.tar.bz2
+                          $1/sources/userland/dl/linux-2.6.35.tar.bz2
 
 # Local Variables:
 # mode: shell-script
