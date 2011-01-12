@@ -132,9 +132,14 @@ fi
 prepare_kernel_directory() {
 (
   KERNEL_VANILLA_DIR=$1
-  KERNEL_CCM2200_DIR=$KERNEL_VANILLA_DIR-ccm2200
+  KERNEL_CCM2200_DIR=${KERNEL_VANILLA_DIR}-ccm2200
   KERNEL_CD_DIR=$2
+  KERNEL_TAR_BALL=$3
   KERNEL_OUTPUT_DIR=output-${KERNEL_CCM2200_DIR##*linux-}
+
+  if [ -z "$KERNEL_TAR_BALL" ]; then
+      KERNEL_TAR_BALL=$KERNEL_CD_DIR/linux-*.tar.bz2
+  fi
 
   cd $KERNEL_BASE
   mkdir $KERNEL_OUTPUT_DIR
@@ -146,7 +151,7 @@ prepare_kernel_directory() {
   \rm -rf $KERNEL_VANILLA_DIR $KERNEL_CCM2200_DIR
 
   # extract kernel
-  tar xjvf $KERNEL_CD_DIR/linux-*.tar.bz2
+  tar xjvf $KERNEL_TAR_BALL
   mv $KERNEL_VANILLA_DIR $KERNEL_CCM2200_DIR
   cd $KERNEL_CCM2200_DIR
 
@@ -173,7 +178,8 @@ prepare_kernel_directory() {
 #                           $1/sources/kernel/2.6.21/
 
 prepare_kernel_directory  linux-2.6.35                            \
-                          $1/sources/kernel/2.6.35/
+                          $1/sources/kernel/2.6.35/               \
+                          $1/source/userland/dl/linux-2.6.35.tar.bz2
 
 # Local Variables:
 # mode: shell-script
