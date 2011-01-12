@@ -2,13 +2,14 @@
 #* 
 #*  @file          Makefile
 #*
-#*                 buildroot basesystem 2.0 weiss package directory
+#*                 buildroot basesystem 2.0 
+#*                  SWARCO Traffic Systems package directory
 #*
-#*  @par Program:  Weiss-Embedded-Linux / Buildroot
+#*  @par Program:  SWARCO Traffic Systems Embedded Linux / Buildroot
 #*
 #*  @version       1.0 (\$Revision: 332 $)
 #*  @author        Guido Classen
-#*                 Weiss Electronic GmbH
+#*                 SWARCO Traffic Systems GmbH
 #* 
 #*  $LastChangedBy: clg9tr $  
 #*  $Date:  $
@@ -25,7 +26,7 @@ include swarco/package/*/*.mk
 TARGETS+=swarco_prepare_root
 
 
-$(PROJECT_BUILD_DIR)/device_table.txt: target/device/Atmel/root/device_table.txt weiss/device_table_ext.txt
+$(PROJECT_BUILD_DIR)/device_table.txt: target/device/Atmel/root/device_table.txt swarco/device_table_ext.txt
 	cat $? >$@
 
 .PHONY: overwrite_target_device_table
@@ -36,7 +37,7 @@ overwrite_target_device_table: $(PROJECT_BUILD_DIR)/device_table.txt
 .PHONY: install_chconf
 install_chconf: 
 	echo install_chconf: 
-	(cd weiss/ch_conf; tar cf - --exclude .svn .) | (cd $(TARGET_DIR);tar xvf -)
+	(cd swarco/ch_conf; tar cf - --exclude .svn .) | (cd $(TARGET_DIR);tar xvf -)
 	-mv $(TARGET_DIR)/etc/init.d/S*ntp $(TARGET_DIR)/etc/init.d/not_started
 	# create links from /var to /tmp
 	for dir in lock log pcmcia run spool tmp; \
