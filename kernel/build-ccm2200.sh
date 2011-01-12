@@ -1,5 +1,5 @@
 KERNEL_DIR=.
-INSTALL_MOD_PATH=$PWD/../../buildroot/weiss_ch_conf
+INSTALL_MOD_PATH=$PWD/../../buildroot/swarco_ch_conf
 OUTPUT_DIR=$PWD/../output-${PWD##*linux-}
 IMAGE_DIR=../../tftp_root/
 
