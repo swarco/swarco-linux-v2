@@ -2,17 +2,17 @@
 #* 
 #*  @file          directories.mk
 #*
-#*                 Weiss-Embedded-Linux Repository
+#*                 SWARCO Traffic Systems Embedded-Linux
 #*
 #*  @par Program:  set makefile variable to actual directories
 #*
-#*  @version       1.0 (\$Revision: 332 $)
+#*  @version       1.0 (\$Revision$)
 #*  @author        Guido Classen
 #*                 Weiss Electronic GmbH
 #* 
-#*  $LastChangedBy: clg9tr $  
-#*  $Date: 2006-11-24 18:21:01 +0100 (Fr, 24 Nov 2006) $
-#*  $URL: svn://server-i/layer-79/makefile $
+#*  $LastChangedBy$  
+#*  $Date$
+#*  $URL$
 #*
 #*  @par Modification History:
 #*   2007-02-05 gc: initial version
@@ -25,7 +25,7 @@ BUILDROOT_BASE  = buildroot
 BUILDROOT_DIR	= buildroot-2.0
 BUILDROOT_SOFT_FLOAT_DIR = buildroot-2.0-soft-float
 BUILDROOT_PATH  = $(BASE_DIR)/$(BUILDROOT_BASE)/$(BUILDROOT_DIR)
-CH_CONFIG_DIR	= $(BASE_DIR)/$(BUILDROOT_BASE)/weiss_ch_conf
+CH_CONFIG_DIR	= $(BASE_DIR)/$(BUILDROOT_BASE)/swarco_ch_conf
 
 
 U_BOOT_BASE	= u-boot

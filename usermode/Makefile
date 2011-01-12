@@ -2,17 +2,17 @@
 #* 
 #*  @file          Makefile
 #*
-#*                 Weiss-Embedded-Linux
+#*                 SWARCO Traffic Systems Embedded-Linux
 #*
 #*  @par Program:  User mode utilities
 #*
-#*  @version       1.0 (\$Revision: 332 $)
+#*  @version       1.0 (\$Revision$)
 #*  @author        Guido Classen
-#*                 Weiss Electronic GmbH
+#*                 SWARCO Traffic Systems GmbH
 #* 
-#*  $LastChangedBy: clg9tr $  
-#*  $Date: 2006-11-24 18:21:01 +0100 (Fr, 24 Nov 2006) $
-#*  $URL: svn://server-i/layer-79/makefile $
+#*  $LastChangedBy$  
+#*  $Date$
+#*  $URL$
 #*
 #*  @par Modification History:
 #*   2007-02-05 gc: initial version
