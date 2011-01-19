@@ -8,7 +8,7 @@
 #*
 #*  @version       1.0 (\$Revision$)
 #*  @author        Guido Classen <br>
-#*                 Weiss-Electronic GmbH
+#*                 SWARCO Traffic Systems GmbH
 #* 
 #*  $LastChangedBy$  
 #*  $Date$

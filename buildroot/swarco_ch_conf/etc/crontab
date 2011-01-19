@@ -4,3 +4,4 @@
 
 # m h dom mon dow command
 15 2 * * * /usr/bin/ntp-query.sh
+24 2,14  * * * /etc/ppp/gprs-connection-test.sh

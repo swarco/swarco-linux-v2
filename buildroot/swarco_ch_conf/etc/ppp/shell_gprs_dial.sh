@@ -8,13 +8,14 @@
 #*  @version       0.1
 #*  @date
 #*  @author        Guido Classen
+#*                 SWARCO Traffic Systems GmbH
 #*
 #*  Changes:
 #*    2009-08-28 gc: initial version
 #*
 #****************************************************************************/
 
-echo $0 [Version 2010-10-29 14:28:48 gc]
+echo $0 [Version 2011-01-19 20:23:12 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1

@@ -53,3 +53,7 @@ GPRS_PPP_LED=/sys/class/leds/led10/brightness
 #GPRS_RESET_CMD='echo 100 >/sys/class/leds/led12/brightness;sleep 5;echo 0 >/sys/class/leds/led12/brightness'
 
 #GPRS_ANSWER_CSD_CMD="/usr/weiss/bin/remote_subnet_mgr /etc/weiss/sm1/rem_subnet_prm"
+
+# cron job based GRRS connection test using Ping (ICMP Echo)
+#GPRS_CON_TEST_PING_HOSTS="192.168.95.10 192.168.9.241 192.168.9.242"
+#GPRS_CON_TEST_TCP_HOSTS="localhost:7250"
