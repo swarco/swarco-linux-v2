@@ -25,9 +25,9 @@
 #*****************************************************************************
 
 BASE_DIR = .
-#WEISS_CD_DIR = $(HOME)/mnt/entwicklung/WeissEmbeddedLinux/DistriCD
+WEISS_CD_DIR = $(HOME)/mnt/entwicklung/WeissEmbeddedLinux/DistriCD
 # offline directory
-WEISS_CD_DIR = $(HOME)/mnt/daten/WeissEmbeddedLinux_lokal/DistriCD
+#WEISS_CD_DIR = $(HOME)/mnt/daten/WeissEmbeddedLinux_lokal/DistriCD
 
 include	$(BASE_DIR)/directories.mk
 
@@ -104,7 +104,7 @@ u-boot-dist:
 
 
 KERNEL_ORIG = linux-orig
-PATCH_FILE  = 201-weiss-ccm2200.patch
+PATCH_FILE  = 201-swarco-ccm2200.patch
 OUTPUT      = output-$(KERNEL_VERS)-ccm2200
 KERNEL_CD_DIR= $(WEISS_CD_DIR)/sources/kernel/$(KERNEL_VERS)
 CONFIG_CD    = $(KERNEL_CD_DIR)/kernel-config-$(KERNEL_VERS)-ccm2200
@@ -112,7 +112,7 @@ CONFIG_CD    = $(KERNEL_CD_DIR)/kernel-config-$(KERNEL_VERS)-ccm2200
 .PHONY: kernel-dist
 kernel-dist:
 	cp $(KERNEL_BASE)/$(OUTPUT)/.config $(CONFIG_CD)
-	# extract a kernel with all patches except Weiss CCM2200 patch!
+	# extract a kernel with all patches except SWARCO CCM2200 patch!
 	cd $(KERNEL_BASE) ; \
         ( \
 	  \rm -rf $(KERNEL_ORIG) $(KERNEL_ACTUAL) ;\
@@ -132,7 +132,7 @@ kernel-dist:
           \
 #	  test -f $(KERNEL_CD_DIR)/cifs_1.44.tar.gz && tar xvzf $(KERNEL_CD_DIR)/cifs_1.44.tar.gz ;\
 	)
-	# create new Weiss CCM2200 patch
+	# create new SWARCO CCM2200 patch
 	-cd $(KERNEL_BASE); diff -Nrub '--exclude=*~' $(KERNEL_ORIG) $(KERNEL_DIR) >$(KERNEL_CD_DIR)/new_$(PATCH_FILE)
 #	\rm -rf $(KERNEL_ORIG)
 
