@@ -23,6 +23,7 @@
  * MA 02111-1307 USA
  *
  *  @par Modification History:
+ *     2011-01-20 gc: support for read back output and leds
  *     2007-05-08 gc: support for continuous option
  *     2007-02-05 gc: initial version
  */
@@ -73,13 +74,17 @@ int main(int argc, char *argv[])
   }
 
   if (!strcmp(argv[2], "out")) {
-    output = 1;
+    if (argc > 3) {
+      output = 1;
+    }
     port = CCM2200_GPIO_OUTPUT;
   } else if (!strcmp(argv[2], "in")) {
     output = 0;
     port = CCM2200_GPIO_INPUT;
   } else if (!strcmp(argv[2], "led")) {
-    output = 1;
+    if (argc > 3) {
+      output = 1;
+    }
     port = CCM2200_GPIO_LED;
   } else if (!strcmp(argv[2], "sconf")) {
     output = 0;
