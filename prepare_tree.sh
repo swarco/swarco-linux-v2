@@ -181,6 +181,9 @@ prepare_kernel_directory  linux-2.6.21                          \
 #                          $1/sources/kernel/2.6.35/               \
 #                          $1/sources/userland/dl/linux-2.6.35.tar.bz2
 
+#prepare_kernel_directory  linux-2.6.33                            \
+#                          $1/sources/kernel/2.6.37/
+
 # Local Variables:
 # mode: shell-script
 # compile-command: "./prepare_tree.sh ~/mnt/entwicklung/WeissEmbeddedLinux/DistriCD"

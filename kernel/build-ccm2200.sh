@@ -16,13 +16,15 @@ export PATH
 PATH=$PATH:$PWD/../../u-boot/u-boot-v2010.09-ccm2200/tools
 export PATH
 
-if [ "$1" == "" ]; then
-set uImage modules modules_install
+if [ -z "$1" ]; then
+    set uImage modules modules_install
 fi
 
 
 # KBUILD_VERBOSE=1
-make -C "$KERNEL_DIR" ARCH=arm CROSS_COMPILE="arm-linux-" INSTALL_MOD_PATH=$INSTALL_MOD_PATH O=$OUTPUT_DIR $@ || exit $?
+make -C "$KERNEL_DIR" ARCH=arm CROSS_COMPILE="arm-linux-"       \
+                      INSTALL_MOD_PATH=$INSTALL_MOD_PATH        \
+                      O=$OUTPUT_DIR $@ || exit $?
 
 cp $OUTPUT_DIR/arch/arm/boot/uImage $IMAGE_DIR/uImage-ccm2200dev.bin
 
