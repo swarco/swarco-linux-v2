@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2011-01-19 20:23:12 gc]
+echo $0 [Version 2011-02-28 15:16:55 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -45,7 +45,12 @@ set_gprs_led() {
     echo 0 "$*" >/tmp/gprs_led
 }
 
-SYS_MESG=/usr/weiss/bin/sys-mesg
+
+if [ -x /usr/swarco/bin/sys-mesg ]; then
+    SYS_MESG=/usr/swarco/bin/sys-mesg
+else
+    SYS_MESG=/usr/weiss/bin/sys-mesg
+fi
 sys_mesg() {
     test -x $SYS_MESG && $SYS_MESG -n GPRS "$@"
 

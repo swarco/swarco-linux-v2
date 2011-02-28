@@ -19,7 +19,11 @@
 #*  
 #*****************************************************************************
 
-SYS_MESG=/usr/weiss/bin/sys-mesg
+if [ -x /usr/swarco/bin/sys-mesg ]; then
+    SYS_MESG=/usr/swarco/bin/sys-mesg
+else
+    SYS_MESG=/usr/weiss/bin/sys-mesg
+fi
 
 if [ -f /etc/default/gprs ]
 then
