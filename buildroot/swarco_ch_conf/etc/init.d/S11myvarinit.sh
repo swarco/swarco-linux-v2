@@ -42,6 +42,8 @@ case "$1" in
     #ln -s /tmp /var/tmp
     #ln -s /var/tmp /var/lib/dhcp
     #ln -s /var/tmp /var/lib/pcmcia
+    mkdir -p /tmp/snmp
+    ln -s /tmp/snmp /var/snmp
     mkdir -p /tmp/locks
     touch /var/log/messages
     syslogd -s 200 -b 1 -m 0

@@ -24,6 +24,15 @@ M_() {
   echo "$@"
 }
 
+if [ -x /usr/swarco/bin/sys-mesg ]; then
+    SYS_MESG=/usr/swarco/bin/sys-mesg
+else
+    SYS_MESG=/usr/weiss/bin/sys-mesg
+fi
+sys_mesg() {
+    test -x $SYS_MESG && $SYS_MESG "$@"
+}
+
 start() {
     #check DIP switch 5
     if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) != 0 ]; then
@@ -34,10 +43,7 @@ start() {
         # dont start watchdog trigger process if CCM2200 is in service mode
  	echo "Watchdog disabled - CCM2200 in service mode"
         logger -t $0 "Watchdog disabled - CCM2200 in service mode"
-        if [ -x /usr/weiss/bin/sys-mesg ]; then
-          /usr/weiss/bin/sys-mesg -n "watchdog" -e service-mode -p warning `M_ "CCM2200 in service mode. Watchdog disabled! Please set DIP-switches 4 and 5 to the OFF position." `
-        fi
-
+        sys_mesg -n "watchdog" -e service-mode -p warning `M_ "CCM2200 in service mode. Watchdog disabled! Please set DIP-switches 4 and 5 to the OFF position." `
         /usr/bin/ccm2200_watchdog /dev/ccm2200_watchdog led 0x0000
         echo 100 >/sys/class/leds/led15/brightness
     fi
