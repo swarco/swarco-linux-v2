@@ -34,13 +34,13 @@ if [ -z "$1" ] || [ ! -d "$1" ] ; then
 fi
 
 
-if [ ! -f /mnt/weiss/weiss-linux/prepare_tree.sh ] ||
-	 [ ! /mnt/weiss/weiss-linux/prepare_tree.sh -ef $0 ] ; then
-  echo Warning: recommended installation place for Weiss-Embedded-Linux Repository
-  echo          is /mnt/weiss/weiss-linux
-  echo          Press Return to continue, Ctrl-C to abort
-  read line
-fi
+# if [ ! -f /mnt/weiss/weiss-linux/prepare_tree.sh ] ||
+# 	 [ ! /mnt/weiss/weiss-linux/prepare_tree.sh -ef $0 ] ; then
+#   echo Warning: recommended installation place for Weiss-Embedded-Linux Repository
+#   echo          is /mnt/weiss/weiss-linux
+#   echo          Press Return to continue, Ctrl-C to abort
+#   read line
+# fi
 
 
 

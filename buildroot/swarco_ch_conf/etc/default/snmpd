@@ -1,3 +1,15 @@
+
+if ! [ -d /tmp/snmp ]; then
+    mkdir -p /tmp/snmp
+fi
+
+if ! [ -d /var/lib/snmp ]; then
+    rw
+    ln -s /tmp/snmp /var/lib/snmp
+    mkdir -p /tmp/locks
+    ro
+fi
+
 #export MIBDIRS=/usr/share/snmp/mibs
 SNMPDRUN=yes
 #SNMPDOPTS='-Lsd -Lf /dev/null -p /var/run/snmpd.pid 127.0.0.1'
