@@ -33,6 +33,7 @@ sys_mesg() {
     test -x $SYS_MESG && $SYS_MESG "$@"
 }
 
+
 start() {
     #check DIP switch 5
     if [ $((`ccm2200_gpio_test /dev/ccm2200_gpio sconf` & 1)) != 0 ]; then

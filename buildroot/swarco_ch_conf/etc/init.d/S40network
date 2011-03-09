@@ -2,6 +2,12 @@
 #
 # Start the network....
 #
+
+
+# internationalization function for messages (identity)
+M_() {
+  echo "$@"
+}
 if [ -x /usr/swarco/bin/sys-mesg ]; then
     SYS_MESG=/usr/swarco/bin/sys-mesg
 else
