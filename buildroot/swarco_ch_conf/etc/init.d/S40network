@@ -2,9 +2,20 @@
 #
 # Start the network....
 #
+if [ -x /usr/swarco/bin/sys-mesg ]; then
+    SYS_MESG=/usr/swarco/bin/sys-mesg
+else
+    SYS_MESG=/usr/weiss/bin/sys-mesg
+fi
 
 start() {
  	echo "Starting network..."
+
+        #check ethernet MAC address
+        if ifconfig eth0 | grep -q "HWaddr 00:00:00:00:00:00" >/dev/null 2>&1; then
+            $SYS_MESG -n "network" -e eth0/mac -p error `M_ "Ethernet MAC address lost. Probably EEPROM contents invalid" `
+        fi
+
         # 2007-05-09 gc: ifup seams currently not to work in busybox
 	#/sbin/ifup -a
 	sh /etc/network/ip-config
