@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2011-02-28 15:16:55 gc]
+echo $0 [Version 2011-04-11 14:23:41 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -409,7 +409,7 @@ init_and_load_drivers() {
                 ;;
 
             114f:1234)
-                print_usb_device "Wavecom Fastrack Extend FXT003 CDC-ACM Modem"
+                print_usb_device "Wavecom Fastrack Xtend FXT003/009 CDC-ACM Modem"
                 ;;
             esac
     done
@@ -475,6 +475,22 @@ identify_terminal_adapter() {
         *WAVECOM*)
             TA_VENDOR=WAVECOM
             print "Found Wavecom GPRS terminal adapter"
+            # Query WAVECOM reset timer for log
+            at_cmd "AT+WRST?"
+            ;;
+
+        *Sierra\ Wireless*)
+            TA_VENDOR=WAVECOM
+            case $r in
+                *FXT009*)
+                    TA_MODEL=FXT009
+                    GPRS_CMD_SET=1
+                    print "Found Sierra Wireless Wavecom FXT009 GPRS terminal adapter"
+                    ;;
+                *)
+                    print "Found unknown Sierra Wireless Wavecom GPRS terminal adapter"
+                    ;;
+            esac
             # Query WAVECOM reset timer for log
             at_cmd "AT+WRST?"
             ;;
@@ -945,6 +961,10 @@ at_cmd "ATS0=0"
   print "Terminal Adapter: ${r%% OK}"
   status GPRS_TA "${r%% OK}"
 #
+  at_cmd "AT+CGMR"
+  print "Firmware Version: ${r%% OK}"
+  status GPRS_CGMR ${r%% OK}
+#
   at_cmd "AT+CGSN"
   print "IMEI: ${r%% OK}"
   status GPRS_IMEI ${r%% OK}
@@ -1122,28 +1142,6 @@ do
         fi
     fi
 
-    if [ \! -z "$GPRS_CMD_SET" ]; then
-        at_cmd "AT+GMI"
-    # activate PDP context
-        at_cmd "AT+CGACT=1,1" 90 || error
-        at_cmd "AT" 2
-
-    #enter data state
-        case $TA_VENDOR in
-            WAVECOM)
-                at_cmd "AT+CGDATA=1" 90 "CONNECT" || error
-                ;;
-            SIEMENS | Cinterion | *)
-                at_cmd "AT+CGDATA=\"PPP\",1" 90 "CONNECT" || error
-                ;;
-        esac
-
-    # 2009-08-07 gc: AT+CGDATA dosn't deliver DNS addresses on Siemens! BUG?
-    else
-        at_cmd "AT D*99***1#" 90 "CONNECT" || error
-    fi
-
-#sleep 1
     ppp_args="call gprs_comgt nolog nodetach $GPRS_PPP_OPTIONS"
     if [ \! -z "$GPRS_USER" ]; then
         ppp_args="$ppp_args user $GPRS_USER"
@@ -1154,12 +1152,59 @@ do
     else
         print "running pppd: /usr/sbin/pppd ${ppp_args}"
     fi
-    stty -F $GPRS_DEVICE -ignbrk brkint
-    /usr/sbin/pppd $ppp_args <&3 >&3 &
+    
+    case $TA_VENDOR in
+        WAVECOM)
+            #2011-04-11 gc: Sierra Wireless WAVECOM FXT009 response so fast
+            #               on GPRS ATD command, so ppp frames will be lost.
+            #               We must call pppd using a chat script for 
+            #               dialing
+            #
+            # @TODO: check this settings on other (Siemens HC25) TAs
+            /usr/sbin/pppd $ppp_args  \
+                connect "/usr/sbin/chat  -v TIMEOUT 120 \
+                                            ABORT BUSY \
+                                            ABORT 'NO CARRIER' \
+                                            '' AT OK \
+                                            'ATD*99***1#' CONNECT" \
+                $GPRS_DEVICE $GPRS_BAUDRATE &
 # save pppd's PID file in case of pppd hangs before it writes the PID file
-    ppp_pid=$!
-    echo $ppp_pid >/var/run/ppp0.pid
-
+            ppp_pid=$!
+            echo $ppp_pid >/var/run/ppp0.pid
+            ;;
+        
+        *)
+            if [ \! -z "$GPRS_CMD_SET" ]; then
+                at_cmd "AT+GMI"
+    # activate PDP context
+                at_cmd "AT+CGACT=1,1" 90 || error
+                at_cmd "AT" 2
+                
+    #enter data state
+                case $TA_VENDOR in
+                    WAVECOM)
+                        at_cmd "AT+CGDATA=1" 90 "CONNECT" || error
+                        ;;
+                    SIEMENS | Cinterion | *)
+                        at_cmd "AT+CGDATA=\"PPP\",1" 90 "CONNECT" || error
+                        ;;
+                esac
+                
+            # 2009-08-07 gc: AT+CGDATA dosn't deliver DNS addresses on
+            # Siemens! BUG?
+            else
+                at_cmd "AT D*99***1#" 90 "CONNECT" || error
+            fi
+            
+            #sleep 1
+            stty -F $GPRS_DEVICE -ignbrk brkint
+            /usr/sbin/pppd $ppp_args <&3 >&3 &
+# save pppd's PID file in case of pppd hangs before it writes the PID file
+            ppp_pid=$!
+            echo $ppp_pid >/var/run/ppp0.pid
+            ;;
+    esac
+    
     set -x
 
     if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
