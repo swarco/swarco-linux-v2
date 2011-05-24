@@ -1,7 +1,7 @@
 #!/bin/sh
 
 BUILDROOT_BASE=$PWD
-BUILDROOT_SVN=buildroot-svn-20081211
+BUILDROOT_SVN=buildroot-svn-20110524
 #prepare buildroot-svn tree for basesystem 2.0
 (
   cd $BUILDROOT_BASE
