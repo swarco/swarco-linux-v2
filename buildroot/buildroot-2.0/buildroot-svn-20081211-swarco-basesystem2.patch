@@ -1,6 +1,6 @@
-diff -Nrub buildroot-2.0/Makefile new/Makefile
---- buildroot-2.0/Makefile	2008-11-07 09:57:59.000000000 +0100
-+++ new/Makefile	2008-12-11 14:47:39.000000000 +0100
+diff -Nru '--exclude=*~' buildroot-2.0-org/Makefile buildroot-2.0/Makefile
+--- buildroot-2.0-org/Makefile	2008-11-07 09:57:59.000000000 +0100
++++ buildroot-2.0/Makefile	2011-05-24 18:58:41.000000000 +0200
 @@ -254,6 +254,7 @@
  endif
  
@@ -9,9 +9,30 @@ diff -Nrub buildroot-2.0/Makefile new/Makefile
  
  TARGETS+=target-devfiles
  
-diff -Nrub buildroot-2.0/package/Config.in new/package/Config.in
---- buildroot-2.0/package/Config.in	2008-12-11 01:33:30.000000000 +0100
-+++ new/package/Config.in	2008-12-11 14:46:36.000000000 +0100
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/busybox/Config.in buildroot-2.0/package/busybox/Config.in
+--- buildroot-2.0-org/package/busybox/Config.in	2008-11-29 21:12:17.000000000 +0100
++++ buildroot-2.0/package/busybox/Config.in	2011-05-24 18:59:37.000000000 +0200
+@@ -51,6 +51,9 @@
+ 	config BR2_BUSYBOX_VERSION_1_13_X
+ 		bool "BusyBox 1.13.x"
+ 
++	config BR2_BUSYBOX_VERSION_1_18_X
++		bool "BusyBox 1.18.x"
++
+ 	config BR2_PACKAGE_BUSYBOX_SNAPSHOT
+ 		bool "daily snapshot"
+ 
+@@ -67,6 +70,7 @@
+ 	default "1.11.3"	if BR2_BUSYBOX_VERSION_1_11_X
+ 	default "1.12.3"	if BR2_BUSYBOX_VERSION_1_12_X
+ 	default "1.13.1"	if BR2_BUSYBOX_VERSION_1_13_X
++	default "1.18.4"	if BR2_BUSYBOX_VERSION_1_18_X
+ 
+ config BR2_PACKAGE_BUSYBOX_FULLINSTALL
+ 	bool "Run BusyBox's own full installation"
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/Config.in buildroot-2.0/package/Config.in
+--- buildroot-2.0-org/package/Config.in	2008-12-11 01:33:30.000000000 +0100
++++ buildroot-2.0/package/Config.in	2011-05-24 18:58:41.000000000 +0200
 @@ -430,4 +430,6 @@
  # various games packages
  source "package/games/Config.in"
@@ -19,9 +40,9 @@ diff -Nrub buildroot-2.0/package/Config.in new/package/Config.in
 +source "swarco/package/Config.in"
 +
  endmenu
-diff -Nrub buildroot-2.0/package/lighttpd/lighttpd.mk new/package/lighttpd/lighttpd.mk
---- buildroot-2.0/package/lighttpd/lighttpd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ new/package/lighttpd/lighttpd.mk	2008-12-11 14:47:13.000000000 +0100
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/lighttpd/lighttpd.mk buildroot-2.0/package/lighttpd/lighttpd.mk
+--- buildroot-2.0-org/package/lighttpd/lighttpd.mk	2008-12-08 09:15:27.000000000 +0100
++++ buildroot-2.0/package/lighttpd/lighttpd.mk	2011-05-24 18:58:41.000000000 +0200
 @@ -8,7 +8,7 @@
  LIGHTTPD_SITE:=http://www.lighttpd.net/download
  LIGHTTPD_INSTALL_STAGING = NO
@@ -39,9 +60,9 @@ diff -Nrub buildroot-2.0/package/lighttpd/lighttpd.mk new/package/lighttpd/light
  	$(DISABLE_IPV6) \
  	$(LIGHTTPD_LFS)
  
-diff -Nrub buildroot-2.0/package/mtd/mtd-utils/mtd.mk new/package/mtd/mtd-utils/mtd.mk
---- buildroot-2.0/package/mtd/mtd-utils/mtd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ new/package/mtd/mtd-utils/mtd.mk	2008-12-11 14:46:03.000000000 +0100
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/mtd/mtd-utils/mtd.mk buildroot-2.0/package/mtd/mtd-utils/mtd.mk
+--- buildroot-2.0-org/package/mtd/mtd-utils/mtd.mk	2008-12-08 09:15:27.000000000 +0100
++++ buildroot-2.0/package/mtd/mtd-utils/mtd.mk	2011-05-24 18:58:41.000000000 +0200
 @@ -38,6 +38,7 @@
  	CC="$(HOSTCC)" CROSS= CFLAGS=-I$(LINUX_HEADERS_DIR)/include \
  		$(MAKE) LINUXDIR=$(LINUX_DIR) \
@@ -50,9 +71,46 @@ diff -Nrub buildroot-2.0/package/mtd/mtd-utils/mtd.mk new/package/mtd/mtd-utils/
  		-C $(MTD_HOST_DIR) mkfs.jffs2
  
  $(SUMTOOL): $(MTD_HOST_DIR)/.unpacked
-diff -Nrub buildroot-2.0/package/stunnel/stunnel.mk new/package/stunnel/stunnel.mk
---- buildroot-2.0/package/stunnel/stunnel.mk	2008-12-08 09:15:27.000000000 +0100
-+++ new/package/stunnel/stunnel.mk	2008-12-15 15:29:04.000000000 +0100
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/ntp/ntp.mk buildroot-2.0/package/ntp/ntp.mk
+--- buildroot-2.0-org/package/ntp/ntp.mk	2008-12-08 09:15:27.000000000 +0100
++++ buildroot-2.0/package/ntp/ntp.mk	2011-05-24 18:58:41.000000000 +0200
+@@ -37,6 +37,9 @@
+ 		--target=$(GNU_TARGET_NAME) \
+ 		--host=$(GNU_TARGET_NAME) \
+ 		--build=$(GNU_HOST_NAME) \
++		--enable-MEINBERG \
++		--enable-RAWDCF \
++		--enable-parse-clocks \
+ 		--prefix=/usr \
+ 		--exec-prefix=/usr \
+ 		--bindir=/usr/bin \
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssh/openssh.mk buildroot-2.0/package/openssh/openssh.mk
+--- buildroot-2.0-org/package/openssh/openssh.mk	2008-09-24 14:00:57.000000000 +0200
++++ buildroot-2.0/package/openssh/openssh.mk	2011-05-24 18:58:41.000000000 +0200
+@@ -3,7 +3,7 @@
+ # openssh
+ #
+ #############################################################
+-OPENSSH_VERSION=5.1p1
++OPENSSH_VERSION=5.8p2
+ OPENSSH_SITE=ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
+ 
+ OPENSSH_CONF_ENV = LD=$(TARGET_CC)
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssl/openssl.mk buildroot-2.0/package/openssl/openssl.mk
+--- buildroot-2.0-org/package/openssl/openssl.mk	2008-10-13 10:10:35.000000000 +0200
++++ buildroot-2.0/package/openssl/openssl.mk	2011-05-24 18:58:41.000000000 +0200
+@@ -3,7 +3,7 @@
+ # openssl
+ #
+ #############################################################
+-OPENSSL_VERSION:=0.9.8g
++OPENSSL_VERSION:=1.0.0d
+ OPENSSL_SITE:=http://www.openssl.org/source
+ 
+ OPENSSL_TARGET_ARCH=generic32
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/stunnel/stunnel.mk buildroot-2.0/package/stunnel/stunnel.mk
+--- buildroot-2.0-org/package/stunnel/stunnel.mk	2008-12-08 09:15:27.000000000 +0100
++++ buildroot-2.0/package/stunnel/stunnel.mk	2011-05-24 18:58:41.000000000 +0200
 @@ -3,7 +3,7 @@
  # stunnel
  #
@@ -79,40 +137,3 @@ diff -Nrub buildroot-2.0/package/stunnel/stunnel.mk new/package/stunnel/stunnel.
 +ifeq ($(strip $(BR2_PACKAGE_STUNNEL)),y)
  TARGETS+=stunnel
  endif
-diff -Nrub buildroot-2.0/package/ntp/ntp.mk new/package/ntp/ntp.mk
---- buildroot-2.0/package/ntp/ntp.mk	2009-07-24 09:32:30.216504093 +0200
-+++ new/package/ntp/ntp.mk	2009-07-24 09:31:56.601783992 +0200
-@@ -37,6 +37,9 @@
- 		--target=$(GNU_TARGET_NAME) \
- 		--host=$(GNU_TARGET_NAME) \
- 		--build=$(GNU_HOST_NAME) \
-+		--enable-MEINBERG \
-+		--enable-RAWDCF \
-+		--enable-parse-clocks \
- 		--prefix=/usr \
- 		--exec-prefix=/usr \
- 		--bindir=/usr/bin \
-diff -Nrub buildroot-2.0/package/openssh/openssh.mk buildroot-2.0-new/package/openssh/openssh.mk
---- buildroot-2.0/package/openssh/openssh.mk	2008-09-24 14:00:57.000000000 +0200
-+++ buildroot-2.0-new/package/openssh/openssh.mk	2009-10-02 16:01:59.000000000 +0200
-@@ -3,7 +3,7 @@
- # openssh
- #
- #############################################################
--OPENSSH_VERSION=5.1p1
-+OPENSSH_VERSION=5.6p1
- OPENSSH_SITE=ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
- 
- OPENSSH_CONF_ENV = LD=$(TARGET_CC)
-diff -Nrub buildroot-2.0/package/openssl/openssl.mk buildroot-2.0-new/package/openssl/openssl.mk
---- buildroot-2.0/package/openssl/openssl.mk	2008-10-13 10:10:35.000000000 +0200
-+++ buildroot-2.0-new/package/openssl/openssl.mk	2009-10-02 16:02:47.000000000 +0200
-@@ -3,7 +3,7 @@
- # openssl
- #
- #############################################################
--OPENSSL_VERSION:=0.9.8g
-+OPENSSL_VERSION:=1.0.0a
- OPENSSL_SITE:=http://www.openssl.org/source
- 
- OPENSSL_TARGET_ARCH=generic32
