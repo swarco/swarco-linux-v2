@@ -40,6 +40,7 @@ enum ExitCode {
 
   EC_RING       = 1,
   EC_BREAK      = 2,
+  EC_DCD_LOST   = 3,
 
   EC_PID        = 64,
   EC_ERROR      = 255
@@ -47,7 +48,8 @@ enum ExitCode {
 
 void usage(void)
 {
-  printf("usage: modemstatus-wait [-F device] [ri] [break] [pid <pid>]\n");
+  printf("usage: modemstatus-wait [-F device] [ri] [break] [dcd_lost] "
+         "[pid <pid>]\n");
   printf("or     modemstatus-wait -r [-F device]\n");
 }
 
@@ -104,6 +106,7 @@ void print_status(int tty_fd)
 }
 
 int wait_ri = 0;
+int wait_dcd_lost = 0;
 int wait_break = 0;
 pid_t wait_pid = 0;               /* pid 0 is not allowed on unix systems (see man fork()) */
 
@@ -138,6 +141,8 @@ int main(int argc, char **argv)
       wait_ri = 1;
     } else if (!strcmp("break", arg)) {
       wait_break = 1;
+    } else if (!strcmp("dcd_lost", arg)) {
+      wait_dcd_lost = 1;
     } else if (!strcmp("pid", arg)) {
       if (i == argc-1) {
         fprintf(stderr, "pid: expect argument: device name\n");
@@ -201,6 +206,15 @@ int main(int argc, char **argv)
     if (wait_ri && icounter_new.rng != icounter_old.rng) {
       printf("got ring\n");
       exit(EC_RING);
+    }
+
+    if (wait_dcd_lost /* && icounter_new.dcd != icounter_old.dcd */) {
+      int status;
+      res = ioctl(tty_fd, TIOCMGET, &status);
+      if ((status & TIOCM_CAR) == 0) {
+        printf("lost DCD\n");
+        exit(EC_DCD_LOST );
+      }
     }
 
     if (wait_break && icounter_new.brk != icounter_old.brk) {
