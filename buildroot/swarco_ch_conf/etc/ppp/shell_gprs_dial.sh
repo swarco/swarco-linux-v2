@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2011-06-22 17:03:02 gc]
+echo $0 [Version 2011-06-22 20:38:34 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -589,8 +589,7 @@ on_ring() {
 
         # start in own shell to create new process group
         #sh -c "eval $GPRS_ANSWER_CSD_CMD" &
-                #eval "$GPRS_ANSWER_CSD_CMD" >/tmp/gsm.log &
-                /usr/weiss/bin/remote_subnet_mgr /etc/weiss/sm1/rem_subnet_prm  2>&1 >/tmp/gsm.log &
+                eval "$GPRS_ANSWER_CSD_CMD" &
                 rsm_pid=$!
                 echo "GPRS_ANSWER_CSD_CMD started (pid $rsm_pid)"
                 #cat /proc/$!/stat
