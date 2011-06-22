@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2011-06-22 21:02:17 gc]
+echo $0 [Version 2011-06-22 21:11:05 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -1373,7 +1373,7 @@ at_cmd "ATS0=0"
           status GPRS_MONP "${r%%<br>OK}"
           
           case "$TA_MODEL" in
-              *HC25*)
+              *HC25* | *TC35*)
                   ;;
               
               *)
