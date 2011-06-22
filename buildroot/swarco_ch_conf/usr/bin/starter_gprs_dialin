@@ -32,11 +32,11 @@ do
     fi
 
     GPRS_PPP_OPTIONS=""
+    GPRS_ONLY_CSD=0
     . /etc/default/gprs
 
     if [ -z "$GPRS_DEVICE" -o \
-        -z "$GPRS_APN" ]
-    then
+        \( -z "$GPRS_APN" -a "$GPRS_ONLY_CSD" -ne 1 \) ]; then
         echo "Necessary settings missing in /etc/default/gprs"
         exit 1
     fi
@@ -95,6 +95,7 @@ do
             export GPRS_RESET_CMD
             export GPRS_INIT_CMD
             export GPRS_START_CMD
+            export GPRS_ONLY_CSD
             export GPRS_ANSWER_CSD_CMD
 
         

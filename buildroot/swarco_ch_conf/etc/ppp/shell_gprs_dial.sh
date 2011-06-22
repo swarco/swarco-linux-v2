@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2011-04-11 14:23:41 gc]
+echo $0 [Version 2011-06-22 17:03:02 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -24,6 +24,7 @@ echo $0 [Version 2011-04-11 14:23:41 gc]
 #GPRS_DEVICE=/dev/com1
 
 GPRS_STATUS_FILE=/tmp/gprs-stat
+GPRS_NET_STATUS_FILE=/tmp/gprs-net
 echo -n >$GPRS_STATUS_FILE
 
 GRPS_ERROR_COUNT_FILE=/tmp/gprs-error
@@ -90,6 +91,13 @@ status() {
     shift
     echo >>$GPRS_STATUS_FILE $var=\'"$*"\'
 }
+
+status_net() {
+    print "Network: $*"
+    echo -n >$GPRS_NET_STATUS_FILE "$*"
+
+}
+status_net unknown
 
 print_at_cmd()
 {
@@ -361,6 +369,10 @@ init_and_load_drivers() {
                 continue
                 ;;
 
+        #12d1:1446)
+        #  Huawei E1750
+        #  /usr/bin/usb_modeswitch -v 0x12d1 -p 0x1446 -c "/etc/usb_modeswitch.d/12d1:1446"
+
         12d1:1003)
                 local d=
                 print_usb_device "Huawei Technologies Co., Ltd. E220 HSDPA Modem"
@@ -457,6 +469,10 @@ identify_terminal_adapter() {
         *SIEMENS* )
             TA_VENDOR=SIEMENS
             case $r in
+                *TC35*)
+                    TA_MODEL=MC35
+                    print "Found Siemens TC35 GPRS terminal adapter"
+                    ;;
                 *MC35*)
                     TA_MODEL=MC35
                     print "Found Siemens MC35 GPRS terminal adapter"
@@ -545,53 +561,153 @@ initiazlize_port() {
 # 2009-08-28 gc: experimental, on ring
 on_ring() {
     local count=0;
-    kill $ppp_pid
-    while [ -d /proc/$ppp_pid ]
-    do
-        sleep 1
-    done
-    print "waiting for ring"
-    command_mode
+    local is_answered=0;
+
+    echo on_ring
 
     while IFS="" read -r -t120 line<&3
     do
         line=${line%%${cr}*}
         print_rcv "$line"
+
         case $line in
             *RING*)
-
-                at_cmd "ATA" 90 "CONNECT" || return 1
-                echo starting $GPRS_ANSWER_CSD_CMD
-                eval "$GPRS_ANSWER_CSD_CMD" &
-                rsm_pid=$!
-                while [ -d /proc/$rsm_pid ]
-                do
-
-                    status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
-    #example:
-    # 1: uart:ATMEL_SERIAL mmio:0xFFFC4000 irq:7 tx:14820 rx:18025 oe:1 RTS|CTS|DTR|DSR|CD
-
-    #check if RI is set in status line
-                    if [ "${status##*|CD}" == "$status" ]; then
-                        echo CD lost
-                        kill $rsm_pid
-                        return 0;
-                    fi
-                done
-
-                break;
+                send "ATA"
+                is_answered=1;
+                ;;
+            *ERROR* | *NO*CARRIER*)
+                if [ "$is_answered" -ne 0 ]; then
+                    return 1
+                fi
                 ;;
 
-        esac
+            *CONNECT*)
+	        echo GPRS_ERROR_COUNT=0 >/tmp/gprs-error
+                echo starting $GPRS_ANSWER_CSD_CMD
+                status_net "GSM / CSD connection active"
+                set_gprs_led 50 1000
 
+        # start in own shell to create new process group
+        #sh -c "eval $GPRS_ANSWER_CSD_CMD" &
+                #eval "$GPRS_ANSWER_CSD_CMD" >/tmp/gsm.log &
+                /usr/weiss/bin/remote_subnet_mgr /etc/weiss/sm1/rem_subnet_prm  2>&1 >/tmp/gsm.log &
+                rsm_pid=$!
+                echo "GPRS_ANSWER_CSD_CMD started (pid $rsm_pid)"
+                #cat /proc/$!/stat
+                while [ -d /proc/$rsm_pid ]
+                do
+                    /usr/bin/modemstatus-wait dcd_lost pid $rsm_pid <&3
+                    case $? in
+                        3)
+                            # DCD lost
+                            echo DCD lost
+                            status_net "GSM registered"
+                            set_gprs_led off
+                            # echo kill -INT $rsm_pid
+                            # kill -INT $rsm_pid
+                            # fuser /dev/com8
+                            # sleep 5
+                            # echo kill process group
+                            # kill -9 -$rsm_pid
+                            # fuser /dev/com8
+                            #return 0;
+                            # killing remote subnet manager currently is currently not working
+                            # use fuser to kill all processes access our device
+                            # (including us self)
+                            echo killing
+                            fuser -k -9 $GPRS_DEVICE
+                            echo ready
+                            exit 0
+                            ;;
+                        
+                        64)
+                # PROCESS PID Terminated
+                            echo "GPRS_ANSWER_CSD_CMD terminated (pid $rsm_pid)"
+                            break
+                            ;;
+                        
+                        *)
+                # error
+                    # modemstatus-wait fails on TIOCGICOUNT ioctrl on devices
+                            break
+                            ;;
+                    esac
+                done
+                set_gprs_led 1000 50 100 50
+                fuser -k -9 $GPRS_DEVICE
+                return 0
+                ;;
+        esac
         count=$(($count+1))
         if [ $count -gt 15 ]
         then
             print timeout
+            set_gprs_led 1000 50
             return 2
         fi
 
     done
+
+
+    set_gprs_led 1000 50
+
+    # while IFS="" read -r -t120 line<&3
+    # do
+    #     line=${line%%${cr}*}
+    #     print_rcv "$line"
+
+    #     case $line in
+    #         *RING*)
+
+    #             #at_cmd "ATA" 90 "CONNECT" || return 1
+    #             echo starting $GPRS_ANSWER_CSD_CMD
+    #             # start in own shell to create new process group
+    #             #sh -c "eval $GPRS_ANSWER_CSD_CMD" &
+    #             eval "$GPRS_ANSWER_CSD_CMD" &
+    #             rsm_pid=$!
+    #             echo "GPRS_ANSWER_CSD_CMD started (pid $rsm_pid)"
+    #             cat /proc/$!/stat
+    #             while [ -d /proc/$rsm_pid ]
+    #             do
+    #                 /usr/bin/modemstatus-wait dcd_lost pid $rsm_pid <&3
+    #                 case $? in
+    #                     3)
+    #                         # DCD lost
+    #                         echo DCD lost
+    #                         echo kill -INT $rsm_pid
+    #                         kill -INT $rsm_pid
+    #                         fuser /dev/com8
+    #                         sleep 5
+    #                         echo kill process group
+    #                         kill -9 -$rsm_pid
+    #                         fuser /dev/com8
+    #                         #return 0;
+    #                         ;;
+                        
+    #                     64)
+    #             # PROCESS PID Terminated
+    #                         ;;
+                        
+    #                     *)
+    #             # error
+    #                 # modemstatus-wait fails on TIOCGICOUNT ioctrl on devices
+    #                         ;;
+    #                 esac
+    #             done
+    #             return 0
+    #             break;
+    #             ;;
+
+    #     esac
+
+    #     count=$(($count+1))
+    #     if [ $count -gt 15 ]
+    #     then
+    #         print timeout
+    #         return 2
+    #     fi
+
+    # done
 }
 
 # get_break_count() {
@@ -608,7 +724,7 @@ on_ring() {
 ##############################################################################
 # check and handle SMS
 ##############################################################################
-# 2009-08-28 gc: experimental, on ring
+
 check_and_handle_SMS() {
     # List UNREAD SMS
     local line=""
@@ -672,6 +788,257 @@ check_and_handle_SMS() {
         reboot
     fi
     return 1
+}
+
+
+##############################################################################
+# attach PDP context to GPRS
+##############################################################################
+attach_PDP_context() {
+    local result=0
+
+    
+    if [ -z "$GPRS_APN" ]; then
+        print "The GPRS_APN env variable is not set"
+        sys_mesg -e APN -p error `M_ "The GPRS_APN env variable is not set. Configuration error" `
+        exit 1
+    fi
+    
+    print "Entering APN: $GPRS_APN"
+    at_cmd "AT+CGDCONT=1,\"IP\",\"$GPRS_APN\"" 240
+    
+    case $? in
+        0)
+            print "Successfully entered APN"
+            ;;
+        
+        1)
+            print "ERROR entering APN"
+            error
+            ;;
+        
+        *)
+            print "TIMEOUT entering APN"
+            error
+            ;;
+    esac
+    
+    at_cmd "AT+CGACT?"
+    print "PDP Context attach: $r"
+    wait_quiet 1
+    
+#GPRS_CMD_SET=1
+    
+    if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
+# use a separate modem device for PPP connection,
+# AT command interpreter on application port remains still accessible
+# connect file handle 3 with modem device
+        print "Switching to modem interface $GPRS_DEVICE_MODEM"
+        if  initiazlize_port $GPRS_DEVICE_MODEM; then
+            
+            exec 3<>$GPRS_DEVICE_MODEM
+            for l in 1 2 3 4 5
+            do
+                if at_cmd "AT"; then
+                    break
+                fi
+            done
+        else
+            GPRS_DEVICE_MODEM=""
+        fi
+    fi
+    
+    ppp_args="call gprs_comgt nolog nodetach $GPRS_PPP_OPTIONS"
+    if [ \! -z "$GPRS_USER" ]; then
+        ppp_args="$ppp_args user $GPRS_USER"
+    fi
+    if [ \! -z "$GPRS_PASSWD" ]; then
+        print "running pppd: /usr/sbin/pppd ${ppp_args} password <hidden>"
+        ppp_args="$ppp_args password $GPRS_PASSWD"
+    else
+        print "running pppd: /usr/sbin/pppd ${ppp_args}"
+    fi
+    
+    case $TA_VENDOR in
+        WAVECOM)
+            #2011-04-11 gc: Sierra Wireless WAVECOM FXT009 response so fast
+            #               on GPRS ATD command, so ppp frames will be lost.
+            #               We must call pppd using a chat script for 
+            #               dialing
+            #
+            # @TODO: check this settings on other (Siemens HC25) TAs
+            /usr/sbin/pppd $ppp_args  \
+                connect "/usr/sbin/chat  -v TIMEOUT 120 \
+                                            ABORT BUSY \
+                                            ABORT 'NO CARRIER' \
+                                            '' AT OK \
+                                            'ATD*99***1#' CONNECT" \
+                $GPRS_DEVICE $GPRS_BAUDRATE &
+# save pppd's PID file in case of pppd hangs before it writes the PID file
+            ppp_pid=$!
+            echo $ppp_pid >/var/run/ppp0.pid
+            ;;
+        
+        *)
+            if [ \! -z "$GPRS_CMD_SET" ]; then
+                at_cmd "AT+GMI"
+    # activate PDP context
+                at_cmd "AT+CGACT=1,1" 90 || error
+                at_cmd "AT" 2
+                
+    #enter data state
+                case $TA_VENDOR in
+                    WAVECOM)
+                        at_cmd "AT+CGDATA=1" 90 "CONNECT" || error
+                        ;;
+                    SIEMENS | Cinterion | *)
+                        at_cmd "AT+CGDATA=\"PPP\",1" 90 "CONNECT" || error
+                        ;;
+                esac
+                
+            # 2009-08-07 gc: AT+CGDATA dosn't deliver DNS addresses on
+            # Siemens! BUG?
+            else
+                at_cmd "AT D*99***1#" 90 "CONNECT" || error
+            fi
+            
+            #sleep 1
+            stty -F $GPRS_DEVICE -ignbrk brkint
+            /usr/sbin/pppd $ppp_args <&3 >&3 &
+# save pppd's PID file in case of pppd hangs before it writes the PID file
+            ppp_pid=$!
+            echo $ppp_pid >/var/run/ppp0.pid
+            status_net "PDP context attached (GPRS or UMTS)"
+            ;;
+    esac
+    
+    set -x
+
+    if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
+# reconnect file handle 3 on application interface
+        print "Switching to application interface $GPRS_DEVICE"
+        exec 3<>$GPRS_DEVICE
+        for l in 1 2 3 4 5
+        do
+            if at_cmd "AT"; then
+                break
+            fi
+        done
+    fi
+
+    case "$TA_VENDOR $TA_MODEL" in
+        *SIEMENS*HC25*)
+            if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
+                count=360
+                while [ -d /proc/$ppp_pid ]
+                do
+                    # answer on ^SQPORT should be "Application" not "Modem"!
+                    # at_cmd "AT^SQPORT"
+                    count=$(($count+1))
+                    if [ $count -gt 360 ]
+                    then
+                        count=0
+                        #
+                        # query Packet Switched Data Information:
+                        at_cmd 'AT^SIND="psinfo",2'
+                        case "$r" in
+                            *'^SIND: psinfo,0,0'*)
+                                status_net "no (E)GPRS available in current cell"
+                                ;;
+                            *'^SIND: psinfo,0,1'*)
+                                status_net "GPRS available"
+                                ;;
+                            *'^SIND: psinfo,0,2'*)
+                                status_net "GPRS attached"
+                                ;;
+                            *'^SIND: psinfo,0,3'*)
+                                status_net "EGPRS available"
+                                ;;
+                            *'^SIND: psinfo,0,4'*)
+                                status_net "EGPRS attached"
+                                ;;
+                            *'^SIND: psinfo,0,5'*)
+                                status_net "camped on WCDMA cell"
+                                ;;
+                            *'^SIND: psinfo,0,6'*)
+                                status_net "WCDMA PS attached"
+                                ;;
+                            *'^SIND: psinfo,0,7'*)
+                                status_net "camped on HSDPA-capable cell"
+                                ;;
+                            *'^SIND: psinfo,0,8'*)
+                                status_net "attached in HSDPA-capable cell"
+                                ;;
+                        esac
+                    fi
+                   #
+
+                    while [ -d /proc/$ppp_pid ]  && IFS="" read -r -t10 line<&3
+                    do
+                        line=${line%%${cr}*}
+                        print_rcv "APP_PORT: $line"
+                        case $line in
+                            *+CMTI:* | *+CMT:*)
+                                echo SMS URC received
+                                if ! check_and_handle_SMS; then
+                                    kill -TERM $ppp_pid
+                                fi
+                                ;;
+
+                            *RING*)
+                                print "ringing"
+                                on_ring
+                                break;
+                                ;;
+                        esac
+                    done
+                    sleep 1
+                done
+            fi
+            # wait till pppd process has terminated
+            wait
+            ;;
+
+        *)
+            print "waiting for modem status change"
+            /usr/bin/modemstatus-wait ri break pid $ppp_pid <&3
+            case $? in
+                1)
+                # RING
+                    echo got RING
+                    kill -TERM $ppp_pid
+                    ring_recv=1
+                    ;;
+
+                2)
+                # BREAK
+                    echo BREAK received
+                    kill -TERM $ppp_pid
+                    ;;
+
+                64)
+                # PROCESS PID Terminated
+                    result=1
+                    ;;
+
+                *)
+                # error
+                    # modemstatus-wait fails on TIOCGICOUNT ioctrl on devices
+                    # not supporting it (for instance ttyACM)
+                    # so we wait here for pppd's termination
+
+                    #kill -TERM $ppp_pid
+                    #do_restart=0
+                    ;;
+            esac
+
+            # wait till pppd process has terminated
+            wait
+            ;;
+    esac
+
+    command_mode
+    return $result
 }
 
 ##############################################################################
@@ -1032,7 +1399,7 @@ at_cmd "ATS0=0"
 
 # read on phone number
 case "$TA_VENDOR $TA_MODEL" in
-    *SIEMENS*MC35*)
+    *SIEMENS*MC35* | *SIEMENS*TC35* )
         at_cmd 'AT+CPBS="ON" +CPBR=1,4'
 # +CPBR: 1,"+491752928173",145,"Eigene Rufnummer"  OK
         cnum=`echo $r | re_extract '\+CPBR: [0-9]+,"(\+?[0-9]+)",.*'`
@@ -1075,303 +1442,32 @@ case "$TA_VENDOR $TA_MODEL" in
         ;;
 esac
 
-do_restart=16
+if [ $GPRS_ONLY_CSD -eq 0 ]; then
+    do_restart=16
+    ring_wait_time=5
+else
+    do_restart=30
+    ring_wait_time=60
+    status_net "GSM registered"
+fi
+ring_recv=0
 
 while [ $do_restart -ne 0 ]
 do
     print "do_restart: $do_restart"
     do_restart=$(($do_restart-1))
 
-    if ! wait_quiet 5 "RING"; then
+    if ! wait_quiet $ring_wait_time "RING" || [ $ring_recv -ne 0 ]; then
         on_ring
+        echo back from on_ring
     fi
 
+    ring_recv=0
     check_and_handle_SMS
 
-##############################################################################
-# attach PDP context to GPRS
-##############################################################################
-
-    if [ -z "$GPRS_APN" ]; then
-        print "The GPRS_APN env variable is not set"
-        sys_mesg -e APN -p error `M_ "The GPRS_APN env variable is not set. Configuration error" `
-        exit 1
+    if [ $GPRS_ONLY_CSD -eq 0 ]; then
+        attach_PDP_context || do_restart=0
     fi
-
-    print "Entering APN: $GPRS_APN"
-    at_cmd "AT+CGDCONT=1,\"IP\",\"$GPRS_APN\"" 240
-
-    case $? in
-        0)
-            print "Successfully entered APN"
-            ;;
-
-        1)
-            print "ERROR entering APN"
-            error
-            ;;
-
-        *)
-            print "TIMEOUT entering APN"
-            error
-            ;;
-    esac
-
-    at_cmd "AT+CGACT?"
-    print "PDP Context attach: $r"
-    wait_quiet 1
-
-#GPRS_CMD_SET=1
-
-    if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
-# use a separate modem device for PPP connection,
-# AT command interpreter on application port remains still accessible
-# connect file handle 3 with modem device
-        print "Switching to modem interface $GPRS_DEVICE_MODEM"
-        if  initiazlize_port $GPRS_DEVICE_MODEM; then
-
-            exec 3<>$GPRS_DEVICE_MODEM
-            for l in 1 2 3 4 5
-            do
-                if at_cmd "AT"; then
-                    break
-                fi
-            done
-        else
-            GPRS_DEVICE_MODEM=""
-        fi
-    fi
-
-    ppp_args="call gprs_comgt nolog nodetach $GPRS_PPP_OPTIONS"
-    if [ \! -z "$GPRS_USER" ]; then
-        ppp_args="$ppp_args user $GPRS_USER"
-    fi
-    if [ \! -z "$GPRS_PASSWD" ]; then
-        print "running pppd: /usr/sbin/pppd ${ppp_args} password <hidden>"
-        ppp_args="$ppp_args password $GPRS_PASSWD"
-    else
-        print "running pppd: /usr/sbin/pppd ${ppp_args}"
-    fi
-    
-    case $TA_VENDOR in
-        WAVECOM)
-            #2011-04-11 gc: Sierra Wireless WAVECOM FXT009 response so fast
-            #               on GPRS ATD command, so ppp frames will be lost.
-            #               We must call pppd using a chat script for 
-            #               dialing
-            #
-            # @TODO: check this settings on other (Siemens HC25) TAs
-            /usr/sbin/pppd $ppp_args  \
-                connect "/usr/sbin/chat  -v TIMEOUT 120 \
-                                            ABORT BUSY \
-                                            ABORT 'NO CARRIER' \
-                                            '' AT OK \
-                                            'ATD*99***1#' CONNECT" \
-                $GPRS_DEVICE $GPRS_BAUDRATE &
-# save pppd's PID file in case of pppd hangs before it writes the PID file
-            ppp_pid=$!
-            echo $ppp_pid >/var/run/ppp0.pid
-            ;;
-        
-        *)
-            if [ \! -z "$GPRS_CMD_SET" ]; then
-                at_cmd "AT+GMI"
-    # activate PDP context
-                at_cmd "AT+CGACT=1,1" 90 || error
-                at_cmd "AT" 2
-                
-    #enter data state
-                case $TA_VENDOR in
-                    WAVECOM)
-                        at_cmd "AT+CGDATA=1" 90 "CONNECT" || error
-                        ;;
-                    SIEMENS | Cinterion | *)
-                        at_cmd "AT+CGDATA=\"PPP\",1" 90 "CONNECT" || error
-                        ;;
-                esac
-                
-            # 2009-08-07 gc: AT+CGDATA dosn't deliver DNS addresses on
-            # Siemens! BUG?
-            else
-                at_cmd "AT D*99***1#" 90 "CONNECT" || error
-            fi
-            
-            #sleep 1
-            stty -F $GPRS_DEVICE -ignbrk brkint
-            /usr/sbin/pppd $ppp_args <&3 >&3 &
-# save pppd's PID file in case of pppd hangs before it writes the PID file
-            ppp_pid=$!
-            echo $ppp_pid >/var/run/ppp0.pid
-            ;;
-    esac
-    
-    set -x
-
-    if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
-# reconnect file handle 3 on application interface
-        print "Switching to application interface $GPRS_DEVICE"
-        exec 3<>$GPRS_DEVICE
-        for l in 1 2 3 4 5
-        do
-            if at_cmd "AT"; then
-                break
-            fi
-        done
-    fi
-
-    case "$TA_VENDOR $TA_MODEL" in
-    # *SIEMENS*MC*)
-    #     case $GPRS_DEVICE in
-    #         /dev/com1 | /dev/ttyAT1)
-
-    #             status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
-    #             get_break_count
-    #             break_count=$b
-
-    #             while [ -d /proc/$ppp_pid ]
-    #             do
-    #                 status=`cat /proc/tty/driver/atmel_serial | grep 1:;`
-    # #example:
-    # # 1: uart:ATMEL_SERIAL mmio:0xFFFC4000 irq:7 tx:14820 rx:18025 oe:1 RTS|CTS|DTR|DSR|CD
-
-    # #check if RI is set in status line
-    #                 if [ "${status##*|RI}" != "$status" ]; then
-    #                     echo ringing
-    #                     if [ \! -z "$GPRS_ANSWER_CSD_CMD" ] ; then
-    #                         on_ring
-    #                     fi
-    #                 fi
-
-    #                 get_break_count
-    #                 if [ "$b" -ne "$break_count" ]; then
-    #                     echo BREAK received
-    #                     kill $ppp_pid
-    #                     break_count=$b
-    #                 fi
-
-    #                 sleep 1
-    #             done
-    #             ;;
-
-    #         *)
-    #             # reading status while connected is currently only
-    #             # supported on /dev/com1
-    #             wait
-    #             ;;
-    #     esac
-    #     ;;
-
-        *SIEMENS*HC25*)
-            if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
-                count=360
-                while [ -d /proc/$ppp_pid ]
-                do
-                    # answer on ^SQPORT should be "Application" not "Modem"!
-                    # at_cmd "AT^SQPORT"
-                    count=$(($count+1))
-                    if [ $count -gt 360 ]
-                    then
-                        count=0
-                        #
-                        # query Packet Switched Data Information:
-                        at_cmd 'AT^SIND="psinfo",2'
-                        case "$r" in
-                            *'^SIND: psinfo,0,0'*)
-                                print "PSINFO: no (E)GPRS available in current cell"
-                                ;;
-                            *'^SIND: psinfo,0,1'*)
-                                print "PSINFO: GPRS available"
-                                ;;
-                            *'^SIND: psinfo,0,2'*)
-                                print "PSINFO: GPRS attached"
-                                ;;
-                            *'^SIND: psinfo,0,3'*)
-                                print "PSINFO: EGPRS available"
-                                ;;
-                            *'^SIND: psinfo,0,4'*)
-                                print "PSINFO: EGPRS attached"
-                                ;;
-                            *'^SIND: psinfo,0,5'*)
-                                print "PSINFO: camped on WCDMA cell"
-                                ;;
-                            *'^SIND: psinfo,0,6'*)
-                                print "PSINFO: WCDMA PS attached"
-                                ;;
-                            *'^SIND: psinfo,0,7'*)
-                                print "PSINFO: camped on HSDPA-capable cell"
-                                ;;
-                            *'^SIND: psinfo,0,8'*)
-                                print "PSINFO: PS attached in HSDPA-capable cell"
-                                ;;
-                        esac
-                    fi
-                   #
-
-                    while [ -d /proc/$ppp_pid ]  && IFS="" read -r -t10 line<&3
-                    do
-                        line=${line%%${cr}*}
-                        print_rcv "APP_PORT: $line"
-                        case $line in
-                            *+CMTI:* | *+CMT:*)
-                                echo SMS URC received
-                                if ! check_and_handle_SMS; then
-                                    kill -TERM $ppp_pid
-                                fi
-                                ;;
-
-                            *RING*)
-                                print "ringing"
-                                on_ring
-                                break;
-                                ;;
-                        esac
-                    done
-                    sleep 1
-                done
-            fi
-            # wait till pppd process has terminated
-            wait
-            ;;
-
-#    *WAVECOM*)
-        *)
-            print "waiting for modem status change"
-            /usr/bin/modemstatus-wait ri break pid $ppp_pid <&3
-            case $? in
-                1)
-                # RING
-                    echo got RING
-                    kill -TERM $ppp_pid
-                    ;;
-
-                2)
-                # BREAK
-                    echo BREAK received
-                    kill -TERM $ppp_pid
-                    ;;
-
-                64)
-                # PROCESS PID Terminated
-                    do_restart=0
-                    ;;
-
-                *)
-                # error
-                    # modemstatus-wait fails on TIOCGICOUNT ioctrl on devices
-                    # not supporting it (for instance ttyACM)
-                    # so we wait here for pppd's termination
-
-                    #kill -TERM $ppp_pid
-                    #do_restart=0
-                    ;;
-            esac
-
-            # wait till pppd process has terminated
-            wait
-            ;;
-    esac
-
-    command_mode
 done
 
 print "$0 terminated"
