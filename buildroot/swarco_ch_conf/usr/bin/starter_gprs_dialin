@@ -106,5 +106,9 @@ do
         fi
     done
 
-    sleep 30
+    if [ -z "$GPRS_ONLY_CSD" -o "$GPRS_ONLY_CSD" -eq 0 ]; then
+        sleep 30
+    else
+        sleep 1
+    fi
 done

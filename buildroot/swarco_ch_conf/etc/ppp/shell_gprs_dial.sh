@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2011-06-22 20:38:34 gc]
+echo $0 [Version 2011-06-22 21:02:17 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -1441,7 +1441,7 @@ case "$TA_VENDOR $TA_MODEL" in
         ;;
 esac
 
-if [ $GPRS_ONLY_CSD -eq 0 ]; then
+if [ -z "$GPRS_ONLY_CSD" -o "$GPRS_ONLY_CSD" -eq 0 ]; then
     do_restart=16
     ring_wait_time=5
 else
