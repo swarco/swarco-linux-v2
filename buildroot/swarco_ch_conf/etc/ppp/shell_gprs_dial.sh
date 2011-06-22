@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2011-06-22 21:11:05 gc]
+echo $0 [Version 2011-06-22 21:17:03 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -470,7 +470,7 @@ identify_terminal_adapter() {
             TA_VENDOR=SIEMENS
             case $r in
                 *TC35*)
-                    TA_MODEL=MC35
+                    TA_MODEL=TC35
                     print "Found Siemens TC35 GPRS terminal adapter"
                     ;;
                 *MC35*)
