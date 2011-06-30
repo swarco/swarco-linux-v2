@@ -5,6 +5,7 @@ mount -t tmpfs -o size=512k tmpfs /dev
 mkdir /dev/pts
 mount -t devpts /dev/pts
 mdev -s
+chmod 0666 /dev/tty
 
 mkdir /dev/misc
 ln -s /dev/ccm2200_gpio /dev/misc/ccm2200_gpio

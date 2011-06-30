@@ -59,8 +59,7 @@ GPRS_PPP_LED=/sys/class/leds/led10/brightness
 #GPRS_ONLY_CSD=1                 
 
 # commands for handling incoming CSD calls (polling or pppd)
-#GPRS_ANSWER_CSD_CMD="/usr/swarco/bin/remote_subnet_mgr /etc/weiss/sm1/rem_subne\
-t_prm"                                                                          
+#GPRS_ANSWER_CSD_CMD="/usr/swarco/bin/remote_subnet_mgr /etc/weiss/sm1/rem_subnet_prm"                                                                          
 #GPRS_ANSWER_CSD_CMD="/etc/ppp/start_auto_ppp.sh"                                
   
 # cron job based GRRS connection test using Ping (ICMP Echo)
