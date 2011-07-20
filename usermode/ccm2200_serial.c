@@ -22,6 +22,8 @@
  * MA 02111-1307 USA
  *
  *  @par Modification History:
+ *     2011-07-20 gc: new naming for RS485 modes using upercase letters, 
+ *                    legacy modes can be accessed by old lowercase names 
  *     2007-02-05 gc: initial version
  */
 
@@ -43,7 +45,7 @@
 void usage(void)
 {
   printf("usage: ccm2200_serial device info\n"
-         "       ccm2200_serial device mode <normal|rs232|rs485hw|rs485int|rs485kern|modemmd> "
+         "       ccm2200_serial device mode <NORMAL|RS232|RS485HW|RS485INT|RS485KERN|RS485KERN_NEG|MODEM_MD|MODEM_MD_DCD> "
          "                                  [turn-on-delay turn-off-delay]\n"
          "       ccm2200_serial device rxled mask delay\n"
          "       ccm2200_serial device txled mask delay\n");
@@ -118,16 +120,37 @@ int main(int argc, char *argv[])
       struct ccm2200_serial_config serial_config;
       memset(&serial_config, 0, sizeof(serial_config));
 
-      if (!strcmp(argv[3], "rs232") || !strcmp(argv[3], "normal")) {
+      if (!strcmp(argv[3], "RS232") || !strcmp(argv[3], "NORMAL")) {
+        serial_config.mode = CCM2200_SERIAL_MODE_NORMAL;
+      } else if (!strcmp(argv[3], "RS485HW")) {
+        serial_config.mode = CCM2200_SERIAL_MODE_RS485HW;
+      } else if (!strcmp(argv[3], "RS485INT")) {
+        serial_config.mode = CCM2200_SERIAL_MODE_RS485INT;
+      } else if (!strcmp(argv[3], "RS485") || !strcmp(argv[3], "RS485KERN")) {
+        serial_config.mode = CCM2200_SERIAL_MODE_RS485KERN;
+      } else if (!strcmp(argv[3], "RS485_NEG") 
+                 || !strcmp(argv[3], "RS485KERN_NEG")) {
+        serial_config.mode = CCM2200_SERIAL_MODE_RS485KERN_NEG;
+      } else if (!strcmp(argv[3], "MODEM_MD")) {
+        serial_config.mode = CCM2200_SERIAL_MODE_MODEM_MD;
+      } else if (!strcmp(argv[3], "MODEM_MD_DCD")) {
+        serial_config.mode = CCM2200_SERIAL_MODE_MODEM_MD_DCD;
+
+      /* 2011-07-20 gc: lowercase modes only legacy modes, use
+       * upercase modes for new configurations!
+       */
+      } else if (!strcmp(argv[3], "rs232") || !strcmp(argv[3], "normal")) {
         serial_config.mode = CCM2200_SERIAL_MODE_NORMAL;
       } else if (!strcmp(argv[3], "rs485hw")) {
         serial_config.mode = CCM2200_SERIAL_MODE_RS485HW;
       } else if (!strcmp(argv[3], "rs485int")) {
         serial_config.mode = CCM2200_SERIAL_MODE_RS485INT;
       } else if (!strcmp(argv[3], "rs485") || !strcmp(argv[3], "rs485kern")) {
-        serial_config.mode = CCM2200_SERIAL_MODE_RS485KERN;
-      } else if (!strcmp(argv[3], "modemmd")) {
+        /* this mode is renamed as CCM2200_SERIAL_MODE_MODEM_MD */
         serial_config.mode = CCM2200_SERIAL_MODE_MODEM_MD;
+      } else if (!strcmp(argv[3], "modemmd")) {
+        /* this mode is renamed as CCM2200_SERIAL_MODE_MODEM_MD_DCD */
+        serial_config.mode = CCM2200_SERIAL_MODE_MODEM_MD_DCD;
       } else {
         printf("unknown mode specified\n");
         usage();
