@@ -45,7 +45,8 @@
 void usage(void)
 {
   printf("usage: ccm2200_serial device info\n"
-         "       ccm2200_serial device mode <NORMAL|RS232|RS485HW|RS485INT|RS485KERN|RS485KERN_NEG|MODEM_MD|MODEM_MD_DCD> "
+         "       ccm2200_serial device mode <NORMAL|RS232|RS485HW|RS485INT|RS485KERN|\n"
+         "                                   RS485KERN_NEG|MODEM_MD|MODEM_MD_DCD>\n"
          "                                  [turn-on-delay turn-off-delay]\n"
          "       ccm2200_serial device rxled mask delay\n"
          "       ccm2200_serial device txled mask delay\n");
@@ -62,13 +63,17 @@ void info(int fd)
     mode_str[0] = '\0';
     switch (serial_config.mode) {
     case CCM2200_SERIAL_MODE_NORMAL:
-      strcat(mode_str, "normal-RS232"); break;
+      strcat(mode_str, "RS232 (Normal)"); break;
     case CCM2200_SERIAL_MODE_RS485HW:
-      strcat(mode_str, "RS485 (controlled by UART hardware)"); break;
+      strcat(mode_str, "RS485 (UART hardware)"); break;
     case CCM2200_SERIAL_MODE_RS485KERN:
-      strcat(mode_str, "RS485 (controlled by kernel)"); break;
+      strcat(mode_str, "RS485 (kernel)"); break;
+    case CCM2200_SERIAL_MODE_RS485KERN_NEG:
+      strcat(mode_str, "RS485 negated RTS (kernel)"); break;
     case CCM2200_SERIAL_MODE_MODEM_MD:
       strcat(mode_str, "Multi-drop modem mode"); break;
+    case CCM2200_SERIAL_MODE_MODEM_MD_DCD:
+      strcat(mode_str, "Multi-drop modem mode with DCD"); break;
     default:
       sprintf(mode_str, "%d", (int) serial_config.mode);             
     };
