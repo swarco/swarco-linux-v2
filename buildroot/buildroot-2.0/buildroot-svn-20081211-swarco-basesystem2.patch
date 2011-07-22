@@ -26,7 +26,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/busybox/Config.in buildroot-2
  	default "1.11.3"	if BR2_BUSYBOX_VERSION_1_11_X
  	default "1.12.3"	if BR2_BUSYBOX_VERSION_1_12_X
  	default "1.13.1"	if BR2_BUSYBOX_VERSION_1_13_X
-+	default "1.18.4"	if BR2_BUSYBOX_VERSION_1_18_X
++	default "1.18.5"	if BR2_BUSYBOX_VERSION_1_18_X
  
  config BR2_PACKAGE_BUSYBOX_FULLINSTALL
  	bool "Run BusyBox's own full installation"
