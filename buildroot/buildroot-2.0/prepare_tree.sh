@@ -14,7 +14,7 @@ BUILDROOT_SVN=buildroot-svn-20081211
   make oldconfig
   # 2011-01-12 gc: oldconfig has removed kernel version, restore it!
   mv .config .oldconfig
-  sed 's/^.*BR2_DEFAULT_KERNEL_HEADERS.*/BR2_DEFAULT_KERNEL_HEADERS="2.6.35/g' \
+  sed 's/^.*BR2_DEFAULT_KERNEL_HEADERS.*/BR2_DEFAULT_KERNEL_HEADERS="2.6.37/g' \
       <.oldconfig >.config
   rm .oldconfig
 
