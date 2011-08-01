@@ -1,6 +1,6 @@
 diff -Nru '--exclude=*~' buildroot-2.0-org/Makefile buildroot-2.0/Makefile
 --- buildroot-2.0-org/Makefile	2008-11-07 09:57:59.000000000 +0100
-+++ buildroot-2.0/Makefile	2011-05-24 18:58:41.000000000 +0200
++++ buildroot-2.0/Makefile	2011-08-01 14:45:53.000000000 +0200
 @@ -254,6 +254,7 @@
  endif
  
@@ -11,7 +11,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/Makefile buildroot-2.0/Makefile
  
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/busybox/Config.in buildroot-2.0/package/busybox/Config.in
 --- buildroot-2.0-org/package/busybox/Config.in	2008-11-29 21:12:17.000000000 +0100
-+++ buildroot-2.0/package/busybox/Config.in	2011-05-24 18:59:37.000000000 +0200
++++ buildroot-2.0/package/busybox/Config.in	2011-08-01 14:45:53.000000000 +0200
 @@ -51,6 +51,9 @@
  	config BR2_BUSYBOX_VERSION_1_13_X
  		bool "BusyBox 1.13.x"
@@ -32,7 +32,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/busybox/Config.in buildroot-2
  	bool "Run BusyBox's own full installation"
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/Config.in buildroot-2.0/package/Config.in
 --- buildroot-2.0-org/package/Config.in	2008-12-11 01:33:30.000000000 +0100
-+++ buildroot-2.0/package/Config.in	2011-05-24 18:58:41.000000000 +0200
++++ buildroot-2.0/package/Config.in	2011-08-01 14:45:53.000000000 +0200
 @@ -430,4 +430,6 @@
  # various games packages
  source "package/games/Config.in"
@@ -42,7 +42,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/Config.in buildroot-2.0/packa
  endmenu
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/lighttpd/lighttpd.mk buildroot-2.0/package/lighttpd/lighttpd.mk
 --- buildroot-2.0-org/package/lighttpd/lighttpd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0/package/lighttpd/lighttpd.mk	2011-05-24 18:58:41.000000000 +0200
++++ buildroot-2.0/package/lighttpd/lighttpd.mk	2011-08-01 14:45:53.000000000 +0200
 @@ -8,7 +8,7 @@
  LIGHTTPD_SITE:=http://www.lighttpd.net/download
  LIGHTTPD_INSTALL_STAGING = NO
@@ -62,7 +62,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/lighttpd/lighttpd.mk buildroo
  
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/mtd/mtd-utils/mtd.mk buildroot-2.0/package/mtd/mtd-utils/mtd.mk
 --- buildroot-2.0-org/package/mtd/mtd-utils/mtd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0/package/mtd/mtd-utils/mtd.mk	2011-05-24 18:58:41.000000000 +0200
++++ buildroot-2.0/package/mtd/mtd-utils/mtd.mk	2011-08-01 14:45:53.000000000 +0200
 @@ -38,6 +38,7 @@
  	CC="$(HOSTCC)" CROSS= CFLAGS=-I$(LINUX_HEADERS_DIR)/include \
  		$(MAKE) LINUXDIR=$(LINUX_DIR) \
@@ -73,7 +73,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/mtd/mtd-utils/mtd.mk buildroo
  $(SUMTOOL): $(MTD_HOST_DIR)/.unpacked
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/ntp/ntp.mk buildroot-2.0/package/ntp/ntp.mk
 --- buildroot-2.0-org/package/ntp/ntp.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0/package/ntp/ntp.mk	2011-05-24 18:58:41.000000000 +0200
++++ buildroot-2.0/package/ntp/ntp.mk	2011-08-01 14:45:53.000000000 +0200
 @@ -37,6 +37,9 @@
  		--target=$(GNU_TARGET_NAME) \
  		--host=$(GNU_TARGET_NAME) \
@@ -86,7 +86,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/ntp/ntp.mk buildroot-2.0/pack
  		--bindir=/usr/bin \
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssh/openssh.mk buildroot-2.0/package/openssh/openssh.mk
 --- buildroot-2.0-org/package/openssh/openssh.mk	2008-09-24 14:00:57.000000000 +0200
-+++ buildroot-2.0/package/openssh/openssh.mk	2011-05-24 18:58:41.000000000 +0200
++++ buildroot-2.0/package/openssh/openssh.mk	2011-08-01 14:45:53.000000000 +0200
 @@ -3,7 +3,7 @@
  # openssh
  #
@@ -98,7 +98,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssh/openssh.mk buildroot-
  OPENSSH_CONF_ENV = LD=$(TARGET_CC)
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssl/openssl.mk buildroot-2.0/package/openssl/openssl.mk
 --- buildroot-2.0-org/package/openssl/openssl.mk	2008-10-13 10:10:35.000000000 +0200
-+++ buildroot-2.0/package/openssl/openssl.mk	2011-05-24 18:58:41.000000000 +0200
++++ buildroot-2.0/package/openssl/openssl.mk	2011-08-01 14:45:53.000000000 +0200
 @@ -3,7 +3,7 @@
  # openssl
  #
@@ -108,9 +108,40 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssl/openssl.mk buildroot-
  OPENSSL_SITE:=http://www.openssl.org/source
  
  OPENSSL_TARGET_ARCH=generic32
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/pppd/pppd.mk buildroot-2.0/package/pppd/pppd.mk
+--- buildroot-2.0-org/package/pppd/pppd.mk	2008-12-08 09:15:27.000000000 +0100
++++ buildroot-2.0/package/pppd/pppd.mk	2011-08-01 13:28:50.000000000 +0200
+@@ -3,8 +3,8 @@
+ # pppd
+ #
+ #############################################################
+-PPPD_VERSION:=2.4.4
+-PPPD_SOURCE:=ppp-$(PPPD_VERSION).tar.gz
++PPPD_VERSION:=2.4.5
++PPPD_SOURCE:=ppp_$(PPPD_VERSION).orig.tar.gz
+ PPPD_SITE:=ftp://ftp.samba.org/pub/ppp
+ PPPD_DIR:=$(BUILD_DIR)/ppp-$(PPPD_VERSION)
+ PPPD_CAT:=$(ZCAT)
+@@ -21,11 +21,16 @@
+ 	$(PPPD_CAT) $(DL_DIR)/$(PPPD_SOURCE) | tar -C $(BUILD_DIR) $(TAR_OPTIONS) -
+ 	$(SED) 's/ -DIPX_CHANGE -DHAVE_MMAP//' $(PPPD_DIR)/pppd/Makefile.linux
+ 	$(SED) 's/HAVE_MULTILINK=y/#HAVE_MULTILINK=y/' $(PPPD_DIR)/pppd/Makefile.linux
++	# 2011-08-01 gc: disable plugins
++	$(SED) 's/PLUGIN=y/#PLUGIN=y/' $(PPPD_DIR)/pppd/Makefile.linux
++	$(SED) 's/\(SUBDIRS\s*[+:]\s*=\)/#\1/' $(PPPD_DIR)/pppd/plugins/Makefile.linux
+ 	$(SED) 's/FILTER=y/#FILTER=y/' $(PPPD_DIR)/pppd/Makefile.linux
+ 	$(SED) 's,(INSTALL) -s,(INSTALL),' $(PPPD_DIR)/*/Makefile.linux
+ 	$(SED) 's,(INSTALL) -s,(INSTALL),' $(PPPD_DIR)/pppd/plugins/*/Makefile.linux
+ 	$(SED) 's/ -o root//' $(PPPD_DIR)/*/Makefile.linux
+ 	$(SED) 's/ -g daemon//' $(PPPD_DIR)/*/Makefile.linux
++	echo "2011-08-01 gc: patch: apply debian's pppd patch (for GPRS DNS...)"
++	cd $(PPPD_DIR); zcat $(DL_DIR)/ppp_2.4.5-5.diff.gz | patch -p1
+ 	touch $@
+ 
+ $(PPPD_DIR)/.configured: $(PPPD_DIR)/.unpacked
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/stunnel/stunnel.mk buildroot-2.0/package/stunnel/stunnel.mk
 --- buildroot-2.0-org/package/stunnel/stunnel.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0/package/stunnel/stunnel.mk	2011-05-24 18:58:41.000000000 +0200
++++ buildroot-2.0/package/stunnel/stunnel.mk	2011-08-01 14:45:53.000000000 +0200
 @@ -3,7 +3,7 @@
  # stunnel
  #
