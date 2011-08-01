@@ -1,24 +1,48 @@
-# GPRS Konfiguration fuer pppd auf CCM2200
-# (C) 2006-06-07 Weiss-Electronic GmbH / Markus Forster
-#
+#*****************************************************************************
+#* 
+#*  @file          gprs_comgt
+#*
+#*  pppd peer file for GPRS terminal adapter using 
+#*  /etc/ppp/comgt_gprs.scr comgt dial in script file!
+#*  port device, baudrate and username are given by the script file. 
+#*
+#*  @version       1.0 (\$Revision: 207 $)
+#*  @author        Guido Classen <br>
+#*                 SWARCO Traffic Systems GmbH
+#* 
+#*  $LastChangedBy: clg9tr $  
+#*  $Date: 2009-09-16 16:58:50 +0200 (Mi, 16 Sep 2009) $
+#*  $URL: svn://server-i/weiss-linux/buildroot/swarco_ch_conf/etc/ppp/peers/gprs_comgt $
+#*
+#*  @par Modification History:
+#*    2007-12-03 gc: initial version
+#*  
+#*****************************************************************************
 
 noproxyarp 
 usehostname 
 noipdefault  
 noauth
-#auth
-connect "/usr/sbin/chat -vs -f /etc/chatscripts/gprs.chat" 
 hide-password 
 defaultroute
-usepeerdns
-
-call ppp_provider_options
 
 crtscts
 lock
 asyncmap 0
 modem
-/dev/com1
-115200
 
+lcp-echo-failure 5
+lcp-echo-interval 10
+lcp-max-configure 60
+lcp-restart 2
 
+# 2011-08-01 gc: added the following two statements to prevent
+#                assignment of dummy DNS address "10.11.12.13"
+#                on GPRS / UMTS terminal adapters (Siemens HC25, ...)
+connect-delay 5000
+ipcp-max-failure 30
+ipcp-accept-local
+ipcp-accept-remote
+
+mtu 1495
+mru 1495
