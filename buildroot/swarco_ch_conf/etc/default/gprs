@@ -9,7 +9,8 @@
 
 GPRS_BAUDRATE=115200
 #GPRS_PIN=1234
-GPRS_APN="internet.t-d1.de"
+#GPRS_APN="internet.t-d1.de"
+GPRS_APN="internet.t-mobile"
 #GPRS_APN="web.vodafone.de"
 GPRS_USER="d1"
 #GPRS_PASSWD=""
