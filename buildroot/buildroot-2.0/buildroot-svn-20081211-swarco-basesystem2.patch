@@ -1,6 +1,6 @@
 diff -Nru '--exclude=*~' buildroot-2.0-org/Makefile buildroot-2.0/Makefile
 --- buildroot-2.0-org/Makefile	2008-11-07 09:57:59.000000000 +0100
-+++ buildroot-2.0/Makefile	2011-08-01 14:45:53.000000000 +0200
++++ buildroot-2.0/Makefile	2012-06-22 16:36:04.000000000 +0200
 @@ -254,6 +254,7 @@
  endif
  
@@ -11,7 +11,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/Makefile buildroot-2.0/Makefile
  
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/busybox/Config.in buildroot-2.0/package/busybox/Config.in
 --- buildroot-2.0-org/package/busybox/Config.in	2008-11-29 21:12:17.000000000 +0100
-+++ buildroot-2.0/package/busybox/Config.in	2011-08-01 14:45:53.000000000 +0200
++++ buildroot-2.0/package/busybox/Config.in	2012-06-22 16:36:04.000000000 +0200
 @@ -51,6 +51,9 @@
  	config BR2_BUSYBOX_VERSION_1_13_X
  		bool "BusyBox 1.13.x"
@@ -32,7 +32,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/busybox/Config.in buildroot-2
  	bool "Run BusyBox's own full installation"
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/Config.in buildroot-2.0/package/Config.in
 --- buildroot-2.0-org/package/Config.in	2008-12-11 01:33:30.000000000 +0100
-+++ buildroot-2.0/package/Config.in	2011-08-01 14:45:53.000000000 +0200
++++ buildroot-2.0/package/Config.in	2012-06-22 16:36:04.000000000 +0200
 @@ -430,4 +430,6 @@
  # various games packages
  source "package/games/Config.in"
@@ -40,9 +40,21 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/Config.in buildroot-2.0/packa
 +source "swarco/package/Config.in"
 +
  endmenu
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/games/xboard/xboard.mk buildroot-2.0/package/games/xboard/xboard.mk
+--- buildroot-2.0-org/package/games/xboard/xboard.mk	2008-08-29 15:27:37.000000000 +0200
++++ buildroot-2.0/package/games/xboard/xboard.mk	2012-06-22 16:40:22.000000000 +0200
+@@ -10,7 +10,7 @@
+ XBOARD_INSTALL_TARGET = YES
+ XBOARD_INSTALL_TARGET_OPT = DESTDIR=$(TARGET_DIR) install
+ 
+-XBOARD_CONF_OPT --prefix=/usr
++XBOARD_CONF_OPT = --prefix=/usr
+ 
+ XBOARD_DEPENDENCIES = uclibc gnuchess
+ 
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/lighttpd/lighttpd.mk buildroot-2.0/package/lighttpd/lighttpd.mk
 --- buildroot-2.0-org/package/lighttpd/lighttpd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0/package/lighttpd/lighttpd.mk	2011-08-01 14:45:53.000000000 +0200
++++ buildroot-2.0/package/lighttpd/lighttpd.mk	2012-06-22 16:36:04.000000000 +0200
 @@ -8,7 +8,7 @@
  LIGHTTPD_SITE:=http://www.lighttpd.net/download
  LIGHTTPD_INSTALL_STAGING = NO
@@ -62,7 +74,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/lighttpd/lighttpd.mk buildroo
  
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/mtd/mtd-utils/mtd.mk buildroot-2.0/package/mtd/mtd-utils/mtd.mk
 --- buildroot-2.0-org/package/mtd/mtd-utils/mtd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0/package/mtd/mtd-utils/mtd.mk	2011-08-01 14:45:53.000000000 +0200
++++ buildroot-2.0/package/mtd/mtd-utils/mtd.mk	2012-06-22 16:37:59.000000000 +0200
 @@ -38,6 +38,7 @@
  	CC="$(HOSTCC)" CROSS= CFLAGS=-I$(LINUX_HEADERS_DIR)/include \
  		$(MAKE) LINUXDIR=$(LINUX_DIR) \
@@ -71,9 +83,30 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/mtd/mtd-utils/mtd.mk buildroo
  		-C $(MTD_HOST_DIR) mkfs.jffs2
  
  $(SUMTOOL): $(MTD_HOST_DIR)/.unpacked
+@@ -107,7 +108,7 @@
+ 	cp -f $< $@
+ 	$(STRIPCMD) $@
+ 
+-mtd: zlib $(MTD_TARGETS)
++mtd: zlib lzo $(MTD_TARGETS)
+ 
+ mtd-source: $(DL_DIR)/$(MTD_SOURCE)
+ 
+diff -Nru '--exclude=*~' buildroot-2.0-org/package/ncftp/ncftp.mk buildroot-2.0/package/ncftp/ncftp.mk
+--- buildroot-2.0-org/package/ncftp/ncftp.mk	2008-12-08 09:15:27.000000000 +0100
++++ buildroot-2.0/package/ncftp/ncftp.mk	2012-06-22 16:41:41.000000000 +0200
+@@ -60,7 +60,7 @@
+ $(NCFTP_DIR)/bin/%: $(NCFTP_DIR)/.configured
+ 	$(MAKE) -C $(NCFTP_DIR)
+ 
+-$(TARGET_DIR)/usr/bin/ncftp $(TARGET_DIR)/usr/bin/ncftp%: $(addprefix $(NCFTP_DIR)/bin/, $(NCFTP_TARGET_BINS))
++$(TARGET_DIR)/usr/bin/ncftp%: $(addprefix $(NCFTP_DIR)/bin/, $(NCFTP_TARGET_BINS))
+ 	$(INSTALL) -m 0755 $(NCFTP_DIR)/bin/$(notdir $@) $(TARGET_DIR)/usr/bin
+ 	$(STRIPCMD) $(STRIP_STRIP_ALL) $@
+ 
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/ntp/ntp.mk buildroot-2.0/package/ntp/ntp.mk
 --- buildroot-2.0-org/package/ntp/ntp.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0/package/ntp/ntp.mk	2011-08-01 14:45:53.000000000 +0200
++++ buildroot-2.0/package/ntp/ntp.mk	2012-06-22 16:36:04.000000000 +0200
 @@ -37,6 +37,9 @@
  		--target=$(GNU_TARGET_NAME) \
  		--host=$(GNU_TARGET_NAME) \
@@ -86,7 +119,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/ntp/ntp.mk buildroot-2.0/pack
  		--bindir=/usr/bin \
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssh/openssh.mk buildroot-2.0/package/openssh/openssh.mk
 --- buildroot-2.0-org/package/openssh/openssh.mk	2008-09-24 14:00:57.000000000 +0200
-+++ buildroot-2.0/package/openssh/openssh.mk	2011-08-01 14:45:53.000000000 +0200
++++ buildroot-2.0/package/openssh/openssh.mk	2012-06-22 16:36:04.000000000 +0200
 @@ -3,7 +3,7 @@
  # openssh
  #
@@ -98,7 +131,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssh/openssh.mk buildroot-
  OPENSSH_CONF_ENV = LD=$(TARGET_CC)
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssl/openssl.mk buildroot-2.0/package/openssl/openssl.mk
 --- buildroot-2.0-org/package/openssl/openssl.mk	2008-10-13 10:10:35.000000000 +0200
-+++ buildroot-2.0/package/openssl/openssl.mk	2011-08-01 14:45:53.000000000 +0200
++++ buildroot-2.0/package/openssl/openssl.mk	2012-06-22 16:36:04.000000000 +0200
 @@ -3,7 +3,7 @@
  # openssl
  #
@@ -110,7 +143,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/openssl/openssl.mk buildroot-
  OPENSSL_TARGET_ARCH=generic32
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/pppd/pppd.mk buildroot-2.0/package/pppd/pppd.mk
 --- buildroot-2.0-org/package/pppd/pppd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0/package/pppd/pppd.mk	2011-08-01 13:28:50.000000000 +0200
++++ buildroot-2.0/package/pppd/pppd.mk	2012-06-22 16:36:04.000000000 +0200
 @@ -3,8 +3,8 @@
  # pppd
  #
@@ -141,7 +174,7 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/pppd/pppd.mk buildroot-2.0/pa
  $(PPPD_DIR)/.configured: $(PPPD_DIR)/.unpacked
 diff -Nru '--exclude=*~' buildroot-2.0-org/package/stunnel/stunnel.mk buildroot-2.0/package/stunnel/stunnel.mk
 --- buildroot-2.0-org/package/stunnel/stunnel.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0/package/stunnel/stunnel.mk	2011-08-01 14:45:53.000000000 +0200
++++ buildroot-2.0/package/stunnel/stunnel.mk	2012-06-22 16:36:04.000000000 +0200
 @@ -3,7 +3,7 @@
  # stunnel
  #
@@ -168,3 +201,15 @@ diff -Nru '--exclude=*~' buildroot-2.0-org/package/stunnel/stunnel.mk buildroot-
 +ifeq ($(strip $(BR2_PACKAGE_STUNNEL)),y)
  TARGETS+=stunnel
  endif
+diff -Nru '--exclude=*~' buildroot-2.0-org/target/makedevs/makedevs.mk buildroot-2.0/target/makedevs/makedevs.mk
+--- buildroot-2.0-org/target/makedevs/makedevs.mk	2006-10-06 14:59:33.000000000 +0200
++++ buildroot-2.0/target/makedevs/makedevs.mk	2012-06-22 16:36:50.000000000 +0200
+@@ -13,7 +13,7 @@
+ 	cp target/makedevs/makedevs.c $(MAKEDEVS_DIR)
+ 
+ $(MAKEDEVS_DIR)/makedevs: $(MAKEDEVS_DIR)/makedevs.c
+-	$(HOSTCC) -Wall -Werror -O2 $(MAKEDEVS_DIR)/makedevs.c -o $(MAKEDEVS_DIR)/makedevs
++	$(HOSTCC) -Wall -O2 $(MAKEDEVS_DIR)/makedevs.c -o $(MAKEDEVS_DIR)/makedevs
+ 	touch -c $(MAKEDEVS_DIR)/makedevs
+ 
+ $(STAGING_DIR)/bin/makedevs: $(MAKEDEVS_DIR)/makedevs
