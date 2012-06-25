@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2011-06-22 21:17:03 gc]
+echo $0 [Version 2012-06-25 11:34:29 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -1053,7 +1053,7 @@ fi
 ##############################################################################
 # check error count
 ##############################################################################
-GPRS_ERROR_COUNT_MAX=5
+GPRS_ERROR_COUNT_MAX=3
 if [ -f $GRPS_ERROR_COUNT_FILE ] ; then
     . $GRPS_ERROR_COUNT_FILE
     GPRS_ERROR_COUNT=$(($GPRS_ERROR_COUNT + 1))
