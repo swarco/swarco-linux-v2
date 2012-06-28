@@ -1,11 +1,21 @@
 KERNEL_DIR=.
 INSTALL_MOD_PATH=$PWD/../../buildroot/swarco_ch_conf
+MOD_DIRECTORY=2.6.21.7-weiss-ccm2200
 OUTPUT_DIR=$PWD/../output-${PWD##*linux-}
 IMAGE_DIR=../../tftp_root/
 
 
 test -d $OUTPUT_DIR || mkdir -p $OUTPUT_DIR
 test -d $INSTALL_MOD_PATH || mkdir -p $INSTALL_MOD_PATH
+
+if [ -f /usr/bin/kmod ]; then
+# Fedora 17 comes with depmod from kmod 7 package instead of modules_init_tools, which needs this files:
+
+    test -d $INSTALL_MOD_PATH/lib/modules/$MOD_DIRECTORY || mkdir -p $INSTALL_MOD_PATH/lib/modules/$MOD_DIRECTORY
+
+    touch $INSTALL_MOD_PATH/lib/modules/$MOD_DIRECTORY/modules.order
+    touch $INSTALL_MOD_PATH/lib/modules/$MOD_DIRECTORY/modules.builtin
+fi
 
 CPU=arm
 TOOLCHAIN=$PWD/../../buildroot/buildroot-2.0/build_${CPU}/staging_dir/
