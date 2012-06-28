@@ -7,6 +7,7 @@ BUILDROOT_SVN=buildroot-svn-20081211
   cd $BUILDROOT_BASE
   # extract buildroot svn
   tar xvjf ../dl/${BUILDROOT_SVN}.tar.bz2 --exclude .svn
+  patch -p1 <${BUILDROOT_SVN}-swarco-basesystem2.patch
   make oldconfig
 )
 
