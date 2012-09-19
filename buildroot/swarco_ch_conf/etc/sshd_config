@@ -11,16 +11,17 @@
 # default value.
 
 Port 22
-Protocol 2,1
+#Protocol 2,1
+Protocol 2
 AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
 
 # HostKey for protocol version 1
-HostKey /etc/ssh_host_key
+# HostKey /etc/ssh_host_key
 # HostKeys for protocol version 2
 HostKey /etc/ssh_host_rsa_key
-HostKey /etc/ssh_host_dsa_key
+# HostKey /etc/ssh_host_dsa_key
 
 # Lifetime and size of ephemeral version 1 server key
 #KeyRegenerationInterval 1h
@@ -94,6 +95,7 @@ PasswordAuthentication no
 #ClientAliveInterval 0
 #ClientAliveCountMax 3
 #UseDNS yes
+UseDNS no
 #PidFile /var/run/sshd.pid
 #MaxStartups 10
 #PermitTunnel no
