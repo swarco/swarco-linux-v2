@@ -49,7 +49,8 @@ then
             # so the last resort is a reboot on this place!
             sleep 10
             killall watchdog
-            reboot            
+            reboot
+            exit
         fi
 
 

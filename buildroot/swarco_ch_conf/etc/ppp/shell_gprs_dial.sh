@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2012-06-25 11:34:29 gc]
+echo $0 [Version 2012-10-11 14:16:49 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -539,7 +539,9 @@ initiazlize_port() {
 
     # stty may say "no such device"
         print "stty failed"
-        return 1
+    # 2012-10-11 gc: stty may only set a subset of the requested parameter,
+    #                so we try to continue even if stty reports a error 
+        return 0
     fi
 
     echo -n AT${cr} >$device &
@@ -1081,7 +1083,8 @@ status GPRS_DEVICE_MODEM "$GPRS_DEVICE_MODEM"
 if ! initiazlize_port $GPRS_DEVICE; then
     sleep 10
     killall watchdog
-    reboot
+    echo initializing port failed
+    #reboot
     exit 3
 fi
 
