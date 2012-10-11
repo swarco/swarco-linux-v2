@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2012-10-11 14:16:49 gc]
+echo $0 [Version 2012-10-11 14:34:18 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -1051,6 +1051,8 @@ if [ \! -z "$GPRS_START_CMD" ]; then
     /bin/sh -c "$GPRS_START_CMD"
 fi
 
+# reset "script-alive" watchdog
+echo GPRS_WATCHDOG_COUNT=0 >/tmp/gprs-watchdog
 
 ##############################################################################
 # check error count
