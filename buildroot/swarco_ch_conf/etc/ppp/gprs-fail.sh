@@ -41,7 +41,7 @@ then
         if [ -f /tmp/gprs-watchdog ] ; then
             . /tmp/gprs-watchdog
         fi
-        if [ -z "$GPRS_WATCHDOG_COUNT" -o "0$GPRS_WATCHDOG_COUNT" -gt 0 ] ; then
+        if [ \! -z "$GPRS_WATCHDOG_COUNT" -a "0$GPRS_WATCHDOG_COUNT" -gt 0 ] ; then
             # shell_gprs_dial.sh musst run more often the gprs-fail.sh
             # so if the watchdog is not reset by a new shell_gprs_dial.sh
             # invokation it seems that this script hangs (may on a blocked

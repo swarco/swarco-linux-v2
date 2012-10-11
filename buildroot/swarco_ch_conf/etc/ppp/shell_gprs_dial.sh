@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2012-10-11 14:34:18 gc]
+echo $0 [Version 2012-10-11 14:46:29 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -1086,6 +1086,7 @@ if ! initiazlize_port $GPRS_DEVICE; then
     sleep 10
     killall watchdog
     echo initializing port failed
+    # 2012-10-11 gc: don't reboot here, we have gprs-watchdog now!
     #reboot
     exit 3
 fi
@@ -1460,6 +1461,9 @@ while [ $do_restart -ne 0 ]
 do
     print "do_restart: $do_restart"
     do_restart=$(($do_restart-1))
+
+    # reset "script-alive" watchdog
+    echo GPRS_WATCHDOG_COUNT=0 >/tmp/gprs-watchdog
 
     if ! wait_quiet $ring_wait_time "RING" || [ $ring_recv -ne 0 ]; then
         on_ring
