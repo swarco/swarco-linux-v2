@@ -40,7 +40,7 @@ ttySconsole::respawn:/sbin/getty -L ttySconsole 38400 ansi-ht
 ::ctrlaltdel:/sbin/reboot
 
 # Stuff to do before rebooting
-null::shutdown:/etc/init.d/S20bootlog stop
+null::shutdown:/etc/init.d/S20bootlog.sh stop
 null::shutdown:/usr/bin/killall klogd
 null::shutdown:/usr/bin/killall syslogd
 null::shutdown:/bin/umount -a -r
