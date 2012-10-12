@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2012-10-11 17:53:08 gc]
+echo $0 [Version 2012-10-12 18:00:01 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -1477,7 +1477,7 @@ do
     ring_recv=0
     check_and_handle_SMS
 
-    if [ $GPRS_ONLY_CSD -eq 0 ]; then
+    if [ -z "$GPRS_ONLY_CSD" -o "$GPRS_ONLY_CSD" -eq 0 ]; then
         attach_PDP_context || do_restart=0
     fi
 done
