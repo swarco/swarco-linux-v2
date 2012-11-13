@@ -37,6 +37,14 @@ kernel_version=`uname -r`
 kernel_minor=${kernel_version##*.}
 
 case "$kernel_version" in
+	3.*)
+	        echo detected Kernel Version 3.x
+                INSMOD=/sbin/insmod
+                MODULE_PATH=/lib/modules/$kernel_version
+                MODULE_SUFF=.ko
+                kernel_version_group=2.6
+	;;
+
 	2.6.*)
 	        echo detected Kernel Version 2.6
 		#exec /etc/rcS-2.6
