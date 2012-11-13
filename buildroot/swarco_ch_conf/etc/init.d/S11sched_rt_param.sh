@@ -8,7 +8,7 @@
 #*                 2010 SWARCO Traffic Systems GmbH
 #*
 #*  @version       0.2
-#*  @date          <2011-01-20 14:29:12 gc>
+#*  @date          <2012-11-13 12:45:03 gc>
 #*  @author        Guido Classen
 #* 
 #*  @par change history:
@@ -16,22 +16,22 @@
 #*  
 #*****************************************************************************
 
-KERNEL_MINOR=`uname -r | sed -e 's/2\.6\.\([0-9]*\).*/\1/'`
-case "$1" in
-  start|restart|reload)
-        if [ "$KERNEL_MINOR" -gt 21 ]; then
-	    echo "Setting real time parameters"
-	    echo 10000 > /proc/sys/kernel/sched_rt_period_us 
-	    echo 1000  > /proc/sys/kernel/sched_rt_runtime_us 
-        fi
-	;;
-  stop)
-  	exit 0
-	;;
-  *)
-	echo $"Usage: $0 {start|stop|restart}"
-	exit 1
-esac
+# KERNEL_MINOR=`uname -r | sed -e 's/2\.6\.\([0-9]*\).*/\1/'`
+# case "$1" in
+#   start|restart|reload)
+#         if [ "$KERNEL_MINOR" -gt 21 ]; then
+# 	    echo "Setting real time parameters"
+# 	    echo 10000 > /proc/sys/kernel/sched_rt_period_us 
+# 	    echo 1000  > /proc/sys/kernel/sched_rt_runtime_us 
+#         fi
+# 	;;
+#   stop)
+#   	exit 0
+# 	;;
+#   *)
+# 	echo $"Usage: $0 {start|stop|restart}"
+# 	exit 1
+# esac
 
 
 # Local Variables:

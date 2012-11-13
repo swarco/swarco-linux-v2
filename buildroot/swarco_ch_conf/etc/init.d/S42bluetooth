@@ -15,8 +15,6 @@
 #*  
 #****************************************************************************/
 
-export KERNEL_VER=`uname -r`
-
 # to enable bluetooth put a line like this in /etc/default/bluetooth:
 #BLUETOOTH_SERVICES="modules hcid sdpd serial_port"
 #BLUETOOTH_SERVICES="modules hcid sdpd dun_server"
