@@ -1,13 +1,13 @@
 #!/bin/sh
 #*****************************************************************************/
 #* 
-#*  @file          S41bluetooth
+#*  @file          S42bluetooth
 #*
 #*  Starts console connectivity for bluetooth interface
 #*  
 #*  @version       0.1
 #*  @date          <2006-07-06 15:01:33 mf>
-#*  @author        Markus Forster
+#*  @author        Markus Forster / Guido Classen
 #* 
 #*  Changes:
 #*    2006-12-20 gc: cleanup
@@ -26,6 +26,7 @@ then
 fi
 
 BLUETOOTH_SERVICES=""
+DUN_PPP_IFACE=ppp2
 . /etc/init_common.sh
 . /etc/default/bluetooth
 
@@ -54,7 +55,9 @@ start_modules() {
     ebegin "Loading Bluetooth modules"
     load_module kernel/lib/crc16
     load_module kernel/net/bluetooth/bluetooth
-    load_module kernel/net/bluetooth/l2cap
+    if [ -r $MODULE_PATH/kernel/drivers/bluetooth/l2cap.ko ] ; then
+        load_module kernel/net/bluetooth/l2cap
+    fi
     load_module kernel/net/bluetooth/rfcomm/rfcomm
     load_module kernel/drivers/bluetooth/$bluetooth_mod_btusb
     load_module kernel/net/bluetooth/bnep/bnep
@@ -66,7 +69,9 @@ stop_modules() {
     rmmod bnep
     rmmod $bluetooth_mod_btusb
     rmmod rfcomm
-    rmmod l2cap
+    if [ -r $MODULE_PATH/kernel/drivers/bluetooth/l2cap.ko ] ; then
+        rmmod l2cap
+    fi
     rmmod bluetooth
     rmmod crc16
     eend $?
@@ -169,9 +174,9 @@ start_dun_server() {
         start-stop-daemon --start --quiet \
                 --make-pidfile --pidfile /var/run/dund.pid \
 		--exec /usr/bin/dund -- \
-	        --listen --msdun unit 1 call dun
+	        --listen --msdun unit ${DUN_PPP_IFACE##ppp} call dun
     result=$?
-    iptables -A INPUT -i ppp1 -j ACCEPT
+    iptables -A INPUT -i ${DUN_PPP_IFACE} -j ACCEPT
 
 #    ifconfig eth0 down
     eend $result

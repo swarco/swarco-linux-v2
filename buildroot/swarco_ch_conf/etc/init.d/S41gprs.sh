@@ -21,20 +21,20 @@
 
 if ! [ -f /etc/default/gprs ]
 then
-  echo "missing file /etc/default/gprs"
 # GPRS not configured -> exit
   exit 1
 fi
 
 GPRS_PPP_IFACE=ppp0
 GPRS_PPP_LED=/sys/class/leds/led10/brightness 
+GPRS_ONLY_CSD=0
 . /etc/default/gprs
 export GPRS_PPP_IFACE
 
 if [ -z "$GPRS_DEVICE" -o \
-     \( -z "$GPRS_APN" -a "$GPRS_ONLY_CSD" -ne 1 \) ]
+     \( -z "$GPRS_APN" -a "0$GPRS_ONLY_CSD" -ne 1 \) ]
 then
-  echo "Necessary settings missing in /etc/default/gprs"
+  echo "GPRS not activated on this system"
   exit 1
 fi
 
