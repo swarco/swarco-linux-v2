@@ -55,7 +55,7 @@ start_modules() {
     ebegin "Loading Bluetooth modules"
     load_module kernel/lib/crc16
     load_module kernel/net/bluetooth/bluetooth
-    if [ -r $MODULE_PATH/kernel/drivers/bluetooth/l2cap.ko ] ; then
+    if [ -r $MODULE_PATH/kernel/net/bluetooth/l2cap.ko ] ; then
         load_module kernel/net/bluetooth/l2cap
     fi
     load_module kernel/net/bluetooth/rfcomm/rfcomm
