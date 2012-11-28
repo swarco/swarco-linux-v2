@@ -29,6 +29,7 @@ WEISS_CD_DIR = $(HOME)/mnt/entwicklung/WeissEmbeddedLinux/DistriCD
 # offline directory
 #WEISS_CD_DIR = $(HOME)/mnt/daten/WeissEmbeddedLinux_lokal/DistriCD
 
+include	$(BASE_DIR)/version.mk
 include	$(BASE_DIR)/directories.mk
 
 # soft float toolchain neccessary for building u-boot boot-loader

@@ -27,6 +27,8 @@ BUILDROOT_SOFT_FLOAT_DIR=buildroot-2.0-soft-float
 U_BOOT_BASE=u-boot
 U_BOOT_DIR=u-boot-v2010.09-ccm2200
 KERNEL_BASE=kernel
+KERNEL_VERS=2.6.21
+#KERNEL_VERS=2.6.37
 
 if [ -z "$1" ] || [ ! -d "$1" ] ; then
   echo Syntax: $0 '<directory to SWARCO Traffic Systems Embedded-Linux CD>'
@@ -171,18 +173,36 @@ prepare_kernel_directory() {
 )
 }
 
-# prepare_kernel_directory  linux-2.6.12.6                        \
-#                           $1/sources/kernel/2.6.12.6/
 
-prepare_kernel_directory  linux-2.6.21                          \
-                           $1/sources/kernel/2.6.21/
+echo KERNEL_VERS=$KERNEL_VERS > version.mk
 
-#prepare_kernel_directory  linux-2.6.35                            \
-#                          $1/sources/kernel/2.6.35/               \
-#                          $1/sources/userland/dl/linux-2.6.35.tar.bz2
+case "$KERNEL_VERS" in
+    2.6.12)
+        prepare_kernel_directory  linux-2.6.12.6                        \
+                                  $1/sources/kernel/2.6.12.6/
+        ;;
+    
+    2.6.21)
+        prepare_kernel_directory  linux-2.6.21                          \
+                                  $1/sources/kernel/2.6.21/
+        ;;
+    
+    2.6.35)
+        prepare_kernel_directory  linux-2.6.35                            \
+                                  $1/sources/kernel/2.6.35/               \
+                                  $1/sources/userland/dl/linux-2.6.35.tar.bz2
+        ;;
+    
+    2.6.37)
+        prepare_kernel_directory  linux-2.6.37                            \
+                                  $1/sources/kernel/2.6.37/
+        ;;
 
-#prepare_kernel_directory  linux-2.6.33                            \
-#                          $1/sources/kernel/2.6.37/
+    3.4)
+        prepare_kernel_directory  linux-3.4                            \
+                                  $1/sources/kernel/3.4/
+        ;;
+esac
 
 # Local Variables:
 # mode: shell-script
