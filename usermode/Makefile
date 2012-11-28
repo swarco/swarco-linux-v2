@@ -25,6 +25,7 @@
 #*****************************************************************************
 
 BASE_DIR = $(CURDIR)/..
+include	$(BASE_DIR)/version.mk
 include	$(BASE_DIR)/directories.mk
 
 CFLAGS		+=  -I$(KERNEL_PATH)/include
