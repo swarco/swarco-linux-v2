@@ -1,5 +1,5 @@
 /*
- * usermode/ccm2200_watchdog.c
+ * usermode/ccm2200_serial.c
  *
  * Copyright (C) 2007 by Weiss-Electronic GmbH.
  * All rights reserved.
@@ -22,12 +22,15 @@
  * MA 02111-1307 USA
  *
  *  @par Modification History:
+ *     2013-02-07 gc: added support for TIOCSRS485 and TIOCGRS485 ioctls
+ *                    present in recent Linux kernels
  *     2011-07-20 gc: new naming for RS485 modes using upercase letters, 
  *                    legacy modes can be accessed by old lowercase names 
  *     2007-02-05 gc: initial version
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <unistd.h>
@@ -41,6 +44,10 @@
 /* this needs a include path to actual CCM2200 Linux kernel! */
 #include <linux/ccm2200_serial.h>
 
+#if defined(TIOCSRS485) && defined(TIOCGRS485)
+#include <linux/serial.h>
+#define HAVE_RS485_IOCTL
+#endif
 
 void usage(void)
 {
@@ -48,9 +55,83 @@ void usage(void)
          "       ccm2200_serial device mode <NORMAL|RS232|RS485HW|RS485INT|RS485KERN|\n"
          "                                   RS485KERN_NEG|MODEM_MD|MODEM_MD_DCD>\n"
          "                                  [turn-on-delay turn-off-delay]\n"
+
+#ifdef HAVE_RS485_IOCTL
+         "       ccm2200_serial device rs485 [enable|^enable]\n"
+         "                                   [rts_on_send|^rts_on_send]\n"
+         "                                   [rts_after_send|^rts_after_send]\n"
+         "                                   [rx_during_tx|^rx_during_tx]\n"
+         "                                   [<delay_rts_before_send> <delay_rts_after_send>]\n"
+#endif
+
          "       ccm2200_serial device rxled mask delay\n"
          "       ccm2200_serial device txled mask delay\n");
 }
+
+#ifdef HAVE_RS485_IOCTL
+void kernel_rs485(int fd, int argc, char *argv[])
+{
+  struct serial_rs485 serial_rs485;
+  memset(&serial_rs485, 0, sizeof(serial_rs485));
+
+  if (argc == 3) {
+    /* print info obtained using TIOCGRS485 */
+    if (ioctl(fd, TIOCGRS485, &serial_rs485) == 0) {
+      printf("%senabled %srts_on_send %srts_after_send %srx_during_tx\n"
+             "delay_rts_before_send: %u delay_rts_after_send: %u\n",
+             (serial_rs485.flags & SER_RS485_ENABLED ? "" : "^"),
+             (serial_rs485.flags & SER_RS485_RTS_ON_SEND ? "" : "^"),
+             (serial_rs485.flags & SER_RS485_RTS_AFTER_SEND ? "" : "^"),
+             (serial_rs485.flags & SER_RS485_RX_DURING_TX ? "" : "^"),
+             serial_rs485.delay_rts_before_send,
+             serial_rs485.delay_rts_after_send);
+    } else {
+      printf("TIOCGRS485 operation not supported by device\n");
+    }
+  } else {
+    int i;
+    char *endptr;
+    int set_delay_rts_before_send = 0;
+    int set_delay_rts_after_send = 0;
+    for (i=3; i < argc; ++i) {
+      if (!strcmp("enabled", argv[i])) {
+        serial_rs485.flags |= SER_RS485_ENABLED;
+      } else if (!strcmp("^enabled", argv[i])) {
+      } else if (!strcmp("rts_on_send", argv[i])) {
+        serial_rs485.flags |= SER_RS485_RTS_ON_SEND;
+      } else if (!strcmp("^rts_on_send", argv[i])) {
+      } else if (!strcmp("rts_after_send", argv[i])) {
+        serial_rs485.flags |= SER_RS485_RTS_AFTER_SEND;
+      } else if (!strcmp("^rts_after_send", argv[i])) {
+      } else if (!strcmp("rx_during_tx", argv[i])) {
+        serial_rs485.flags |= SER_RS485_RX_DURING_TX;
+      } else if (!strcmp("^rx_during_tx", argv[i])) {
+      } else {
+        endptr = NULL;
+        unsigned long val = strtoul(argv[i], &endptr, 0);
+        if (argv[i][0] != '\0' && endptr && *endptr == '\0'
+            && !set_delay_rts_after_send) {
+          if (!set_delay_rts_before_send) {
+            set_delay_rts_before_send = 1;
+            serial_rs485.delay_rts_before_send = val;
+          } else {
+            set_delay_rts_after_send = 1;
+            serial_rs485.delay_rts_after_send = val;
+          }
+        } else {
+          printf("ERROR: invalid argument %s\n", argv[i]);
+          exit(1);
+        }
+      }
+    }
+    if (ioctl(fd, TIOCSRS485, &serial_rs485) != 0) {
+      printf("TIOCSRS485 operation not supported by device\n");
+    }
+
+
+  }
+}
+#endif
 
 void info(int fd)
 {
@@ -117,6 +198,10 @@ int main(int argc, char *argv[])
 
   if (!strcmp(argv[2], "info")) {
     info(device_fd);
+#ifdef HAVE_RS485_IOCTL
+  } else if (!strcmp(argv[2], "rs485")) {
+    kernel_rs485(device_fd, argc, argv);
+#endif
   } else if (!strcmp(argv[2], "mode")) {
     if (argc < 4) {
       printf("must specify mode\n");
