@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2012-10-12 18:00:01 gc]
+echo $0 [Version 2013-06-10 19:24:44 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -420,6 +420,27 @@ init_and_load_drivers() {
                 find_usb_device "$reload_modules" 0681 0047 /dev/ttyUSB0 /dev/ttyACM0
                 ;;
 
+            1e2d:0053)
+                print_usb_device "Cinterion PH8 in USB component mode"
+
+                find_usb_device "$reload_modules" 1e2d 0053 /dev/ttyUSB2 /dev/ttyUSB3
+                ;;
+
+            1e2d:0054)
+                print_usb_device "Cinterion PH8 in USB CDC-ACM mode"
+
+                find_usb_device "" 1e2d 0054 /dev/ttyACM0
+                # switch to USB component mode
+                sleep 1
+                initiazlize_port $GPRS_DEVICE
+                sleep 1
+                # connect file handle 3 with terminal adapter
+                exec 3<>$GPRS_DEVICE
+                at_cmd "AT^SDPORT=3"
+                sleep 1
+                exit 1
+                ;;
+
             114f:1234)
                 print_usb_device "Wavecom Fastrack Xtend FXT003/009 CDC-ACM Modem"
                 ;;
@@ -464,6 +485,10 @@ identify_terminal_adapter() {
                     print "Found Cinterion HC25 UMTS/GPRS terminal adapter"
                 # HC25: enable network (UTMS=blue/GSM=green) status LEDs
                     at_cmd "AT^sled=1"
+                    ;;
+                *PHS8* | *PH8*)
+                    TA_MODEL=PH8
+                    print "Found Cinterion PH8/PHS8 HSDPA/UMTS/GPRS terminal adapter"
                     ;;
                 *)
                     print "Found unkonwn Cinterion terminal adapter"
@@ -870,8 +895,6 @@ attach_PDP_context() {
             #               on GPRS ATD command, so ppp frames will be lost.
             #               We must call pppd using a chat script for 
             #               dialing
-            #
-            # @TODO: check this settings on other (Siemens HC25) TAs
             /usr/sbin/pppd $ppp_args  \
                 connect "/usr/sbin/chat  -v TIMEOUT 120 \
                                             ABORT BUSY \
@@ -932,7 +955,7 @@ attach_PDP_context() {
     fi
 
     case "$TA_VENDOR $TA_MODEL" in
-        *SIEMENS*HC25*)
+        *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8*)
             if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
                 count=360
                 while [ -d /proc/$ppp_pid ]
@@ -1222,7 +1245,7 @@ sys_mesg -e SIM -p okay `M_ "No error" `
 op_cmd="AT+COPS=0"
 
 case "$TA_VENDOR $TA_MODEL" in
-    *SIEMENS*HC25* | *Cinterion*HC25* )
+    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8*)
         # supply net access type (GSM or UMTS) for Siemens HC25 UMTS TA
         if [ \! -z "$GPRS_NET_ACCESS_TYPE" ]; then
             op_cmd="AT+COPS=0,,,$GPRS_NET_ACCESS_TYPE"
@@ -1365,6 +1388,7 @@ at_cmd "ATS0=0"
 
           case "$TA_MODEL" in
               *HC25*)
+                  #PH8 supports ^SCID
                   ;;
               
               *)
@@ -1383,7 +1407,7 @@ at_cmd "ATS0=0"
           status GPRS_MONP "${r%%<br>OK}"
           
           case "$TA_MODEL" in
-              *HC25* | *TC35*)
+              *HC25* | *TC35* | *PH8*)
                   ;;
               
               *)
@@ -1436,7 +1460,7 @@ at_cmd "AT+CMGF=1"
 
 #2009-08-28 gc: enable URC on incoming SMS (and break of data/GPRS connection)
 case "$TA_VENDOR $TA_MODEL" in
-    *SIEMENS*HC25* | *Cinterion*HC25*)
+    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8*)
         at_cmd "AT+CNMI=2,1"
         ;;
     *WAVECOM*)
