@@ -1,0 +1,21 @@
+--- libc/inet/in6_addr.c.org	2013-06-14 16:21:45.000000000 +0200
++++ libc/inet/in6_addr.c	2013-06-14 16:20:29.000000000 +0200
+@@ -21,13 +21,16 @@
+ #include <features.h>
+ #include <netinet/in.h>
+ 
+-#ifdef __UCLIBC_HAS_IPV6__
++/* #ifdef __UCLIBC_HAS_IPV6__ */
++/* 2013-06-14 gc: include in6addr_any even if IPV6 support is not configured,
++ *                because packages like iptables still need it!
++ */
+ const struct in6_addr in6addr_any =
+ { { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } } };
+ libc_hidden_proto(in6addr_loopback)
+ const struct in6_addr in6addr_loopback =
+ { { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 } } };
+ libc_hidden_data_def(in6addr_loopback)
+-#endif /* __UCLIBC_HAS_IPV6__ */
++/* #endif /\* __UCLIBC_HAS_IPV6__ *\/ */
+ 
+ 
