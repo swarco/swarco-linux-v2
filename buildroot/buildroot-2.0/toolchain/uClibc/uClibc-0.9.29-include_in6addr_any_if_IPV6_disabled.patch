@@ -1,5 +1,5 @@
---- libc/inet/in6_addr.c.org	2013-06-14 16:21:45.000000000 +0200
-+++ libc/inet/in6_addr.c	2013-06-14 16:20:29.000000000 +0200
+--- a/libc/inet/in6_addr.c.org	2013-06-14 16:21:45.000000000 +0200
++++ b/libc/inet/in6_addr.c	2013-06-14 16:20:29.000000000 +0200
 @@ -21,13 +21,16 @@
  #include <features.h>
  #include <netinet/in.h>
