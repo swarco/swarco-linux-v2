@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2013-06-10 19:24:44 gc]
+echo $0 [Version 2013-06-14 16:00:04 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -890,7 +890,36 @@ attach_PDP_context() {
     fi
     
     case $TA_VENDOR in
-        WAVECOM)
+        *)
+            if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
+                PPP_DEVICE="$GPRS_DEVICE_MODEM"
+            else
+                PPP_DEVICE="$GPRS_DEVICE"
+            fi
+
+             if [ \! -z "$GPRS_CMD_SET" ]; then
+                 at_cmd "AT+GMI"
+# activate PDP context
+                 at_cmd "AT+CGACT=1,1" 90 || error
+                 at_cmd "AT" 2
+                
+#enter data state
+                 case $TA_VENDOR in
+                     WAVECOM)
+                         PPP_DIAL='AT+CGDATA=1'
+                         ;;
+                     SIEMENS | Cinterion | *)
+                         PPP_DIAL='AT+CGDATA=\"PPP\",1'
+                         ;;
+                 esac
+                
+             # 2009-08-07 gc: AT+CGDATA dosn't deliver DNS addresses on
+             # Siemens! BUG?
+             else
+                 PPP_DIAL='ATD*99***1#'
+             fi
+            
+
             #2011-04-11 gc: Sierra Wireless WAVECOM FXT009 response so fast
             #               on GPRS ATD command, so ppp frames will be lost.
             #               We must call pppd using a chat script for 
@@ -900,44 +929,46 @@ attach_PDP_context() {
                                             ABORT BUSY \
                                             ABORT 'NO CARRIER' \
                                             '' AT OK \
-                                            'ATD*99***1#' CONNECT" \
-                $GPRS_DEVICE $GPRS_BAUDRATE &
-# save pppd's PID file in case of pppd hangs before it writes the PID file
-            ppp_pid=$!
-            echo $ppp_pid >/var/run/ppp0.pid
-            ;;
-        
-        *)
-            if [ \! -z "$GPRS_CMD_SET" ]; then
-                at_cmd "AT+GMI"
-    # activate PDP context
-                at_cmd "AT+CGACT=1,1" 90 || error
-                at_cmd "AT" 2
-                
-    #enter data state
-                case $TA_VENDOR in
-                    WAVECOM)
-                        at_cmd "AT+CGDATA=1" 90 "CONNECT" || error
-                        ;;
-                    SIEMENS | Cinterion | *)
-                        at_cmd "AT+CGDATA=\"PPP\",1" 90 "CONNECT" || error
-                        ;;
-                esac
-                
-            # 2009-08-07 gc: AT+CGDATA dosn't deliver DNS addresses on
-            # Siemens! BUG?
-            else
-                at_cmd "AT D*99***1#" 90 "CONNECT" || error
-            fi
-            
-            #sleep 1
-            stty -F $GPRS_DEVICE -ignbrk brkint
-            /usr/sbin/pppd $ppp_args <&3 >&3 &
+                                            '$PPP_DIAL' CONNECT" \
+                <&3 >&3 &
+#                $PPP_DEVICE $GPRS_BAUDRATE &
 # save pppd's PID file in case of pppd hangs before it writes the PID file
             ppp_pid=$!
             echo $ppp_pid >/var/run/ppp0.pid
             status_net "PDP context attached (GPRS or UMTS)"
             ;;
+        
+#         *)
+#             if [ \! -z "$GPRS_CMD_SET" ]; then
+#                 at_cmd "AT+GMI"
+#     # activate PDP context
+#                 at_cmd "AT+CGACT=1,1" 90 || error
+#                 at_cmd "AT" 2
+                
+#     #enter data state
+#                 case $TA_VENDOR in
+#                     WAVECOM)
+#                         at_cmd "AT+CGDATA=1" 90 "CONNECT" || error
+#                         ;;
+#                     SIEMENS | Cinterion | *)
+#                         at_cmd "AT+CGDATA=\"PPP\",1" 90 "CONNECT" || error
+#                         ;;
+#                 esac
+                
+#             # 2009-08-07 gc: AT+CGDATA dosn't deliver DNS addresses on
+#             # Siemens! BUG?
+#             else
+#                 at_cmd "AT D*99***1#" 90 "CONNECT" || error
+#             fi
+            
+#             #sleep 1
+#             stty -F $GPRS_DEVICE -ignbrk brkint
+#             /usr/sbin/pppd $ppp_args <&3 >&3 &
+# # save pppd's PID file in case of pppd hangs before it writes the PID file
+#             ppp_pid=$!
+#             echo $ppp_pid >/var/run/ppp0.pid
+#             status_net "PDP context attached (GPRS or UMTS)"
+#             ;;
     esac
     
     set -x
