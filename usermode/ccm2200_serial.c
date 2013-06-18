@@ -44,7 +44,9 @@
 /* this needs a include path to actual CCM2200 Linux kernel! */
 #include <linux/ccm2200_serial.h>
 
-#if defined(TIOCSRS485) && defined(TIOCGRS485)
+#if defined(TIOCSRS485) && defined(TIOCGRS485) && defined(SER_RS485_ENABLED) \
+    && defined(SER_RS485_RTS_ON_SEND) && defined(SER_RS485_RTS_AFTER_SEND)   \
+    && defined(SER_RS485_RX_DURING_TX)
 #include <linux/serial.h>
 #define HAVE_RS485_IOCTL
 #endif
