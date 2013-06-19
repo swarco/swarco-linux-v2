@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2013-06-14 16:00:04 gc]
+echo $0 [Version 2013-06-19 16:34:07 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -530,12 +530,28 @@ identify_terminal_adapter() {
                 *FXT009*)
                     TA_MODEL=FXT009
                     GPRS_CMD_SET=1
+                    # Bugfix on Sierra Wireless FXT009
+                    # this device sometimes switchs baudrate after CSD 
+                    # connect, so we set it here to fixed baudrate
+                    # (only when connected to serial port)
+                    # These device will not save +IPR setting permanent,
+                    # when no AT&W command is issued, so after power reset
+                    # the interface is reset to autobaud!
+	            if ! [ -z "$GPRS_ANSWER_CSD_CMD" ]; then
+                    # print "GPRS_DEVICE: $GPRS_DEVICE" 
+	                case "$GPRS_DEVICE" in
+		            /dev/com* | /dev/ttyS* | /dev/ttyAT*)
+                                at_cmd "AT+IPR=$GPRS_BAUDRATE"
+	                        ;;
+                        esac
+                    fi
                     print "Found Sierra Wireless Wavecom FXT009 GPRS terminal adapter"
                     ;;
                 *)
                     print "Found unknown Sierra Wireless Wavecom GPRS terminal adapter"
                     ;;
             esac
+
             # Query WAVECOM reset timer for log
             at_cmd "AT+WRST?"
             ;;
@@ -620,7 +636,7 @@ on_ring() {
 
         # start in own shell to create new process group
         #sh -c "eval $GPRS_ANSWER_CSD_CMD" &
-                eval "$GPRS_ANSWER_CSD_CMD" &
+                eval "$GPRS_ANSWER_CSD_CMD" <&3 &
                 rsm_pid=$!
                 echo "GPRS_ANSWER_CSD_CMD started (pid $rsm_pid)"
                 #cat /proc/$!/stat
