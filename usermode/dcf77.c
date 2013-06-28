@@ -107,7 +107,7 @@ void settings_group(const char *path, const char *id, const char *name)
 #define SETTINGS_PATH  SETTINGS_START "/c/"
 void settings_add(void)
 {
-  settings_group("", SETTINGS_START, SETTINGS_START);
+  settings_group("", SETTINGS_START, "DCF77 Radio Clock");
   settings_text(SETTINGS_PATH, "time",   "Last Received Time", "---");
   settings_text(SETTINGS_PATH, "sym",    "Symbols Okay / Erroneous [Current]", 
                 "0 / 0");
