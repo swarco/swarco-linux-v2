@@ -34,16 +34,25 @@ then
 fi
 
 start() {
-        #wait until mosquitto accepts connections
-        while ! mosquitto_pub -t dcf77 -m ""  >/dev/null 2>&1
-        do
-            sleep 1
-        done
+    (
+        HAVE_MOSQUITTO=""
+        if [ -x /usr/swarco/bin/mosquitto_pub ]; then
+            HAVE_MOSQUITTO="-p"
+            #wait until mosquitto accepts connections
+            while ! /usr/swarco/bin/mosquitto_pub -t dcf77 -m "" \
+                      </dev/null >/dev/null 2>&1
+            do
+                sleep 1
+            done
+        fi
 	echo "Starting DCF77 radio clock time synchronization"
-	start-stop-daemon --start --quiet --background \
-		--make-pidfile --pidfile /var/run/dcf77.pid \
-		--exec /usr/bin/dcf77 -- \
-		 -s "tty:$DCF77_DEVICE" -S -p
+        PATH=$PATH:/usr/swarco/bin \
+	    start-stop-daemon \
+            --start --quiet --background \
+	    --make-pidfile --pidfile /var/run/dcf77.pid \
+	    --exec /usr/bin/dcf77 -- \
+	    -s "tty:$DCF77_DEVICE" -S $HAVE_MOSQUITTO
+    ) &
 }
 
 stop() {
