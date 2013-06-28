@@ -2,7 +2,7 @@
 # uncomment DCF77_DEVICE to enable DCF77 time synchronization
 #DCF77_DEVICE="/dev/com6"
 
-if [ -z "$DCF77_DEVICE" ]; then
+if [ \! -z "$DCF77_DEVICE" ]; then
     ccm2200_serial "$DCF77_DEVICE" rxled "$((1<<3))" 4
     # no tx led, DCF77 read will not transmit any data!
     ccm2200_serial "$DCF77_DEVICE" txled 0 4
