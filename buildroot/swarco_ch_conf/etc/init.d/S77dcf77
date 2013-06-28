@@ -34,6 +34,11 @@ then
 fi
 
 start() {
+        #wait until mosquitto accepts connections
+        while ! mosquitto_pub -t dcf77 -m ""  >/dev/null 2>&1
+        do
+            sleep 1
+        done
 	echo "Starting DCF77 radio clock time synchronization"
 	start-stop-daemon --start --quiet --background \
 		--make-pidfile --pidfile /var/run/dcf77.pid \
