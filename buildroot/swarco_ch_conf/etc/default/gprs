@@ -25,11 +25,16 @@ GPRS_DIAL="*99**PPP*1#"
 
 # Operator Code:
 #       0 automatic operator selection mode
-#   26201 T-Mobile D1
-#   26202 Vodafone D2 GmbH
-#   26203 E-Plus Mobilfunk
-#   26207 O2 Germany
-GPRS_OPERATOR=26201
+#   26201 Deutschland, Telekom Deutschland
+#   26202 Deutschland, Vodafone.de GmbH
+#   26203 Deutschland, E-Plus Mobilfunk
+#   26207 Deutschland, O2 Germany
+#
+#   22801 Schweiz, Swisscom
+#   22802 Schweiz, Sunrise
+#   22803 Schweiz, Orange
+
+GPRS_OPERATOR=0
 
 # Network access type
 # 0 GSM
