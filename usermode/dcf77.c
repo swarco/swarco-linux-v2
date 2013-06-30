@@ -308,12 +308,16 @@ void dcf_delta(struct timeval *t1, int bit)
 	static struct timeval t2;
 	struct timeval td;
 
-        if (bitno > 61) bitno = -1;
+        if (bitno > 61) {
+          bitno = -1;
+          symbols_erroneous++;
+        }
 	dcf_sub_time(&td, t1, &t2);
 	t2 = *t1;
-	if(td.tv_sec>2) bitno = -1;
-	else
-	{
+	if(td.tv_sec>2) {
+          bitno = -1;
+          symbols_erroneous++;
+        } else {
 		int tdl;
 		tdl = td.tv_sec * 1000000 + td.tv_usec;
 		if(tdl>=900000 && tdl<=1050000) ;
@@ -321,8 +325,10 @@ void dcf_delta(struct timeval *t1, int bit)
 		{
 			if(bitno==59) dcf_auswert(t1, bits);
 			bitno = 0;
-		}
-		else bitno = -1;
+		} else {
+                  bitno = -1;
+                  symbols_erroneous++;
+                }
 	}
 	
 	if(deb&D_EDGE)
