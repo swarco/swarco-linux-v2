@@ -227,12 +227,14 @@ void dcf_auswert(struct timeval *unixt, int *bit)
 		}
 		if(tm.tm_wday==0? wday!=7: wday!=tm.tm_wday)
 		{
-                  printf("day of week mismatch, tm:%d, dcf:%d\n",
-                         tm.tm_wday, wday);
-			break;
+                  if (deb&D_EDGE)
+                    printf("day of week mismatch, tm:%d, dcf:%d\n",
+                           tm.tm_wday, wday);
+                  break;
 		}
 		sign = dcf_sub_abs_time(&delta, &dcft, unixt);
-		printf("%c%ld.%06ld ", sign? '-': '+', delta.tv_sec, delta.tv_usec);
+                if (deb&D_EDGE)
+                  printf("%c%ld.%06ld ", sign? '-': '+', delta.tv_sec, delta.tv_usec);
 		strftime(date_buf, 100, "%a %H:%M %d.%m.%y %Z", &tm);
                 strcat(date_buf, " [");
 		for(j=0, i=0; i<COUNT(extrabits); i++)
@@ -241,7 +243,8 @@ void dcf_auswert(struct timeval *unixt, int *bit)
                     strcat(date_buf, extrabits[i].name);
                   }
                 strcat(date_buf, "]");
-		printf("%s", date_buf);
+                if (deb&D_EDGE)
+                  printf("%s", date_buf);
 
                 if (publish_settings) {
                   settings_value(SETTINGS_PATH, "time", date_buf);
@@ -253,6 +256,7 @@ void dcf_auswert(struct timeval *unixt, int *bit)
 			{
 				struct timeval newtime;
                                 /* if (delta.tv_sec > 2 * 60) */
+                                if (deb&D_EDGE)
                                   fprintf(stderr, 
                                           "dcf: clock off by more than 2 "
                                           "minutes, "
@@ -274,8 +278,9 @@ void dcf_auswert(struct timeval *unixt, int *bit)
 				tx.offset = delta.tv_sec*1000000+delta.tv_usec;
 				if(sign) tx.offset = -tx.offset;
 				if(adjtimex(&tx)<0) perror("adjtimex(ADJ_OFFSET...)");
-				printf(" offs=%ld, freq=%ld, st=%d, tol=%ld",
-					   tx.offset, tx.T_FREQ, tx.status, tx.tolerance);
+                                if (deb&D_EDGE)
+                                  printf(" offs=%ld, freq=%ld, st=%d, tol=%ld",
+                                         tx.offset, tx.T_FREQ, tx.status, tx.tolerance);
 				if(fp_data)
 				{
 					strftime(date_buf, 100, "%H:%M %d", &tm);
@@ -286,9 +291,11 @@ void dcf_auswert(struct timeval *unixt, int *bit)
 				}
 			}
 		}
-		printf("\n");
-                printf("Frames Okay: %d, Frames erroneous: %d\n",
-                       frames_okay, frames_erroneous);
+                if (deb&D_EDGE)
+                  printf("\n");
+                if (deb&D_EDGE)
+                  printf("Frames Okay: %d, Frames erroneous: %d\n",
+                         frames_okay, frames_erroneous);
 	} while(0);
 
         if (publish_settings) {
@@ -320,9 +327,17 @@ void dcf_delta(struct timeval *t1, int bit)
         } else {
 		int tdl;
 		tdl = td.tv_sec * 1000000 + td.tv_usec;
-		if(tdl>=900000 && tdl<=1050000) ;
-		else if(tdl>=1950000 && tdl<=2050000)
-		{
+                printf("tdl: %d\n", tdl);
+		if (tdl>=900000 && tdl<=1050000) {
+                  ;
+                /* 2013-06-30 gc: a little bit more time for the first
+                 *                bit after dcf_auswert().
+                 *                dcf_auswert() may run for several
+                 *                hundert milliseconds
+                 */
+                } else if (bitno == 0 && (tdl>=900000 && tdl<=1900000)) {
+                       ;
+		} else if (tdl>=1950000 && tdl<=2050000) {
 			if(bitno==59) dcf_auswert(t1, bits);
 			bitno = 0;
 		} else {
