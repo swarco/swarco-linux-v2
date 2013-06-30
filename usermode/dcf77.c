@@ -312,6 +312,7 @@ void dcf_delta(struct timeval *t1, int bit)
 {
 	static int bits[61];
 	static bitno = -1;
+        static int initialized = 0;
 	static struct timeval t2;
 	struct timeval td;
 
@@ -323,7 +324,8 @@ void dcf_delta(struct timeval *t1, int bit)
 	t2 = *t1;
 	if(td.tv_sec>2) {
           bitno = -1;
-          symbols_erroneous++;
+          if (initialized)
+            symbols_erroneous++;
         } else {
 		int tdl;
 		tdl = td.tv_sec * 1000000 + td.tv_usec;
@@ -373,6 +375,7 @@ void dcf_delta(struct timeval *t1, int bit)
         }
 
 	if(bitno>=0) bits[bitno++] = bit;
+        initialized = 1;
 }
 
 static inline int dcf_readbit(void)
