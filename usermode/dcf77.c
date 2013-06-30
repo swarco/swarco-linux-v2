@@ -338,7 +338,7 @@ void dcf_delta(struct timeval *t1, int bit)
                  *                dcf_auswert() may run for several
                  *                hundert milliseconds
                  */
-                } else if (bitno == 1 && (tdl>=900000 && tdl<=1900000)) {
+                } else if (bitno == 1 && (tdl>=900000 && tdl<=1500000)) {
                        ;
 		} else if (tdl>=1950000 && tdl<=2050000) {
 			if(bitno==59) dcf_auswert(t1, bits);
