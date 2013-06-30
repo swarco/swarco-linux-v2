@@ -327,7 +327,8 @@ void dcf_delta(struct timeval *t1, int bit)
         } else {
 		int tdl;
 		tdl = td.tv_sec * 1000000 + td.tv_usec;
-                printf("tdl: %d\n", tdl);
+                if (deb&D_EDGE)
+                  printf("tdl: %d\n", tdl);
 		if (tdl>=900000 && tdl<=1050000) {
                   ;
                 /* 2013-06-30 gc: a little bit more time for the first
