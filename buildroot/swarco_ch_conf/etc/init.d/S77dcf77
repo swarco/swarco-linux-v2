@@ -45,6 +45,8 @@ start() {
                 sleep 1
             done
         fi
+        setserial "$DCF77_DEVICE" low_latency
+
 	echo "Starting DCF77 radio clock time synchronization"
         PATH=$PATH:/usr/swarco/bin \
 	    start-stop-daemon \
