@@ -65,7 +65,7 @@
  * Not needed if PPP callers want to get a real "login:"
  * prompt first. Don't forget to activate the /AutoPPP/ line in login.config!
  */
-/* #define AUTO_PPP */
+#define AUTO_PPP
 
 /* callback config file
  *
