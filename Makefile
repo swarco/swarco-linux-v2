@@ -95,13 +95,13 @@ TODAY = $(shell date +%Y%m%d)
 
 # save modified versions from working directory back to Weiss-Embedded
 # Linux-CD 
+# cd $(U_BOOT_BASE); tar cvzf $(WEISS_CD_DIR)/sources/u-boot/u-boot-git-$(TODAY).tar.gz u-boot-git
 .PHONY: u-boot-dist
 u-boot-dist:
 	cd $(U_BOOT_PATH); make distclean
-	cd $(U_BOOT_BASE); tar cvzf $(WEISS_CD_DIR)/sources/u-boot/u-boot-ccm2200-$(TODAY).tar.gz $(U_BOOT_DIR)
+	cd $(U_BOOT_BASE); tar xvzf $(WEISS_CD_DIR)/sources/u-boot/v2010.09/u-boot-git-v2010.09.tar.gz
 	cd $(U_BOOT_BASE)/u-boot-git; make distclean
-	cd $(U_BOOT_BASE); tar cvzf $(WEISS_CD_DIR)/sources/u-boot/u-boot-git-$(TODAY).tar.gz u-boot-git
-	-cd $(U_BOOT_BASE); diff -Nrup '--exclude=*~' --exclude=.depend --exclude=.git u-boot-git $(U_BOOT_DIR) >$(WEISS_CD_DIR)/sources/u-boot/u-boot-ccm2200-$(TODAY).patch
+	-cd $(U_BOOT_BASE); diff -Nrup '--exclude=*~' --exclude=.depend --exclude=.git u-boot-git $(U_BOOT_DIR) >$(WEISS_CD_DIR)/sources/u-boot/v2010.09/u-boot-v2010.09-ccm2200-redu-$(TODAY).patch
 
 
 KERNEL_ORIG = linux-orig
