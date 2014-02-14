@@ -145,9 +145,10 @@ net_add()
   test -f /etc/network/if-add-$INTERFACE && . /etc/network/if-add-$INTERFACE
 }
 
-#write event to syslog for testing and debugging
-/sbin/mdev
 #log_event
+
+#write event to syslog for testing and debugging
+#/sbin/mdev
 
 case "${SUBSYSTEM}_${ACTION}" in
   "usb_add")
@@ -175,6 +176,22 @@ case "${SUBSYSTEM}_${ACTION}" in
 	net_remove
         ;;
 
+  firmware_add)
+# 	logger -t hotplug <<Ende
+
+# firmware : $FIRMWARE
+
+# Ende
+
+	log_event
+	echo 1 > /sys/$DEVPATH/loading
+	cat "/lib/firmware/$FIRMWARE" > /sys/$DEVPATH/data
+	echo 0 > /sys/$DEVPATH/loading	
+	;;
   *)
 	;;
 esac
+
+exec /sbin/mdev
+
+
