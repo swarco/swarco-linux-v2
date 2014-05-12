@@ -141,7 +141,7 @@ diff -Nru buildroot-2.0/package/openssl/openssl.mk buildroot-2.0-patch//package/
  #
  #############################################################
 -OPENSSL_VERSION:=0.9.8g
-+OPENSSL_VERSION:=1.0.1c
++OPENSSL_VERSION:=1.0.1g
  OPENSSL_SITE:=http://www.openssl.org/source
  
  OPENSSL_TARGET_ARCH=generic32
