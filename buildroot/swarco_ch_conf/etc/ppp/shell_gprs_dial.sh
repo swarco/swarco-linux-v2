@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2013-06-19 16:34:07 gc]
+echo $0 [Version 2014-09-22 18:21:06 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -455,6 +455,8 @@ identify_terminal_adapter() {
     at_cmd "ATi" || return 1
     print "Terminal adpater identification: $r"
 
+    status GPRS_TA "${r%% OK}"
+
     case $r in
         *Cinterion* )
             TA_VENDOR=Cinterion
@@ -517,19 +519,22 @@ identify_terminal_adapter() {
                     ;;
             esac
             ;;
-        *WAVECOM*)
-            TA_VENDOR=WAVECOM
-            print "Found Wavecom GPRS terminal adapter"
-            # Query WAVECOM reset timer for log
-            at_cmd "AT+WRST?"
-            ;;
 
-        *Sierra\ Wireless*)
+        *WAVECOM* | *Sierra\ Wireless*)
             TA_VENDOR=WAVECOM
+
             case $r in
+                *MULTIBAND\ \ 900E\ \ 1800*)
+                    print "Found Wavecom Fastrack Supreme terminal adapter"
+                    ;;
+
                 *FXT009*)
                     TA_MODEL=FXT009
-                    GPRS_CMD_SET=1
+                    # 2014-09-22 gc: Bugfix Sierra Wireless FXT009:
+                    #                GPRS_CMD_SET is general supported, but
+                    #                will not work for Vodafone CDA APN!
+                    #                (Firmware tested till R7.51.0.201306260837)
+                    #GPRS_CMD_SET=1
                     # Bugfix on Sierra Wireless FXT009
                     # this device sometimes switchs baudrate after CSD 
                     # connect, so we set it here to fixed baudrate
@@ -545,10 +550,10 @@ identify_terminal_adapter() {
 	                        ;;
                         esac
                     fi
-                    print "Found Sierra Wireless Wavecom FXT009 GPRS terminal adapter"
+                    print "Found Sierra Wireless / Wavecom FXT009 GPRS terminal adapter"
                     ;;
                 *)
-                    print "Found unknown Sierra Wireless Wavecom GPRS terminal adapter"
+                    print "Found unknown Sierra Wireless / Wavecom GPRS terminal adapter"
                     ;;
             esac
 
@@ -1402,10 +1407,6 @@ at_cmd "ATS0=0"
 # query some status information from terminal adapter
 ##############################################################################
   print "querying status information from terminal adapater:"
-#
-  at_cmd "ATi"
-  print "Terminal Adapter: ${r%% OK}"
-  status GPRS_TA "${r%% OK}"
 #
   at_cmd "AT+CGMR"
   print "Firmware Version: ${r%% OK}"
