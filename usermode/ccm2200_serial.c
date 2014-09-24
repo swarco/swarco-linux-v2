@@ -193,7 +193,8 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  if ((device_fd = open(argv[1], O_RDWR)) == -1) {
+  /* O_RDONLY should be enough for ioctl calls */
+  if ((device_fd = open(argv[1], O_RDWR | O_NONBLOCK)) == -1) {
     printf("could not open \"%s\"\n", argv[1]);
     return 1;
   }

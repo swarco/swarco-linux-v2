@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     --argc;
   }
 
-  if ((device_fd = open(argv[1], O_RDWR | O_SYNC)) == -1) {
+  if ((device_fd = open(argv[1], O_RDWR | O_NONBLOCK | O_SYNC)) == -1) {
     printf("could not open \"%s\"\n", argv[1]);
     return 1;
   }
