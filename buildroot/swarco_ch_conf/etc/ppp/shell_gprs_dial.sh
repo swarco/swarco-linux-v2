@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2014-09-22 18:21:06 gc]
+echo $0 [Version 2015-01-15 11:45:43 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -361,6 +361,10 @@ print_usb_device() {
 ##############################################################################
 init_and_load_drivers() {
     local reload_modules=$1
+    # huaweiAktBbo and usb_modeswitch only work with mounted usbfs
+    if ! [ -f /proc/bus/usb/devices ]; then
+        mount -tusbfs none /proc/bus/usb
+    fi
 
     for id in /sys/bus/usb/devices/*
     do
@@ -369,19 +373,41 @@ init_and_load_drivers() {
                 continue
                 ;;
 
-        #12d1:1446)
-        #  Huawei E1750
-        #  /usr/bin/usb_modeswitch -v 0x12d1 -p 0x1446 -c "/etc/usb_modeswitch.d/12d1:1446"
-
         12d1:1003)
                 local d=
                 print_usb_device "Huawei Technologies Co., Ltd. E220 HSDPA Modem"
                 if [ \! -z "$reload_modules" ]; then
-                    mount -tusbfs none /proc/bus/usb
                     /usr/bin/huaweiAktBbo
                 fi
 
                 find_usb_device "$reload_modules" 12d1 1003 /dev/ttyUSB0
+                ;;
+
+        #  Huawei E1750 in mass storage device mode
+        12d1:1446)
+                local d=
+                print_usb_device "Huawei Technologies Co., Ltd. E1750 HSDPA Modem in mass storage mode"
+                usb_modeswitch -v 12d1 -p 1446 -M 55534243123456780000000000000011062000000100000000000000000000
+                exit 1
+                ;;
+
+        12d1:1436)
+                print_usb_device "Huawei Technologies Co., Ltd. E1750 HSDPA Modem in USB serial mode"
+                find_usb_device "$reload_modules" 12d1 1436 /dev/ttyUSB0
+                ;;
+
+        #  Huawei E303/E353/E3131 in mass storage device mode
+        12d1:1f01)
+                local d=
+                print_usb_device "Huawei Technologies Co., Ltd. E303/E353/E3131 HSDPA Modem in mass storage mode"
+
+                usb_modeswitch -v 12d1 -p 1f01 -M 55534243123456780000000000000011060000000000000000000000000000
+                exit 1
+                ;;
+
+        12d1:1001)
+                print_usb_device "Huawei Technologies Co., Ltd. E303/E353/E3131 HSDPA Modem in USB serial mode"
+                find_usb_device "$reload_modules" 12d1 1001 /dev/ttyUSB0
                 ;;
 
         0681:0041)
