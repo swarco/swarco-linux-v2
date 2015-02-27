@@ -22,6 +22,9 @@ start() {
             $SYS_MESG -n "network" -e eth0/mac -p error `M_ "Ethernet MAC address lost. Probably EEPROM contents invalid" `
         fi
 
+	# disable ARP replies with IP addresses of other interfaces
+        echo 1 >/proc/sys/net/ipv4/conf/all/arp_ignore 
+
         # 2007-05-09 gc: ifup seams currently not to work in busybox
 	#/sbin/ifup -a
 	sh /etc/network/ip-config
