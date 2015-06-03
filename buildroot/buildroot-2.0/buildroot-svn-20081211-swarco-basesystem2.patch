@@ -214,7 +214,7 @@ diff -Nrub buildroot-2.0/package/openssh/openssh_bsdcomp.patch buildroot-2.0.t/p
 diff -Nrub buildroot-2.0/package/openssh/openssh.mk buildroot-2.0.t/package/openssh/openssh.mk
 --- buildroot-2.0/package/openssh/openssh.mk	2008-09-24 14:00:57.000000000 +0200
 +++ buildroot-2.0.t/package/openssh/openssh.mk	2015-06-03 13:34:15.000000000 +0200
-@@ -3,7 +3,7 @@
+@@ -3,12 +3,15 @@
  # openssh
  #
  #############################################################
@@ -223,7 +223,15 @@ diff -Nrub buildroot-2.0/package/openssh/openssh.mk buildroot-2.0.t/package/open
  OPENSSH_SITE=ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
  
  OPENSSH_CONF_ENV = LD=$(TARGET_CC)
-diff -Nrub buildroot-2.0/package/openssh/openssh.patch buildroot-2.0.t/package/openssh/openssh.patch
++# 2015-06-03 gc: added --without-pie linker option
++#                PIE executables seams not to work in the uClibc environemnt
+ OPENSSH_CONF_OPT = --libexecdir=/usr/lib --disable-lastlog --disable-utmp \
+-		--disable-utmpx --disable-wtmp --disable-wtmpx --without-x
++		--disable-utmpx --disable-wtmp --disable-wtmpx --without-x \
++                --without-pie
+ 
+ OPENSSH_INSTALL_TARGET_OPT = DESTDIR=$(TARGET_DIR) install
+ diff -Nrub buildroot-2.0/package/openssh/openssh.patch buildroot-2.0.t/package/openssh/openssh.patch
 --- buildroot-2.0/package/openssh/openssh.patch	2008-09-24 14:00:57.000000000 +0200
 +++ buildroot-2.0.t/package/openssh/openssh.patch	2015-06-03 13:34:24.000000000 +0200
 @@ -1,30 +1,27 @@
