@@ -1,6 +1,6 @@
-diff -Nru buildroot-2.0/Makefile buildroot-2.0-patch//Makefile
+diff -Nrub buildroot-2.0/Makefile buildroot-2.0.t/Makefile
 --- buildroot-2.0/Makefile	2008-11-07 09:57:59.000000000 +0100
-+++ buildroot-2.0-patch//Makefile	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/Makefile	2015-06-03 13:31:56.000000000 +0200
 @@ -254,6 +254,7 @@
  endif
  
@@ -9,9 +9,9 @@ diff -Nru buildroot-2.0/Makefile buildroot-2.0-patch//Makefile
  
  TARGETS+=target-devfiles
  
-diff -Nru buildroot-2.0/package/busybox/Config.in buildroot-2.0-patch//package/busybox/Config.in
+diff -Nrub buildroot-2.0/package/busybox/Config.in buildroot-2.0.t/package/busybox/Config.in
 --- buildroot-2.0/package/busybox/Config.in	2008-11-29 21:12:17.000000000 +0100
-+++ buildroot-2.0-patch//package/busybox/Config.in	2012-10-15 17:38:01.000000000 +0200
++++ buildroot-2.0.t/package/busybox/Config.in	2015-06-03 13:31:56.000000000 +0200
 @@ -51,6 +51,12 @@
  	config BR2_BUSYBOX_VERSION_1_13_X
  		bool "BusyBox 1.13.x"
@@ -34,9 +34,9 @@ diff -Nru buildroot-2.0/package/busybox/Config.in buildroot-2.0-patch//package/b
  
  config BR2_PACKAGE_BUSYBOX_FULLINSTALL
  	bool "Run BusyBox's own full installation"
-diff -Nru buildroot-2.0/package/Config.in buildroot-2.0-patch//package/Config.in
+diff -Nrub buildroot-2.0/package/Config.in buildroot-2.0.t/package/Config.in
 --- buildroot-2.0/package/Config.in	2008-12-11 01:33:30.000000000 +0100
-+++ buildroot-2.0-patch//package/Config.in	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/package/Config.in	2015-06-03 13:31:56.000000000 +0200
 @@ -430,4 +430,6 @@
  # various games packages
  source "package/games/Config.in"
@@ -44,9 +44,9 @@ diff -Nru buildroot-2.0/package/Config.in buildroot-2.0-patch//package/Config.in
 +source "swarco/package/Config.in"
 +
  endmenu
-diff -Nru buildroot-2.0/package/games/xboard/xboard.mk buildroot-2.0-patch//package/games/xboard/xboard.mk
+diff -Nrub buildroot-2.0/package/games/xboard/xboard.mk buildroot-2.0.t/package/games/xboard/xboard.mk
 --- buildroot-2.0/package/games/xboard/xboard.mk	2008-08-29 15:27:37.000000000 +0200
-+++ buildroot-2.0-patch//package/games/xboard/xboard.mk	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/package/games/xboard/xboard.mk	2015-06-03 13:31:56.000000000 +0200
 @@ -10,7 +10,7 @@
  XBOARD_INSTALL_TARGET = YES
  XBOARD_INSTALL_TARGET_OPT = DESTDIR=$(TARGET_DIR) install
@@ -56,9 +56,9 @@ diff -Nru buildroot-2.0/package/games/xboard/xboard.mk buildroot-2.0-patch//pack
  
  XBOARD_DEPENDENCIES = uclibc gnuchess
  
-diff -Nru buildroot-2.0/package/lighttpd/lighttpd.mk buildroot-2.0-patch//package/lighttpd/lighttpd.mk
+diff -Nrub buildroot-2.0/package/lighttpd/lighttpd.mk buildroot-2.0.t/package/lighttpd/lighttpd.mk
 --- buildroot-2.0/package/lighttpd/lighttpd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-patch//package/lighttpd/lighttpd.mk	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/package/lighttpd/lighttpd.mk	2015-06-03 13:31:56.000000000 +0200
 @@ -8,7 +8,7 @@
  LIGHTTPD_SITE:=http://www.lighttpd.net/download
  LIGHTTPD_INSTALL_STAGING = NO
@@ -76,9 +76,9 @@ diff -Nru buildroot-2.0/package/lighttpd/lighttpd.mk buildroot-2.0-patch//packag
  	$(DISABLE_IPV6) \
  	$(LIGHTTPD_LFS)
  
-diff -Nru buildroot-2.0/package/mtd/mtd-utils/mtd.mk buildroot-2.0-patch//package/mtd/mtd-utils/mtd.mk
+diff -Nrub buildroot-2.0/package/mtd/mtd-utils/mtd.mk buildroot-2.0.t/package/mtd/mtd-utils/mtd.mk
 --- buildroot-2.0/package/mtd/mtd-utils/mtd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-patch//package/mtd/mtd-utils/mtd.mk	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/package/mtd/mtd-utils/mtd.mk	2015-06-03 13:31:56.000000000 +0200
 @@ -38,6 +38,7 @@
  	CC="$(HOSTCC)" CROSS= CFLAGS=-I$(LINUX_HEADERS_DIR)/include \
  		$(MAKE) LINUXDIR=$(LINUX_DIR) \
@@ -96,9 +96,9 @@ diff -Nru buildroot-2.0/package/mtd/mtd-utils/mtd.mk buildroot-2.0-patch//packag
  
  mtd-source: $(DL_DIR)/$(MTD_SOURCE)
  
-diff -Nru buildroot-2.0/package/ncftp/ncftp.mk buildroot-2.0-patch//package/ncftp/ncftp.mk
+diff -Nrub buildroot-2.0/package/ncftp/ncftp.mk buildroot-2.0.t/package/ncftp/ncftp.mk
 --- buildroot-2.0/package/ncftp/ncftp.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-patch//package/ncftp/ncftp.mk	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/package/ncftp/ncftp.mk	2015-06-03 13:31:56.000000000 +0200
 @@ -60,7 +60,7 @@
  $(NCFTP_DIR)/bin/%: $(NCFTP_DIR)/.configured
  	$(MAKE) -C $(NCFTP_DIR)
@@ -108,9 +108,9 @@ diff -Nru buildroot-2.0/package/ncftp/ncftp.mk buildroot-2.0-patch//package/ncft
  	$(INSTALL) -m 0755 $(NCFTP_DIR)/bin/$(notdir $@) $(TARGET_DIR)/usr/bin
  	$(STRIPCMD) $(STRIP_STRIP_ALL) $@
  
-diff -Nru buildroot-2.0/package/ntp/ntp.mk buildroot-2.0-patch//package/ntp/ntp.mk
+diff -Nrub buildroot-2.0/package/ntp/ntp.mk buildroot-2.0.t/package/ntp/ntp.mk
 --- buildroot-2.0/package/ntp/ntp.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-patch//package/ntp/ntp.mk	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/package/ntp/ntp.mk	2015-06-03 13:31:56.000000000 +0200
 @@ -37,6 +37,9 @@
  		--target=$(GNU_TARGET_NAME) \
  		--host=$(GNU_TARGET_NAME) \
@@ -121,21 +121,157 @@ diff -Nru buildroot-2.0/package/ntp/ntp.mk buildroot-2.0-patch//package/ntp/ntp.
  		--prefix=/usr \
  		--exec-prefix=/usr \
  		--bindir=/usr/bin \
-diff -Nru buildroot-2.0/package/openssh/openssh.mk buildroot-2.0-patch//package/openssh/openssh.mk
+diff -Nrub buildroot-2.0/package/openssh/openssh_bsdcomp.patch buildroot-2.0.t/package/openssh/openssh_bsdcomp.patch
+--- buildroot-2.0/package/openssh/openssh_bsdcomp.patch	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2.0.t/package/openssh/openssh_bsdcomp.patch	2015-06-03 13:34:00.000000000 +0200
+@@ -0,0 +1,86 @@
++diff -Nurb openssh-6.8p1/openbsd-compat/explicit_bzero.c openssh-6.8p1.n//openbsd-compat/explicit_bzero.c
++--- openssh-6.8p1/openbsd-compat/explicit_bzero.c	2015-03-17 06:49:20.000000000 +0100
+++++ openssh-6.8p1.n//openbsd-compat/explicit_bzero.c	2015-06-03 13:11:43.000000000 +0200
++@@ -6,6 +6,7 @@
++  */
++ 
++ #include "includes.h"
+++#include <string.h>
++ 
++ /*
++  * explicit_bzero - don't let the compiler optimize away bzero
++@@ -24,15 +25,15 @@
++ #else /* HAVE_MEMSET_S */
++ 
++ /*
++- * Indirect bzero through a volatile pointer to hopefully avoid
+++ * Indirect memset through a volatile pointer to hopefully avoid
++  * dead-store optimisation eliminating the call.
++  */
++-static void (* volatile ssh_bzero)(void *, size_t) = bzero;
+++static void *(* volatile ssh_memset)(void *s, int c, size_t n) = memset;
++ 
++ void
++ explicit_bzero(void *p, size_t n)
++ {
++-	ssh_bzero(p, n);
+++	(void)ssh_memset(p, 0, n);
++ }
++ 
++ #endif /* HAVE_MEMSET_S */
++diff -Nurb openssh-6.8p1/openbsd-compat/explicit_bzero.c.orig openssh-6.8p1.n//openbsd-compat/explicit_bzero.c.orig
++--- openssh-6.8p1/openbsd-compat/explicit_bzero.c.orig	1970-01-01 01:00:00.000000000 +0100
+++++ openssh-6.8p1.n//openbsd-compat/explicit_bzero.c.orig	2015-03-17 06:49:20.000000000 +0100
++@@ -0,0 +1,40 @@
+++/* OPENBSD ORIGINAL: lib/libc/string/explicit_bzero.c */
+++/*	$OpenBSD: explicit_bzero.c,v 1.1 2014/01/22 21:06:45 tedu Exp $ */
+++/*
+++ * Public domain.
+++ * Written by Ted Unangst
+++ */
+++
+++#include "includes.h"
+++
+++/*
+++ * explicit_bzero - don't let the compiler optimize away bzero
+++ */
+++
+++#ifndef HAVE_EXPLICIT_BZERO
+++
+++#ifdef HAVE_MEMSET_S
+++
+++void
+++explicit_bzero(void *p, size_t n)
+++{
+++	(void)memset_s(p, n, 0, n);
+++}
+++
+++#else /* HAVE_MEMSET_S */
+++
+++/*
+++ * Indirect bzero through a volatile pointer to hopefully avoid
+++ * dead-store optimisation eliminating the call.
+++ */
+++static void (* volatile ssh_bzero)(void *, size_t) = bzero;
+++
+++void
+++explicit_bzero(void *p, size_t n)
+++{
+++	ssh_bzero(p, n);
+++}
+++
+++#endif /* HAVE_MEMSET_S */
+++
+++#endif /* HAVE_EXPLICIT_BZERO */
++diff -Nurb openssh-6.8p1/sshkey.c openssh-6.8p1.n//sshkey.c
++--- openssh-6.8p1/sshkey.c	2015-03-17 06:49:20.000000000 +0100
+++++ openssh-6.8p1.n//sshkey.c	2015-06-03 13:10:56.000000000 +0200
++@@ -59,6 +59,8 @@
++ #include "sshkey.h"
++ #include "match.h"
++ 
+++#define index(s, c) strchr(s, c)
+++
++ /* openssh private key file format */
++ #define MARK_BEGIN		"-----BEGIN OPENSSH PRIVATE KEY-----\n"
++ #define MARK_END		"-----END OPENSSH PRIVATE KEY-----\n"
+diff -Nrub buildroot-2.0/package/openssh/openssh.mk buildroot-2.0.t/package/openssh/openssh.mk
 --- buildroot-2.0/package/openssh/openssh.mk	2008-09-24 14:00:57.000000000 +0200
-+++ buildroot-2.0-patch//package/openssh/openssh.mk	2012-10-15 17:38:58.000000000 +0200
++++ buildroot-2.0.t/package/openssh/openssh.mk	2015-06-03 13:34:15.000000000 +0200
 @@ -3,7 +3,7 @@
  # openssh
  #
  #############################################################
 -OPENSSH_VERSION=5.1p1
-+OPENSSH_VERSION=6.1p1
++OPENSSH_VERSION=6.8p1
  OPENSSH_SITE=ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
  
  OPENSSH_CONF_ENV = LD=$(TARGET_CC)
-diff -Nru buildroot-2.0/package/openssl/openssl.mk buildroot-2.0-patch//package/openssl/openssl.mk
+diff -Nrub buildroot-2.0/package/openssh/openssh.patch buildroot-2.0.t/package/openssh/openssh.patch
+--- buildroot-2.0/package/openssh/openssh.patch	2008-09-24 14:00:57.000000000 +0200
++++ buildroot-2.0.t/package/openssh/openssh.patch	2015-06-03 13:34:24.000000000 +0200
+@@ -1,30 +1,27 @@
+---- openssh-3.6.1p1/Makefile.in.orig	2003-03-20 17:34:34.000000000 -0700
+-+++ openssh-3.6.1p1/Makefile.in	2003-04-25 17:09:00.000000000 -0600
+-@@ -27,7 +27,7 @@
+- RAND_HELPER=$(libexecdir)/ssh-rand-helper
++diff -Nrub openssh-6.8p1/Makefile.in openssh-6.8p1.n//Makefile.in
++--- openssh-6.8p1.n//Makefile.in	2015-03-17 06:49:20.000000000 +0100
+++++ openssh-6.8p1/Makefile.in	2015-06-03 13:22:54.000000000 +0200
++@@ -28,7 +28,7 @@
++ SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
+  PRIVSEP_PATH=@PRIVSEP_PATH@
+  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
+ -STRIP_OPT=@STRIP_OPT@
+ +STRIP_OPT=
++ TEST_SHELL=@TEST_SHELL@
+  
+  PATHS= -DSSHDIR=\"$(sysconfdir)\" \
+- 	-D_PATH_SSH_PROGRAM=\"$(SSH_PROGRAM)\" \
+-
+---- openssh-4.6p1.oorig/sshd_config	2006-07-24 06:06:47.000000000 +0200
+-+++ openssh-4.6p1/sshd_config	2007-06-28 15:58:49.000000000 +0200
+-@@ -83,9 +83,11 @@
+- #AllowTcpForwarding yes
+- #GatewayPorts no
+- #X11Forwarding no
+-+X11Forwarding yes
+- #X11DisplayOffset 10
++diff -Nrub openssh-6.8p1/sshd_config openssh-6.8p1.n//sshd_config
++--- openssh-6.8p1.n//sshd_config	2015-03-17 06:49:20.000000000 +0100
+++++ openssh-6.8p1/sshd_config	2015-06-03 13:23:27.000000000 +0200
++@@ -104,6 +104,7 @@
+  #X11UseLocalhost yes
++ #PermitTTY yes
+  #PrintMotd yes
+ +PrintMotd no
+  #PrintLastLog yes
+  #TCPKeepAlive yes
+  #UseLogin no
+-@@ -102,8 +104,12 @@
++@@ -122,6 +123,10 @@
+  # no default banner path
+  #Banner none
+  
+diff -Nrub buildroot-2.0/package/openssl/openssl.mk buildroot-2.0.t/package/openssl/openssl.mk
 --- buildroot-2.0/package/openssl/openssl.mk	2008-10-13 10:10:35.000000000 +0200
-+++ buildroot-2.0-patch//package/openssl/openssl.mk	2012-10-15 17:38:48.000000000 +0200
++++ buildroot-2.0.t/package/openssl/openssl.mk	2015-06-03 13:31:56.000000000 +0200
 @@ -3,7 +3,7 @@
  # openssl
  #
@@ -145,9 +281,84 @@ diff -Nru buildroot-2.0/package/openssl/openssl.mk buildroot-2.0-patch//package/
  OPENSSL_SITE:=http://www.openssl.org/source
  
  OPENSSL_TARGET_ARCH=generic32
-diff -Nru buildroot-2.0/package/pppd/pppd.mk buildroot-2.0-patch//package/pppd/pppd.mk
+diff -Nrub buildroot-2.0/package/openvpn/openvpn-2.3.2-fix-small.patch buildroot-2.0.t/package/openvpn/openvpn-2.3.2-fix-small.patch
+--- buildroot-2.0/package/openvpn/openvpn-2.3.2-fix-small.patch	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2.0.t/package/openvpn/openvpn-2.3.2-fix-small.patch	2015-06-03 13:35:14.000000000 +0200
+@@ -0,0 +1,40 @@
++diff -Nrub --exclude '*~' openvpn-2.3.2-org//src/openvpn/init.c openvpn-2.3.2/src/openvpn/init.c
++--- openvpn-2.3.2-org//src/openvpn/init.c	2013-05-31 14:00:25.000000000 +0200
+++++ openvpn-2.3.2/src/openvpn/init.c	2013-06-18 10:40:02.000000000 +0200
++@@ -660,7 +660,9 @@
++   {
++     struct route_gateway_info rgi;
++     get_default_gateway(&rgi);
+++#ifndef ENABLE_SMALL
++     print_default_gateway(M_INFO, &rgi);
+++#endif
++     return false;
++   }
++ #endif
++diff -Nrub --exclude '*~' openvpn-2.3.2-org//src/openvpn/options.c openvpn-2.3.2/src/openvpn/options.c
++--- openvpn-2.3.2-org//src/openvpn/options.c	2013-05-31 14:00:25.000000000 +0200
+++++ openvpn-2.3.2/src/openvpn/options.c	2013-06-18 10:40:10.000000000 +0200
++@@ -4065,7 +4065,9 @@
++       struct route_gateway_info rgi;
++       VERIFY_PERMISSION (OPT_P_GENERAL);
++       get_default_gateway(&rgi);
+++#ifndef ENABLE_SMALL
++       print_default_gateway(M_INFO, &rgi);
+++#endif
++       openvpn_exit (OPENVPN_EXIT_STATUS_GOOD); /* exit point */
++     }
++ #endif
++diff -Nrub --exclude '*~' openvpn-2.3.2-org//src/openvpn/route.c openvpn-2.3.2/src/openvpn/route.c
++--- openvpn-2.3.2-org//src/openvpn/route.c	2013-05-31 14:00:25.000000000 +0200
+++++ openvpn-2.3.2/src/openvpn/route.c	2013-06-18 10:39:36.000000000 +0200
++@@ -596,8 +596,10 @@
++     {
++       setenv_route_addr (es, "net_gateway", rl->rgi.gateway.addr, -1);
++ #ifdef ENABLE_DEBUG
+++#ifndef ENABLE_SMALL
++       print_default_gateway (D_ROUTE, &rl->rgi);
++ #endif
+++#endif
++     }
++   else
++     {
+diff -Nrub buildroot-2.0/package/openvpn/openvpn.mk buildroot-2.0.t/package/openvpn/openvpn.mk
+--- buildroot-2.0/package/openvpn/openvpn.mk	2008-12-08 09:15:27.000000000 +0100
++++ buildroot-2.0.t/package/openvpn/openvpn.mk	2015-06-03 13:35:30.000000000 +0200
+@@ -6,9 +6,9 @@
+ # to enable that within busybox
+ #
+ #############################################################
+-OPENVPN_VERSION:=2.0.9
++OPENVPN_VERSION:=2.3.2
+ OPENVPN_SOURCE:=openvpn-$(OPENVPN_VERSION).tar.gz
+-OPENVPN_SITE:=http://openvpn.net/release/
++OPENVPN_SITE:=http://swupdate.openvpn.org/community/releases/
+ OPENVPN_DIR:=$(BUILD_DIR)/openvpn-$(OPENVPN_VERSION)
+ OPENVPN_CAT:=$(ZCAT)
+ OPENVPN_BINARY:=openvpn
+@@ -30,6 +30,7 @@
+ 
+ $(OPENVPN_DIR)/.unpacked: $(DL_DIR)/$(OPENVPN_SOURCE)
+ 	$(OPENVPN_CAT) $(DL_DIR)/$(OPENVPN_SOURCE) | tar -C $(BUILD_DIR) $(TAR_OPTIONS) -
++	toolchain/patch-kernel.sh $(OPENVPN_DIR) package/openvpn/ \*$(OPENVPN_VERSION)\*.patch
+ 	touch $(OPENVPN_DIR)/.unpacked
+ 
+ $(OPENVPN_DIR)/.configured: $(OPENVPN_DIR)/.unpacked
+@@ -53,6 +54,7 @@
+ 		--infodir=/usr/info \
+ 		--program-prefix="" \
+ 		--enable-small \
++		--disable-plugin-auth-pam \
+ 		$(THREAD_MODEL) \
+ 	)
+ 	touch $(OPENVPN_DIR)/.configured
+diff -Nrub buildroot-2.0/package/pppd/pppd.mk buildroot-2.0.t/package/pppd/pppd.mk
 --- buildroot-2.0/package/pppd/pppd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-patch//package/pppd/pppd.mk	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/package/pppd/pppd.mk	2015-06-03 13:31:56.000000000 +0200
 @@ -3,8 +3,8 @@
  # pppd
  #
@@ -176,9 +387,9 @@ diff -Nru buildroot-2.0/package/pppd/pppd.mk buildroot-2.0-patch//package/pppd/p
  	touch $@
  
  $(PPPD_DIR)/.configured: $(PPPD_DIR)/.unpacked
-diff -Nru buildroot-2.0/package/stunnel/stunnel.mk buildroot-2.0-patch//package/stunnel/stunnel.mk
+diff -Nrub buildroot-2.0/package/stunnel/stunnel.mk buildroot-2.0.t/package/stunnel/stunnel.mk
 --- buildroot-2.0/package/stunnel/stunnel.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-patch//package/stunnel/stunnel.mk	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/package/stunnel/stunnel.mk	2015-06-03 13:31:56.000000000 +0200
 @@ -3,7 +3,7 @@
  # stunnel
  #
@@ -205,9 +416,9 @@ diff -Nru buildroot-2.0/package/stunnel/stunnel.mk buildroot-2.0-patch//package/
 +ifeq ($(strip $(BR2_PACKAGE_STUNNEL)),y)
  TARGETS+=stunnel
  endif
-diff -Nru buildroot-2.0/target/makedevs/makedevs.mk buildroot-2.0-patch//target/makedevs/makedevs.mk
+diff -Nrub buildroot-2.0/target/makedevs/makedevs.mk buildroot-2.0.t/target/makedevs/makedevs.mk
 --- buildroot-2.0/target/makedevs/makedevs.mk	2006-10-06 14:59:33.000000000 +0200
-+++ buildroot-2.0-patch//target/makedevs/makedevs.mk	2012-10-15 17:35:07.000000000 +0200
++++ buildroot-2.0.t/target/makedevs/makedevs.mk	2015-06-03 13:31:56.000000000 +0200
 @@ -13,7 +13,7 @@
  	cp target/makedevs/makedevs.c $(MAKEDEVS_DIR)
  
