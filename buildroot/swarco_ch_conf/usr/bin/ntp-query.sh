@@ -32,6 +32,9 @@ test -f /etc/default/ntpdate || exit 0
 
 test -n "$NTPSERVERS" || exit 0
 
+. /etc/create_lock.sh
+create_lock ntp-query
+
 logger -t $0 "Running ntpdate to synchronize clock"
 if $NTPDATE $NTPOPTIONS $NTPSERVERS; then
     $HWCLOCK -w

@@ -3,5 +3,7 @@
 # command to install the new version when you edit this file.
 
 # m h dom mon dow command
-15 2 * * * /usr/bin/ntp-query.sh
+# 2015-06-08 gc: gprs-connection-test.sh runns ntp-query.sh when
+#                NTP-servers are configured
+# 15 2 * * * /usr/bin/ntp-query.sh
 24 2,14  * * * /etc/ppp/gprs-connection-test.sh
