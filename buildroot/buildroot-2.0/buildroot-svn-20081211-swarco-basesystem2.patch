@@ -238,7 +238,7 @@ diff -Nrub buildroot-2.0/package/openssl/openssl_ghash_arm_asm-optimizations.pat
 --- buildroot-2.0/package/openssl/openssl_ghash_arm_asm-optimizations.patch	1970-01-01 01:00:00.000000000 +0100
 +++ buildroot-2.0-new//package/openssl/openssl_ghash_arm_asm-optimizations.patch	2015-06-16 16:07:26.000000000 +0200
 @@ -0,0 +1,11 @@
-+--- openssl-1.0.2a-patch/Configure~	2015-03-19 14:30:36.000000000 +0100
++--- openssl-1.0.2a-patch/Configure.org	2015-03-19 14:30:36.000000000 +0100
 ++++ openssl-1.0.2a-patch/Configure	2015-06-16 15:45:55.000000000 +0200
 +@@ -138,7 +138,7 @@
 + my $mips64_asm=":bn-mips.o mips-mont.o:::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o sha512-mips.o::::::::";
@@ -257,7 +257,7 @@ diff -Nrub buildroot-2.0/package/openssl/openssl.mk buildroot-2.0-new//package/o
  #
  #############################################################
 -OPENSSL_VERSION:=0.9.8g
-+OPENSSL_VERSION:=1.0.2a
++OPENSSL_VERSION:=1.0.2c
  OPENSSL_SITE:=http://www.openssl.org/source
  
  OPENSSL_TARGET_ARCH=generic32
