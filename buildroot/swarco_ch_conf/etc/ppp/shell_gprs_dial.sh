@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2015-01-15 11:45:43 gc]
+echo $0 [Version 2016-02-26 11:28:48 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -103,7 +103,7 @@ print_at_cmd()
 {
     if [ \! -z "$AT_VERBOSE_FD" ]; then
         # hide PIN-Number from log, substitute with <hidden>
-        echo >&$AT_VERBOSE_FD "${*/+CPIN=????/+CPIN=<hidden>}"
+        echo >&$AT_VERBOSE_FD "${*/+CPIN=\"????\"/+CPIN=<hidden>}"
     fi
 }
 
@@ -1292,7 +1292,8 @@ case $r in
             exit 1
         fi
         print "sending pin"
-        at_cmd "AT+CPIN=$GPRS_PIN" 30 || error
+        # 2016-02-26 gc: Cinterion EGS5 module requires quotes around pin
+        at_cmd "AT+CPIN=\"$GPRS_PIN\"" 30 || error
         # Wait until registered
         if [ $TA_VENDOR == "WAVECOM" ]; then
             sleep 20
