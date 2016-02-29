@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2016-02-26 11:28:48 gc]
+echo $0 [Version 2016-02-29 15:12:01 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -86,10 +86,12 @@ print() {
     echo "$*"
 }
 
+
 status() {
     local var=$1
     shift
-    echo >>$GPRS_STATUS_FILE $var=\'"$*"\'
+    awk "! /^$var=/ {  print } END { print \"$var='$*'\" }" <$GPRS_STATUS_FILE >${GPRS_STATUS_FILE}.tmp
+    mv ${GPRS_STATUS_FILE}.tmp ${GPRS_STATUS_FILE}
 }
 
 status_net() {
@@ -298,6 +300,33 @@ sendsms() {
     return 1
 }
 
+query_signal_quality() {
+    at_cmd "AT+CSQ"
+    print "Signal quality: ${r%% OK}"
+    r=${r##*CSQ: }
+    GPRS_CSQ=${r%%,*}
+    if [ $GPRS_CSQ -lt 10 ]; then
+        sys_mesg_net -e NET -p warning `M_ "Low GSM/UMTS signal quality" `
+    else
+        sys_mesg_net -e NET -p okay `M_ "No error" `
+    fi
+    status GPRS_CSQ $GPRS_CSQ    
+}
+
+query_board_temp() {
+    at_cmd "AT^SCTM?"
+    r=${r##^SCTM: *,*,}
+    GPRS_TEMP="${r%% OK}"
+    print "Board temperature: ${GPRS_TEMP}°C"
+
+    if [ $GPRS_TEMP -gt 60 ]; then
+        sys_mesg_net -e NET -p warning `M_ "High modem temperature " `
+    else
+        sys_mesg_net -e NET -p okay `M_ "No error" `
+    fi
+    status GPRS_TEMP $GPRS_TEMP
+}
+
 
 ##############################################################################
 # load modules and detect ttyUSB* devices
@@ -467,6 +496,12 @@ init_and_load_drivers() {
                 exit 1
                 ;;
 
+            1e2d:0058)
+                print_usb_device "Cinterion EHS5-E in USB CDC-ACM mode"
+
+                find_usb_device "$reload_modules" 1e2d  0058 /dev/ttyACM0 /dev/ttyACM3
+                ;;
+
             114f:1234)
                 print_usb_device "Wavecom Fastrack Xtend FXT003/009 CDC-ACM Modem"
                 ;;
@@ -517,6 +552,11 @@ identify_terminal_adapter() {
                 *PHS8* | *PH8*)
                     TA_MODEL=PH8
                     print "Found Cinterion PH8/PHS8 HSDPA/UMTS/GPRS terminal adapter"
+                    ;;
+
+                *EHS*)
+                    TA_MODEL=EHS5
+                    print "Found Cinterion EHSx HSDPA/UMTS/GPRS terminal adapter"
                     ;;
                 *)
                     print "Found unkonwn Cinterion terminal adapter"
@@ -1033,7 +1073,13 @@ attach_PDP_context() {
     fi
 
     case "$TA_VENDOR $TA_MODEL" in
-        *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8*)
+        *Cinterion*EHS5*)
+            query_board_temp
+            ;;
+    esac
+
+    case "$TA_VENDOR $TA_MODEL" in
+        *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* | *Cinterion*EHS5*)
             if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
                 count=360
                 while [ -d /proc/$ppp_pid ]
@@ -1045,11 +1091,16 @@ attach_PDP_context() {
                     then
                         count=0
                         #
+                        query_signal_quality
+
                         # query Packet Switched Data Information:
                         at_cmd 'AT^SIND="psinfo",2'
                         case "$r" in
                             *'^SIND: psinfo,0,0'*)
                                 status_net "no (E)GPRS available in current cell"
+                                ;;
+                            *'^SIND: psinfo,0,10'*)
+                                status_net "attached in HSDPA/HSUPA-capable cell"
                                 ;;
                             *'^SIND: psinfo,0,1'*)
                                 status_net "GPRS available"
@@ -1074,6 +1125,9 @@ attach_PDP_context() {
                                 ;;
                             *'^SIND: psinfo,0,8'*)
                                 status_net "attached in HSDPA-capable cell"
+                                ;;
+                            *'^SIND: psinfo,0,9'*)
+                                status_net "camped on HSDPA/HSUPA-capable cell"
                                 ;;
                         esac
                     fi
@@ -1324,8 +1378,8 @@ sys_mesg -e SIM -p okay `M_ "No error" `
 op_cmd="AT+COPS=0"
 
 case "$TA_VENDOR $TA_MODEL" in
-    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8*)
-        # supply net access type (GSM or UMTS) for Siemens HC25 UMTS TA
+    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* | *Cinterion*EHS5*)
+        # supply net access type (GSM or UMTS) for UMTS capable TA
         if [ \! -z "$GPRS_NET_ACCESS_TYPE" ]; then
             op_cmd="AT+COPS=0,,,$GPRS_NET_ACCESS_TYPE"
         fi
@@ -1447,20 +1501,21 @@ at_cmd "ATS0=0"
   print "IMSI: ${r%% OK}"
   status GPRS_IMSI ${r%% OK}
 #
-  at_cmd "AT+CSQ"
-  print "Signal quality: ${r%% OK}"
-  r=${r##*CSQ: }
-  GPRS_CSQ=${r%%,*}
-  if [ $GPRS_CSQ -lt 10 ]; then
-      sys_mesg_net -e NET -p warning `M_ "Low GSM/UMTS signal quality" `
-  else
-      sys_mesg_net -e NET -p okay `M_ "No error" `
-  fi
-  status GPRS_CSQ $GPRS_CSQ
+  query_signal_quality
 
-  case $TA_VENDOR in
-      SIEMENS | *Cinterion* )
+  case "$TA_VENDOR $TA_MODEL" in
+      *Cinterion*EHS5* )
+          # EHSx don't support Siemens style AT^xMONx commands
+          at_cmd "AT+CCID"
+          print "SIM card id: $r"
+          r=${r##+CCID: }
+          status GPRS_SCID "${r%% OK}"
 
+          at_cmd "AT^SCTM=0,1"
+          query_board_temp
+          ;;
+
+      *SIEMENS* | *Cinterion* )
           case "$TA_MODEL" in
               *HC25*)
                   #PH8 supports ^SCID
@@ -1495,7 +1550,7 @@ at_cmd "ATS0=0"
           wait_quiet 5
           ;;
 
-      WAVECOM)
+      *WAVECOM*)
           # query cell environment description 
           # @todo the output must be reformated
           # 2010-09-10 gc: dosn't work properly
@@ -1535,7 +1590,7 @@ at_cmd "AT+CMGF=1"
 
 #2009-08-28 gc: enable URC on incoming SMS (and break of data/GPRS connection)
 case "$TA_VENDOR $TA_MODEL" in
-    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8*)
+    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* | *Cinterion*EHS5*)
         at_cmd "AT+CNMI=2,1"
         ;;
     *WAVECOM*)
