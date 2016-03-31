@@ -1,0 +1,36 @@
+2016-03-31  Guido Classen  <gc@tux-mobil.loc>
+
+	* buildroot/buildroot-2.0/package/openvpn/openvpn.mk (OPENVPN_VERSION): 
+	Update openvpn to Version 2.3.10
+
+	* buildroot/buildroot-2.0/.config (BR2_BUSYBOX_VERSION):
+	Update busybox to Version 1.24.2
+	Provied updated config file buildroot/buildroot-2.0/swarco/busybox.config
+
+	* buildroot/buildroot-2.0/package/stunnel/stunnel.mk (STUNNEL_SITE): 
+	Update stunnel to version 5.31
+	Patch to disable stack-protector (not supported by uclibc)
+
+	* buildroot/buildroot-2.0/package/openssh/openssh.mk (OPENSSH_VERSION): 
+	Update OpenSSH to Version 7.2p2
+	* buildroot/buildroot-2.0/ch_conf/etc/sshd_config (PubkeyAcceptedKeyTypes  +ssh-dss): 
+	enable DSS key support for openssh 7.x which are now disabled by default for security reasons!
+
+
+	* buildroot/buildroot-2.0/package/openssl/openssl.mk (OPENSSL_VERSION): 
+	Update OpenSSL to Version 1.0.2g
+	Patches to build on buildroot
+
+2016-03-29  Guido Classen  <>
+	* buildroot/swarco_ch_conf/etc/create_lock.sh: 
+	added missing file 'create_lock.sh'
+	
+2016-03-22  Guido Classen  <>
+	* kernel/linux-2.6.21-ccm2200/drivers/char/ccm2200_gpio.c (ccm2200_gpio_init): 
+	set digital outs register to "1" => tri-state,
+	so we keep the initial state set after CPU reset (fixed toggling OUTS 8...12 on kernel boot)
+
+2016-02-26  Guido Classen  <>
+	* buildroot/swarco_ch_conf/etc/ppp/shell_gprs_dial.sh:
+	Added support for Cinterion EGS5 module (requires quotes around pin in AT+CPIN)
+	periodic refresh CSQ and network type, added board temperature for EHS5

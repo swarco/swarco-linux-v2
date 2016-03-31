@@ -1,6 +1,6 @@
-diff -Nrub buildroot-2.0/Makefile buildroot-2.0-new//Makefile
+diff -Nrub buildroot-2.0/Makefile p/Makefile
 --- buildroot-2.0/Makefile	2008-11-07 09:57:59.000000000 +0100
-+++ buildroot-2.0-new//Makefile	2015-06-16 16:06:12.000000000 +0200
++++ p/Makefile	2016-03-31 17:54:50.000000000 +0200
 @@ -254,6 +254,7 @@
  endif
  
@@ -9,9 +9,9 @@ diff -Nrub buildroot-2.0/Makefile buildroot-2.0-new//Makefile
  
  TARGETS+=target-devfiles
  
-diff -Nrub buildroot-2.0/package/busybox/Config.in buildroot-2.0-new//package/busybox/Config.in
+diff -Nrub buildroot-2.0/package/busybox/Config.in p/package/busybox/Config.in
 --- buildroot-2.0/package/busybox/Config.in	2008-11-29 21:12:17.000000000 +0100
-+++ buildroot-2.0-new//package/busybox/Config.in	2015-06-16 16:06:12.000000000 +0200
++++ p/package/busybox/Config.in	2016-03-31 17:54:50.000000000 +0200
 @@ -51,6 +51,12 @@
  	config BR2_BUSYBOX_VERSION_1_13_X
  		bool "BusyBox 1.13.x"
@@ -34,9 +34,9 @@ diff -Nrub buildroot-2.0/package/busybox/Config.in buildroot-2.0-new//package/bu
  
  config BR2_PACKAGE_BUSYBOX_FULLINSTALL
  	bool "Run BusyBox's own full installation"
-diff -Nrub buildroot-2.0/package/Config.in buildroot-2.0-new//package/Config.in
+diff -Nrub buildroot-2.0/package/Config.in p/package/Config.in
 --- buildroot-2.0/package/Config.in	2008-12-11 01:33:30.000000000 +0100
-+++ buildroot-2.0-new//package/Config.in	2015-06-16 16:06:12.000000000 +0200
++++ p/package/Config.in	2016-03-31 17:54:50.000000000 +0200
 @@ -430,4 +430,6 @@
  # various games packages
  source "package/games/Config.in"
@@ -44,9 +44,9 @@ diff -Nrub buildroot-2.0/package/Config.in buildroot-2.0-new//package/Config.in
 +source "swarco/package/Config.in"
 +
  endmenu
-diff -Nrub buildroot-2.0/package/games/xboard/xboard.mk buildroot-2.0-new//package/games/xboard/xboard.mk
+diff -Nrub buildroot-2.0/package/games/xboard/xboard.mk p/package/games/xboard/xboard.mk
 --- buildroot-2.0/package/games/xboard/xboard.mk	2008-08-29 15:27:37.000000000 +0200
-+++ buildroot-2.0-new//package/games/xboard/xboard.mk	2015-06-16 16:06:12.000000000 +0200
++++ p/package/games/xboard/xboard.mk	2016-03-31 17:54:50.000000000 +0200
 @@ -10,7 +10,7 @@
  XBOARD_INSTALL_TARGET = YES
  XBOARD_INSTALL_TARGET_OPT = DESTDIR=$(TARGET_DIR) install
@@ -56,9 +56,9 @@ diff -Nrub buildroot-2.0/package/games/xboard/xboard.mk buildroot-2.0-new//packa
  
  XBOARD_DEPENDENCIES = uclibc gnuchess
  
-diff -Nrub buildroot-2.0/package/lighttpd/lighttpd.mk buildroot-2.0-new//package/lighttpd/lighttpd.mk
+diff -Nrub buildroot-2.0/package/lighttpd/lighttpd.mk p/package/lighttpd/lighttpd.mk
 --- buildroot-2.0/package/lighttpd/lighttpd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-new//package/lighttpd/lighttpd.mk	2015-06-16 16:06:12.000000000 +0200
++++ p/package/lighttpd/lighttpd.mk	2016-03-31 17:54:50.000000000 +0200
 @@ -8,7 +8,7 @@
  LIGHTTPD_SITE:=http://www.lighttpd.net/download
  LIGHTTPD_INSTALL_STAGING = NO
@@ -76,9 +76,9 @@ diff -Nrub buildroot-2.0/package/lighttpd/lighttpd.mk buildroot-2.0-new//package
  	$(DISABLE_IPV6) \
  	$(LIGHTTPD_LFS)
  
-diff -Nrub buildroot-2.0/package/mtd/mtd-utils/mtd.mk buildroot-2.0-new//package/mtd/mtd-utils/mtd.mk
+diff -Nrub buildroot-2.0/package/mtd/mtd-utils/mtd.mk p/package/mtd/mtd-utils/mtd.mk
 --- buildroot-2.0/package/mtd/mtd-utils/mtd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-new//package/mtd/mtd-utils/mtd.mk	2015-06-16 16:06:12.000000000 +0200
++++ p/package/mtd/mtd-utils/mtd.mk	2016-03-31 17:54:50.000000000 +0200
 @@ -38,6 +38,7 @@
  	CC="$(HOSTCC)" CROSS= CFLAGS=-I$(LINUX_HEADERS_DIR)/include \
  		$(MAKE) LINUXDIR=$(LINUX_DIR) \
@@ -96,9 +96,9 @@ diff -Nrub buildroot-2.0/package/mtd/mtd-utils/mtd.mk buildroot-2.0-new//package
  
  mtd-source: $(DL_DIR)/$(MTD_SOURCE)
  
-diff -Nrub buildroot-2.0/package/ncftp/ncftp.mk buildroot-2.0-new//package/ncftp/ncftp.mk
+diff -Nrub buildroot-2.0/package/ncftp/ncftp.mk p/package/ncftp/ncftp.mk
 --- buildroot-2.0/package/ncftp/ncftp.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-new//package/ncftp/ncftp.mk	2015-06-16 16:06:12.000000000 +0200
++++ p/package/ncftp/ncftp.mk	2016-03-31 17:54:50.000000000 +0200
 @@ -60,7 +60,7 @@
  $(NCFTP_DIR)/bin/%: $(NCFTP_DIR)/.configured
  	$(MAKE) -C $(NCFTP_DIR)
@@ -108,9 +108,9 @@ diff -Nrub buildroot-2.0/package/ncftp/ncftp.mk buildroot-2.0-new//package/ncftp
  	$(INSTALL) -m 0755 $(NCFTP_DIR)/bin/$(notdir $@) $(TARGET_DIR)/usr/bin
  	$(STRIPCMD) $(STRIP_STRIP_ALL) $@
  
-diff -Nrub buildroot-2.0/package/ntp/ntp.mk buildroot-2.0-new//package/ntp/ntp.mk
+diff -Nrub buildroot-2.0/package/ntp/ntp.mk p/package/ntp/ntp.mk
 --- buildroot-2.0/package/ntp/ntp.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-new//package/ntp/ntp.mk	2015-06-16 16:06:12.000000000 +0200
++++ p/package/ntp/ntp.mk	2016-03-31 17:54:50.000000000 +0200
 @@ -37,6 +37,9 @@
  		--target=$(GNU_TARGET_NAME) \
  		--host=$(GNU_TARGET_NAME) \
@@ -121,9 +121,9 @@ diff -Nrub buildroot-2.0/package/ntp/ntp.mk buildroot-2.0-new//package/ntp/ntp.m
  		--prefix=/usr \
  		--exec-prefix=/usr \
  		--bindir=/usr/bin \
-diff -Nrub buildroot-2.0/package/openssh/openssh_bsdcomp.patch buildroot-2.0-new//package/openssh/openssh_bsdcomp.patch
+diff -Nrub buildroot-2.0/package/openssh/openssh_bsdcomp.patch p/package/openssh/openssh_bsdcomp.patch
 --- buildroot-2.0/package/openssh/openssh_bsdcomp.patch	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2.0-new//package/openssh/openssh_bsdcomp.patch	2015-06-16 16:16:18.000000000 +0200
++++ p/package/openssh/openssh_bsdcomp.patch	2016-03-31 17:54:50.000000000 +0200
 @@ -0,0 +1,42 @@
 +diff -Nurb openssh-6.8p1/openbsd-compat/explicit_bzero.c openssh-6.8p1.n//openbsd-compat/explicit_bzero.c
 +--- openssh-6.8p1/openbsd-compat/explicit_bzero.c	2015-03-17 06:49:20.000000000 +0100
@@ -167,15 +167,16 @@ diff -Nrub buildroot-2.0/package/openssh/openssh_bsdcomp.patch buildroot-2.0-new
 + /* openssh private key file format */
 + #define MARK_BEGIN		"-----BEGIN OPENSSH PRIVATE KEY-----\n"
 + #define MARK_END		"-----END OPENSSH PRIVATE KEY-----\n"
-diff -Nrub buildroot-2.0/package/openssh/openssh.mk buildroot-2.0-new//package/openssh/openssh.mk
+diff -Nrub buildroot-2.0/package/openssh/openssh.mk p/package/openssh/openssh.mk
 --- buildroot-2.0/package/openssh/openssh.mk	2008-09-24 14:00:57.000000000 +0200
-+++ buildroot-2.0-new//package/openssh/openssh.mk	2015-06-16 16:06:12.000000000 +0200
-@@ -3,12 +3,15 @@
++++ p/package/openssh/openssh.mk	2016-03-31 17:57:55.000000000 +0200
+@@ -3,12 +3,16 @@
  # openssh
  #
  #############################################################
 -OPENSSH_VERSION=5.1p1
-+OPENSSH_VERSION=6.8p1
++#OPENSSH_VERSION=6.8p1
++OPENSSH_VERSION=7.2p2
  OPENSSH_SITE=ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
  
  OPENSSH_CONF_ENV = LD=$(TARGET_CC)
@@ -188,9 +189,9 @@ diff -Nrub buildroot-2.0/package/openssh/openssh.mk buildroot-2.0-new//package/o
  
  OPENSSH_INSTALL_TARGET_OPT = DESTDIR=$(TARGET_DIR) install
  
-diff -Nrub buildroot-2.0/package/openssh/openssh.patch buildroot-2.0-new//package/openssh/openssh.patch
+diff -Nrub buildroot-2.0/package/openssh/openssh.patch p/package/openssh/openssh.patch
 --- buildroot-2.0/package/openssh/openssh.patch	2008-09-24 14:00:57.000000000 +0200
-+++ buildroot-2.0-new//package/openssh/openssh.patch	2015-06-16 16:06:12.000000000 +0200
++++ p/package/openssh/openssh.patch	2016-03-31 17:54:50.000000000 +0200
 @@ -1,30 +1,27 @@
 ---- openssh-3.6.1p1/Makefile.in.orig	2003-03-20 17:34:34.000000000 -0700
 -+++ openssh-3.6.1p1/Makefile.in	2003-04-25 17:09:00.000000000 -0600
@@ -234,9 +235,9 @@ diff -Nrub buildroot-2.0/package/openssh/openssh.patch buildroot-2.0-new//packag
   # no default banner path
   #Banner none
   
-diff -Nrub buildroot-2.0/package/openssl/openssl_ghash_arm_asm-optimizations.patch buildroot-2.0-new//package/openssl/openssl_ghash_arm_asm-optimizations.patch
---- buildroot-2.0/package/openssl/openssl_ghash_arm_asm-optimizations.patch	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2.0-new//package/openssl/openssl_ghash_arm_asm-optimizations.patch	2015-06-16 16:07:26.000000000 +0200
+diff -Nrub buildroot-2.0/package/openssl/openssl-gc-ghash_arm_asm-optimizations.patch p/package/openssl/openssl-gc-ghash_arm_asm-optimizations.patch
+--- buildroot-2.0/package/openssl/openssl-gc-ghash_arm_asm-optimizations.patch	1970-01-01 01:00:00.000000000 +0100
++++ p/package/openssl/openssl-gc-ghash_arm_asm-optimizations.patch	2016-03-31 17:59:16.000000000 +0200
 @@ -0,0 +1,11 @@
 +--- openssl-1.0.2a-patch/Configure.org	2015-03-19 14:30:36.000000000 +0100
 ++++ openssl-1.0.2a-patch/Configure	2015-06-16 15:45:55.000000000 +0200
@@ -249,15 +250,666 @@ diff -Nrub buildroot-2.0/package/openssl/openssl_ghash_arm_asm-optimizations.pat
 + my $aarch64_asm="armcap.o arm64cpuid.o mem_clr.o::::aes_core.o aes_cbc.o aesv8-armx.o:::sha1-armv8.o sha256-armv8.o sha512-armv8.o:::::::ghashv8-armx.o:";
 + my $parisc11_asm="pariscid.o:bn_asm.o parisc-mont.o:::aes_core.o aes_cbc.o aes-parisc.o:::sha1-parisc.o sha256-parisc.o sha512-parisc.o::rc4-parisc.o:::::ghash-parisc.o::32";
 + my $parisc20_asm="pariscid.o:pa-risc2W.o parisc-mont.o:::aes_core.o aes_cbc.o aes-parisc.o:::sha1-parisc.o sha256-parisc.o sha512-parisc.o::rc4-parisc.o:::::ghash-parisc.o::64";
-diff -Nrub buildroot-2.0/package/openssl/openssl.mk buildroot-2.0-new//package/openssl/openssl.mk
+diff -Nrub buildroot-2.0/package/openssl/openssl-gc-Makefile.patch p/package/openssl/openssl-gc-Makefile.patch
+--- buildroot-2.0/package/openssl/openssl-gc-Makefile.patch	1970-01-01 01:00:00.000000000 +0100
++++ p/package/openssl/openssl-gc-Makefile.patch	2016-03-31 17:59:12.000000000 +0200
+@@ -0,0 +1,647 @@
++diff -Nurb -x '*~' -x '*.o' openssl-1.0.2g-org/apps/Makefile ../save/openssl-1.0.2g/apps/Makefile
++--- openssl-1.0.2g-org/apps/Makefile	2016-03-01 14:36:53.000000000 +0100
+++++ ../save/openssl-1.0.2g/apps/Makefile	2016-03-23 15:22:39.000000000 +0100
++@@ -941,9 +941,9 @@
++ speed.o: ../include/openssl/ec.h ../include/openssl/ecdh.h
++ speed.o: ../include/openssl/ecdsa.h ../include/openssl/engine.h
++ speed.o: ../include/openssl/err.h ../include/openssl/evp.h
++-speed.o: ../include/openssl/hmac.h ../include/openssl/idea.h
+++speed.o: ../include/openssl/hmac.h ../crypto/idea/idea.h
++ speed.o: ../include/openssl/lhash.h ../include/openssl/md4.h
++-speed.o: ../include/openssl/md5.h ../include/openssl/mdc2.h
+++speed.o: ../include/openssl/md5.h ../crypto/mdc2/mdc2.h
++ speed.o: ../include/openssl/modes.h ../include/openssl/obj_mac.h
++ speed.o: ../include/openssl/objects.h ../include/openssl/ocsp.h
++ speed.o: ../include/openssl/opensslconf.h ../include/openssl/opensslv.h
++@@ -1029,7 +1029,7 @@
++ version.o: ../include/openssl/des_old.h ../include/openssl/e_os2.h
++ version.o: ../include/openssl/ec.h ../include/openssl/ecdh.h
++ version.o: ../include/openssl/ecdsa.h ../include/openssl/engine.h
++-version.o: ../include/openssl/evp.h ../include/openssl/idea.h
+++version.o: ../include/openssl/evp.h ../crypto/idea/idea.h
++ version.o: ../include/openssl/lhash.h ../include/openssl/obj_mac.h
++ version.o: ../include/openssl/objects.h ../include/openssl/ocsp.h
++ version.o: ../include/openssl/opensslconf.h ../include/openssl/opensslv.h
++Binary files openssl-1.0.2g-org/apps/openssl and ../save/openssl-1.0.2g/apps/openssl differ
++diff -Nurb -x '*~' -x '*.o' openssl-1.0.2g-org/crypto/evp/Makefile ../save/openssl-1.0.2g/crypto/evp/Makefile
++--- openssl-1.0.2g-org/crypto/evp/Makefile	2016-03-01 14:36:45.000000000 +0100
+++++ ../save/openssl-1.0.2g/crypto/evp/Makefile	2016-03-23 15:08:42.000000000 +0100
++@@ -107,7 +107,7 @@
++ bio_b64.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ bio_b64.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ bio_b64.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-bio_b64.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++bio_b64.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ bio_b64.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ bio_b64.o: ../../include/openssl/symhacks.h ../cryptlib.h bio_b64.c
++ bio_enc.o: ../../e_os.h ../../include/openssl/asn1.h
++@@ -116,7 +116,7 @@
++ bio_enc.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ bio_enc.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ bio_enc.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-bio_enc.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++bio_enc.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ bio_enc.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ bio_enc.o: ../../include/openssl/symhacks.h ../cryptlib.h bio_enc.c
++ bio_md.o: ../../e_os.h ../../include/openssl/asn1.h ../../include/openssl/bio.h
++@@ -124,7 +124,7 @@
++ bio_md.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ bio_md.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ bio_md.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-bio_md.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++bio_md.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ bio_md.o: ../../include/openssl/ossl_typ.h ../../include/openssl/safestack.h
++ bio_md.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++ bio_md.o: ../cryptlib.h bio_md.c
++@@ -133,7 +133,7 @@
++ bio_ok.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ bio_ok.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ bio_ok.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-bio_ok.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++bio_ok.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ bio_ok.o: ../../include/openssl/ossl_typ.h ../../include/openssl/rand.h
++ bio_ok.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ bio_ok.o: ../../include/openssl/symhacks.h ../cryptlib.h bio_ok.c
++@@ -144,7 +144,7 @@
++ c_all.o: ../../include/openssl/engine.h ../../include/openssl/err.h
++ c_all.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ c_all.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-c_all.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++c_all.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ c_all.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs7.h
++ c_all.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ c_all.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -157,7 +157,7 @@
++ c_allc.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ c_allc.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ c_allc.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-c_allc.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++c_allc.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ c_allc.o: ../../include/openssl/pkcs12.h ../../include/openssl/pkcs7.h
++ c_allc.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ c_allc.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -170,7 +170,7 @@
++ c_alld.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ c_alld.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ c_alld.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-c_alld.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++c_alld.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ c_alld.o: ../../include/openssl/pkcs12.h ../../include/openssl/pkcs7.h
++ c_alld.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ c_alld.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -183,7 +183,7 @@
++ digest.o: ../../include/openssl/engine.h ../../include/openssl/err.h
++ digest.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ digest.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-digest.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++digest.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ digest.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs7.h
++ digest.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ digest.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -195,7 +195,7 @@
++ e_aes.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ e_aes.o: ../../include/openssl/modes.h ../../include/openssl/obj_mac.h
++ e_aes.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-e_aes.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++e_aes.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ e_aes.o: ../../include/openssl/rand.h ../../include/openssl/safestack.h
++ e_aes.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++ e_aes.o: ../modes/modes_lcl.h e_aes.c evp_locl.h
++@@ -208,7 +208,7 @@
++ e_aes_cbc_hmac_sha1.o: ../../include/openssl/obj_mac.h
++ e_aes_cbc_hmac_sha1.o: ../../include/openssl/objects.h
++ e_aes_cbc_hmac_sha1.o: ../../include/openssl/opensslconf.h
++-e_aes_cbc_hmac_sha1.o: ../../include/openssl/opensslv.h
+++e_aes_cbc_hmac_sha1.o: ../opensslv.h
++ e_aes_cbc_hmac_sha1.o: ../../include/openssl/ossl_typ.h
++ e_aes_cbc_hmac_sha1.o: ../../include/openssl/rand.h
++ e_aes_cbc_hmac_sha1.o: ../../include/openssl/safestack.h
++@@ -226,7 +226,7 @@
++ e_aes_cbc_hmac_sha256.o: ../../include/openssl/obj_mac.h
++ e_aes_cbc_hmac_sha256.o: ../../include/openssl/objects.h
++ e_aes_cbc_hmac_sha256.o: ../../include/openssl/opensslconf.h
++-e_aes_cbc_hmac_sha256.o: ../../include/openssl/opensslv.h
+++e_aes_cbc_hmac_sha256.o: ../opensslv.h
++ e_aes_cbc_hmac_sha256.o: ../../include/openssl/ossl_typ.h
++ e_aes_cbc_hmac_sha256.o: ../../include/openssl/rand.h
++ e_aes_cbc_hmac_sha256.o: ../../include/openssl/safestack.h
++@@ -240,7 +240,7 @@
++ e_bf.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ e_bf.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ e_bf.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-e_bf.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++e_bf.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ e_bf.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ e_bf.o: ../../include/openssl/symhacks.h ../cryptlib.h e_bf.c evp_locl.h
++ e_camellia.o: ../../include/openssl/asn1.h ../../include/openssl/bio.h
++@@ -250,7 +250,7 @@
++ e_camellia.o: ../../include/openssl/modes.h ../../include/openssl/obj_mac.h
++ e_camellia.o: ../../include/openssl/objects.h
++ e_camellia.o: ../../include/openssl/opensslconf.h
++-e_camellia.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++e_camellia.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ e_camellia.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ e_camellia.o: ../../include/openssl/symhacks.h ../modes/modes_lcl.h
++ e_camellia.o: e_camellia.c evp_locl.h
++@@ -260,7 +260,7 @@
++ e_cast.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ e_cast.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ e_cast.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-e_cast.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++e_cast.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ e_cast.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ e_cast.o: ../../include/openssl/symhacks.h ../cryptlib.h e_cast.c evp_locl.h
++ e_des.o: ../../e_os.h ../../include/openssl/asn1.h ../../include/openssl/bio.h
++@@ -269,7 +269,7 @@
++ e_des.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ e_des.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ e_des.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-e_des.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++e_des.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ e_des.o: ../../include/openssl/ossl_typ.h ../../include/openssl/rand.h
++ e_des.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ e_des.o: ../../include/openssl/symhacks.h ../../include/openssl/ui.h
++@@ -280,7 +280,7 @@
++ e_des3.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ e_des3.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ e_des3.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-e_des3.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++e_des3.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ e_des3.o: ../../include/openssl/ossl_typ.h ../../include/openssl/rand.h
++ e_des3.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ e_des3.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -289,10 +289,10 @@
++ e_idea.o: ../../e_os.h ../../include/openssl/asn1.h ../../include/openssl/bio.h
++ e_idea.o: ../../include/openssl/buffer.h ../../include/openssl/crypto.h
++ e_idea.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++-e_idea.o: ../../include/openssl/evp.h ../../include/openssl/idea.h
+++e_idea.o: ../../include/openssl/evp.h ../idea/idea.h
++ e_idea.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ e_idea.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-e_idea.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++e_idea.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ e_idea.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ e_idea.o: ../../include/openssl/symhacks.h ../cryptlib.h e_idea.c evp_locl.h
++ e_null.o: ../../e_os.h ../../include/openssl/asn1.h ../../include/openssl/bio.h
++@@ -300,7 +300,7 @@
++ e_null.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ e_null.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ e_null.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-e_null.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++e_null.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ e_null.o: ../../include/openssl/ossl_typ.h ../../include/openssl/safestack.h
++ e_null.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++ e_null.o: ../cryptlib.h e_null.c
++@@ -310,7 +310,7 @@
++ e_rc2.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ e_rc2.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ e_rc2.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-e_rc2.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++e_rc2.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ e_rc2.o: ../../include/openssl/ossl_typ.h ../../include/openssl/rc2.h
++ e_rc2.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ e_rc2.o: ../../include/openssl/symhacks.h ../cryptlib.h e_rc2.c evp_locl.h
++@@ -319,7 +319,7 @@
++ e_rc4.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ e_rc4.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ e_rc4.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-e_rc4.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++e_rc4.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ e_rc4.o: ../../include/openssl/ossl_typ.h ../../include/openssl/rc4.h
++ e_rc4.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ e_rc4.o: ../../include/openssl/symhacks.h ../cryptlib.h e_rc4.c evp_locl.h
++@@ -329,7 +329,7 @@
++ e_rc4_hmac_md5.o: ../../include/openssl/obj_mac.h
++ e_rc4_hmac_md5.o: ../../include/openssl/objects.h
++ e_rc4_hmac_md5.o: ../../include/openssl/opensslconf.h
++-e_rc4_hmac_md5.o: ../../include/openssl/opensslv.h
+++e_rc4_hmac_md5.o: ../opensslv.h
++ e_rc4_hmac_md5.o: ../../include/openssl/ossl_typ.h ../../include/openssl/rc4.h
++ e_rc4_hmac_md5.o: ../../include/openssl/safestack.h
++ e_rc4_hmac_md5.o: ../../include/openssl/stack.h
++@@ -338,7 +338,7 @@
++ e_rc5.o: ../../include/openssl/buffer.h ../../include/openssl/crypto.h
++ e_rc5.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ e_rc5.o: ../../include/openssl/lhash.h ../../include/openssl/opensslconf.h
++-e_rc5.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++e_rc5.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ e_rc5.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ e_rc5.o: ../../include/openssl/symhacks.h ../cryptlib.h e_rc5.c
++ e_seed.o: ../../include/openssl/asn1.h ../../include/openssl/bio.h
++@@ -346,7 +346,7 @@
++ e_seed.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ e_seed.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ e_seed.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-e_seed.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++e_seed.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ e_seed.o: ../../include/openssl/safestack.h ../../include/openssl/seed.h
++ e_seed.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++ e_seed.o: e_seed.c evp_locl.h
++@@ -357,7 +357,7 @@
++ e_xcbc_d.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ e_xcbc_d.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ e_xcbc_d.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-e_xcbc_d.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++e_xcbc_d.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ e_xcbc_d.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ e_xcbc_d.o: ../../include/openssl/symhacks.h ../../include/openssl/ui.h
++ e_xcbc_d.o: ../../include/openssl/ui_compat.h ../cryptlib.h e_xcbc_d.c
++@@ -367,7 +367,7 @@
++ encode.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ encode.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ encode.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-encode.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++encode.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ encode.o: ../../include/openssl/ossl_typ.h ../../include/openssl/safestack.h
++ encode.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++ encode.o: ../cryptlib.h encode.c
++@@ -378,7 +378,7 @@
++ evp_acnf.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ evp_acnf.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++ evp_acnf.o: ../../include/openssl/opensslconf.h
++-evp_acnf.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++evp_acnf.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ evp_acnf.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ evp_acnf.o: ../../include/openssl/symhacks.h ../cryptlib.h evp_acnf.c
++ evp_cnf.o: ../../e_os.h ../../include/openssl/asn1.h
++@@ -389,7 +389,7 @@
++ evp_cnf.o: ../../include/openssl/ecdsa.h ../../include/openssl/err.h
++ evp_cnf.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ evp_cnf.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-evp_cnf.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++evp_cnf.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ evp_cnf.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs7.h
++ evp_cnf.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ evp_cnf.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -403,7 +403,7 @@
++ evp_enc.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ evp_enc.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ evp_enc.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-evp_enc.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++evp_enc.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ evp_enc.o: ../../include/openssl/pkcs7.h ../../include/openssl/rand.h
++ evp_enc.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ evp_enc.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -414,7 +414,7 @@
++ evp_err.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ evp_err.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ evp_err.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-evp_err.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++evp_err.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ evp_err.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ evp_err.o: ../../include/openssl/symhacks.h evp_err.c
++ evp_key.o: ../../e_os.h ../../include/openssl/asn1.h
++@@ -424,7 +424,7 @@
++ evp_key.o: ../../include/openssl/ecdsa.h ../../include/openssl/err.h
++ evp_key.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ evp_key.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-evp_key.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++evp_key.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ evp_key.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs7.h
++ evp_key.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ evp_key.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -436,7 +436,7 @@
++ evp_lib.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ evp_lib.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ evp_lib.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-evp_lib.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++evp_lib.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ evp_lib.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ evp_lib.o: ../../include/openssl/symhacks.h ../cryptlib.h evp_lib.c
++ evp_pbe.o: ../../e_os.h ../../include/openssl/asn1.h
++@@ -446,7 +446,7 @@
++ evp_pbe.o: ../../include/openssl/ecdsa.h ../../include/openssl/err.h
++ evp_pbe.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ evp_pbe.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-evp_pbe.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++evp_pbe.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ evp_pbe.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs12.h
++ evp_pbe.o: ../../include/openssl/pkcs7.h ../../include/openssl/safestack.h
++ evp_pbe.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++@@ -460,7 +460,7 @@
++ evp_pkey.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ evp_pkey.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++ evp_pkey.o: ../../include/openssl/opensslconf.h
++-evp_pkey.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++evp_pkey.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ evp_pkey.o: ../../include/openssl/pkcs7.h ../../include/openssl/rand.h
++ evp_pkey.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ evp_pkey.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -472,7 +472,7 @@
++ m_dss.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ m_dss.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ m_dss.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-m_dss.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++m_dss.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ m_dss.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ m_dss.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++ m_dss.o: ../cryptlib.h m_dss.c
++@@ -482,7 +482,7 @@
++ m_dss1.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ m_dss1.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ m_dss1.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-m_dss1.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++m_dss1.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ m_dss1.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ m_dss1.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++ m_dss1.o: ../cryptlib.h m_dss1.c
++@@ -493,7 +493,7 @@
++ m_ecdsa.o: ../../include/openssl/ecdsa.h ../../include/openssl/err.h
++ m_ecdsa.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ m_ecdsa.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-m_ecdsa.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++m_ecdsa.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ m_ecdsa.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs7.h
++ m_ecdsa.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ m_ecdsa.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -503,7 +503,7 @@
++ m_md2.o: ../../include/openssl/buffer.h ../../include/openssl/crypto.h
++ m_md2.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ m_md2.o: ../../include/openssl/lhash.h ../../include/openssl/opensslconf.h
++-m_md2.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++m_md2.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ m_md2.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ m_md2.o: ../../include/openssl/symhacks.h ../cryptlib.h m_md2.c
++ m_md4.o: ../../e_os.h ../../include/openssl/asn1.h ../../include/openssl/bio.h
++@@ -513,7 +513,7 @@
++ m_md4.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ m_md4.o: ../../include/openssl/lhash.h ../../include/openssl/md4.h
++ m_md4.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-m_md4.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++m_md4.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ m_md4.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs7.h
++ m_md4.o: ../../include/openssl/rsa.h ../../include/openssl/safestack.h
++ m_md4.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++@@ -526,7 +526,7 @@
++ m_md5.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ m_md5.o: ../../include/openssl/lhash.h ../../include/openssl/md5.h
++ m_md5.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-m_md5.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++m_md5.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ m_md5.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs7.h
++ m_md5.o: ../../include/openssl/rsa.h ../../include/openssl/safestack.h
++ m_md5.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++@@ -538,9 +538,9 @@
++ m_mdc2.o: ../../include/openssl/e_os2.h ../../include/openssl/ec.h
++ m_mdc2.o: ../../include/openssl/ecdh.h ../../include/openssl/ecdsa.h
++ m_mdc2.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++-m_mdc2.o: ../../include/openssl/lhash.h ../../include/openssl/mdc2.h
+++m_mdc2.o: ../../include/openssl/lhash.h ../mdc2/mdc2.h
++ m_mdc2.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-m_mdc2.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++m_mdc2.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ m_mdc2.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs7.h
++ m_mdc2.o: ../../include/openssl/rsa.h ../../include/openssl/safestack.h
++ m_mdc2.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++@@ -554,7 +554,7 @@
++ m_null.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ m_null.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ m_null.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-m_null.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++m_null.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ m_null.o: ../../include/openssl/pkcs7.h ../../include/openssl/safestack.h
++ m_null.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++ m_null.o: ../../include/openssl/symhacks.h ../../include/openssl/x509.h
++@@ -567,7 +567,7 @@
++ m_ripemd.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ m_ripemd.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++ m_ripemd.o: ../../include/openssl/opensslconf.h
++-m_ripemd.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++m_ripemd.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ m_ripemd.o: ../../include/openssl/pkcs7.h ../../include/openssl/ripemd.h
++ m_ripemd.o: ../../include/openssl/rsa.h ../../include/openssl/safestack.h
++ m_ripemd.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++@@ -581,7 +581,7 @@
++ m_sha.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ m_sha.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ m_sha.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-m_sha.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++m_sha.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ m_sha.o: ../../include/openssl/pkcs7.h ../../include/openssl/rsa.h
++ m_sha.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ m_sha.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -592,7 +592,7 @@
++ m_sha1.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++ m_sha1.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ m_sha1.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-m_sha1.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++m_sha1.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ m_sha1.o: ../../include/openssl/ossl_typ.h ../../include/openssl/rsa.h
++ m_sha1.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ m_sha1.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -605,7 +605,7 @@
++ m_sigver.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ m_sigver.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++ m_sigver.o: ../../include/openssl/opensslconf.h
++-m_sigver.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++m_sigver.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ m_sigver.o: ../../include/openssl/pkcs7.h ../../include/openssl/safestack.h
++ m_sigver.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++ m_sigver.o: ../../include/openssl/symhacks.h ../../include/openssl/x509.h
++@@ -618,7 +618,7 @@
++ m_wp.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ m_wp.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ m_wp.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-m_wp.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++m_wp.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ m_wp.o: ../../include/openssl/pkcs7.h ../../include/openssl/safestack.h
++ m_wp.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++ m_wp.o: ../../include/openssl/symhacks.h ../../include/openssl/whrlpool.h
++@@ -631,7 +631,7 @@
++ names.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ names.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ names.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-names.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++names.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ names.o: ../../include/openssl/pkcs7.h ../../include/openssl/safestack.h
++ names.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++ names.o: ../../include/openssl/symhacks.h ../../include/openssl/x509.h
++@@ -643,7 +643,7 @@
++ p5_crpt.o: ../../include/openssl/ecdsa.h ../../include/openssl/err.h
++ p5_crpt.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ p5_crpt.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++-p5_crpt.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
+++p5_crpt.o: ../../include/openssl/opensslconf.h ../opensslv.h
++ p5_crpt.o: ../../include/openssl/ossl_typ.h ../../include/openssl/pkcs7.h
++ p5_crpt.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ p5_crpt.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -657,7 +657,7 @@
++ p5_crpt2.o: ../../include/openssl/evp.h ../../include/openssl/hmac.h
++ p5_crpt2.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ p5_crpt2.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-p5_crpt2.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++p5_crpt2.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ p5_crpt2.o: ../../include/openssl/pkcs7.h ../../include/openssl/safestack.h
++ p5_crpt2.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++ p5_crpt2.o: ../../include/openssl/symhacks.h ../../include/openssl/x509.h
++@@ -670,7 +670,7 @@
++ p_dec.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ p_dec.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ p_dec.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-p_dec.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++p_dec.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ p_dec.o: ../../include/openssl/pkcs7.h ../../include/openssl/rand.h
++ p_dec.o: ../../include/openssl/rsa.h ../../include/openssl/safestack.h
++ p_dec.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++@@ -683,7 +683,7 @@
++ p_enc.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ p_enc.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ p_enc.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-p_enc.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++p_enc.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ p_enc.o: ../../include/openssl/pkcs7.h ../../include/openssl/rand.h
++ p_enc.o: ../../include/openssl/rsa.h ../../include/openssl/safestack.h
++ p_enc.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++@@ -699,7 +699,7 @@
++ p_lib.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ p_lib.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ p_lib.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-p_lib.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++p_lib.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ p_lib.o: ../../include/openssl/pkcs7.h ../../include/openssl/rsa.h
++ p_lib.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ p_lib.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -712,7 +712,7 @@
++ p_open.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ p_open.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ p_open.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-p_open.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++p_open.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ p_open.o: ../../include/openssl/pkcs7.h ../../include/openssl/rsa.h
++ p_open.o: ../../include/openssl/safestack.h ../../include/openssl/sha.h
++ p_open.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++@@ -725,7 +725,7 @@
++ p_seal.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ p_seal.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ p_seal.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-p_seal.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++p_seal.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ p_seal.o: ../../include/openssl/pkcs7.h ../../include/openssl/rand.h
++ p_seal.o: ../../include/openssl/rsa.h ../../include/openssl/safestack.h
++ p_seal.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++@@ -738,7 +738,7 @@
++ p_sign.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ p_sign.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ p_sign.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-p_sign.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++p_sign.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ p_sign.o: ../../include/openssl/pkcs7.h ../../include/openssl/safestack.h
++ p_sign.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++ p_sign.o: ../../include/openssl/symhacks.h ../../include/openssl/x509.h
++@@ -751,7 +751,7 @@
++ p_verify.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ p_verify.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++ p_verify.o: ../../include/openssl/opensslconf.h
++-p_verify.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++p_verify.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ p_verify.o: ../../include/openssl/pkcs7.h ../../include/openssl/safestack.h
++ p_verify.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++ p_verify.o: ../../include/openssl/symhacks.h ../../include/openssl/x509.h
++@@ -762,7 +762,7 @@
++ pmeth_fn.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++ pmeth_fn.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ pmeth_fn.o: ../../include/openssl/objects.h ../../include/openssl/opensslconf.h
++-pmeth_fn.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++pmeth_fn.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ pmeth_fn.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ pmeth_fn.o: ../../include/openssl/symhacks.h ../cryptlib.h evp_locl.h
++ pmeth_fn.o: pmeth_fn.c
++@@ -773,7 +773,7 @@
++ pmeth_gn.o: ../../include/openssl/evp.h ../../include/openssl/lhash.h
++ pmeth_gn.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++ pmeth_gn.o: ../../include/openssl/opensslconf.h
++-pmeth_gn.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++pmeth_gn.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ pmeth_gn.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++ pmeth_gn.o: ../../include/openssl/symhacks.h ../cryptlib.h evp_locl.h
++ pmeth_gn.o: pmeth_gn.c
++@@ -786,7 +786,7 @@
++ pmeth_lib.o: ../../include/openssl/lhash.h ../../include/openssl/obj_mac.h
++ pmeth_lib.o: ../../include/openssl/objects.h
++ pmeth_lib.o: ../../include/openssl/opensslconf.h
++-pmeth_lib.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
+++pmeth_lib.o: ../opensslv.h ../../include/openssl/ossl_typ.h
++ pmeth_lib.o: ../../include/openssl/pkcs7.h ../../include/openssl/safestack.h
++ pmeth_lib.o: ../../include/openssl/sha.h ../../include/openssl/stack.h
++ pmeth_lib.o: ../../include/openssl/symhacks.h ../../include/openssl/x509.h
++Binary files openssl-1.0.2g-org/engines/ccgost/libgost.so and ../save/openssl-1.0.2g/engines/ccgost/libgost.so differ
++Binary files openssl-1.0.2g-org/engines/lib4758cca.so and ../save/openssl-1.0.2g/engines/lib4758cca.so differ
++Binary files openssl-1.0.2g-org/engines/libaep.so and ../save/openssl-1.0.2g/engines/libaep.so differ
++Binary files openssl-1.0.2g-org/engines/libatalla.so and ../save/openssl-1.0.2g/engines/libatalla.so differ
++Binary files openssl-1.0.2g-org/engines/libcapi.so and ../save/openssl-1.0.2g/engines/libcapi.so differ
++Binary files openssl-1.0.2g-org/engines/libchil.so and ../save/openssl-1.0.2g/engines/libchil.so differ
++Binary files openssl-1.0.2g-org/engines/libcswift.so and ../save/openssl-1.0.2g/engines/libcswift.so differ
++Binary files openssl-1.0.2g-org/engines/libgmp.so and ../save/openssl-1.0.2g/engines/libgmp.so differ
++Binary files openssl-1.0.2g-org/engines/libnuron.so and ../save/openssl-1.0.2g/engines/libnuron.so differ
++Binary files openssl-1.0.2g-org/engines/libpadlock.so and ../save/openssl-1.0.2g/engines/libpadlock.so differ
++Binary files openssl-1.0.2g-org/engines/libsureware.so and ../save/openssl-1.0.2g/engines/libsureware.so differ
++Binary files openssl-1.0.2g-org/engines/libubsec.so and ../save/openssl-1.0.2g/engines/libubsec.so differ
++Binary files openssl-1.0.2g-org/libcrypto.a and ../save/openssl-1.0.2g/libcrypto.a differ
++Binary files openssl-1.0.2g-org/libcrypto.so and ../save/openssl-1.0.2g/libcrypto.so differ
++Binary files openssl-1.0.2g-org/libcrypto.so.1.0.0 and ../save/openssl-1.0.2g/libcrypto.so.1.0.0 differ
++Binary files openssl-1.0.2g-org/libssl.a and ../save/openssl-1.0.2g/libssl.a differ
++Binary files openssl-1.0.2g-org/libssl.so and ../save/openssl-1.0.2g/libssl.so differ
++Binary files openssl-1.0.2g-org/libssl.so.1.0.0 and ../save/openssl-1.0.2g/libssl.so.1.0.0 differ
++Binary files openssl-1.0.2g-org/test/asn1test and ../save/openssl-1.0.2g/test/asn1test differ
++Binary files openssl-1.0.2g-org/test/bftest and ../save/openssl-1.0.2g/test/bftest differ
++Binary files openssl-1.0.2g-org/test/bntest and ../save/openssl-1.0.2g/test/bntest differ
++Binary files openssl-1.0.2g-org/test/casttest and ../save/openssl-1.0.2g/test/casttest differ
++Binary files openssl-1.0.2g-org/test/clienthellotest and ../save/openssl-1.0.2g/test/clienthellotest differ
++Binary files openssl-1.0.2g-org/test/constant_time_test and ../save/openssl-1.0.2g/test/constant_time_test differ
++Binary files openssl-1.0.2g-org/test/destest and ../save/openssl-1.0.2g/test/destest differ
++Binary files openssl-1.0.2g-org/test/dhtest and ../save/openssl-1.0.2g/test/dhtest differ
++Binary files openssl-1.0.2g-org/test/dsatest and ../save/openssl-1.0.2g/test/dsatest differ
++Binary files openssl-1.0.2g-org/test/dummytest and ../save/openssl-1.0.2g/test/dummytest differ
++Binary files openssl-1.0.2g-org/test/ecdhtest and ../save/openssl-1.0.2g/test/ecdhtest differ
++Binary files openssl-1.0.2g-org/test/ecdsatest and ../save/openssl-1.0.2g/test/ecdsatest differ
++Binary files openssl-1.0.2g-org/test/ectest and ../save/openssl-1.0.2g/test/ectest differ
++Binary files openssl-1.0.2g-org/test/enginetest and ../save/openssl-1.0.2g/test/enginetest differ
++Binary files openssl-1.0.2g-org/test/evp_extra_test and ../save/openssl-1.0.2g/test/evp_extra_test differ
++Binary files openssl-1.0.2g-org/test/evp_test and ../save/openssl-1.0.2g/test/evp_test differ
++Binary files openssl-1.0.2g-org/test/exptest and ../save/openssl-1.0.2g/test/exptest differ
++Binary files openssl-1.0.2g-org/test/heartbeat_test and ../save/openssl-1.0.2g/test/heartbeat_test differ
++Binary files openssl-1.0.2g-org/test/hmactest and ../save/openssl-1.0.2g/test/hmactest differ
++Binary files openssl-1.0.2g-org/test/ideatest and ../save/openssl-1.0.2g/test/ideatest differ
++Binary files openssl-1.0.2g-org/test/igetest and ../save/openssl-1.0.2g/test/igetest differ
++Binary files openssl-1.0.2g-org/test/jpaketest and ../save/openssl-1.0.2g/test/jpaketest differ
++diff -Nurb -x '*~' -x '*.o' openssl-1.0.2g-org/test/Makefile ../save/openssl-1.0.2g/test/Makefile
++--- openssl-1.0.2g-org/test/Makefile	2016-03-01 14:36:53.000000000 +0100
+++++ ../save/openssl-1.0.2g/test/Makefile	2016-03-23 15:23:10.000000000 +0100
++@@ -746,7 +746,7 @@
++ hmactest.o: ../include/openssl/opensslv.h ../include/openssl/ossl_typ.h
++ hmactest.o: ../include/openssl/safestack.h ../include/openssl/stack.h
++ hmactest.o: ../include/openssl/symhacks.h hmactest.c
++-ideatest.o: ../e_os.h ../include/openssl/e_os2.h ../include/openssl/idea.h
+++ideatest.o: ../e_os.h ../include/openssl/e_os2.h ../crypto/idea/idea.h
++ ideatest.o: ../include/openssl/opensslconf.h ideatest.c
++ igetest.o: ../include/openssl/aes.h ../include/openssl/e_os2.h
++ igetest.o: ../include/openssl/opensslconf.h ../include/openssl/ossl_typ.h
++@@ -778,7 +778,7 @@
++ mdc2test.o: ../e_os.h ../include/openssl/asn1.h ../include/openssl/bio.h
++ mdc2test.o: ../include/openssl/crypto.h ../include/openssl/des.h
++ mdc2test.o: ../include/openssl/des_old.h ../include/openssl/e_os2.h
++-mdc2test.o: ../include/openssl/evp.h ../include/openssl/mdc2.h
+++mdc2test.o: ../include/openssl/evp.h ../crypto/mdc2/mdc2.h
++ mdc2test.o: ../include/openssl/obj_mac.h ../include/openssl/objects.h
++ mdc2test.o: ../include/openssl/opensslconf.h ../include/openssl/opensslv.h
++ mdc2test.o: ../include/openssl/ossl_typ.h ../include/openssl/safestack.h
++Binary files openssl-1.0.2g-org/test/md2test and ../save/openssl-1.0.2g/test/md2test differ
++Binary files openssl-1.0.2g-org/test/md4test and ../save/openssl-1.0.2g/test/md4test differ
++Binary files openssl-1.0.2g-org/test/md5test and ../save/openssl-1.0.2g/test/md5test differ
++Binary files openssl-1.0.2g-org/test/mdc2test and ../save/openssl-1.0.2g/test/mdc2test differ
++Binary files openssl-1.0.2g-org/test/randtest and ../save/openssl-1.0.2g/test/randtest differ
++Binary files openssl-1.0.2g-org/test/rc2test and ../save/openssl-1.0.2g/test/rc2test differ
++Binary files openssl-1.0.2g-org/test/rc4test and ../save/openssl-1.0.2g/test/rc4test differ
++Binary files openssl-1.0.2g-org/test/rc5test and ../save/openssl-1.0.2g/test/rc5test differ
++Binary files openssl-1.0.2g-org/test/rmdtest and ../save/openssl-1.0.2g/test/rmdtest differ
++Binary files openssl-1.0.2g-org/test/rsa_test and ../save/openssl-1.0.2g/test/rsa_test differ
++Binary files openssl-1.0.2g-org/test/sha1test and ../save/openssl-1.0.2g/test/sha1test differ
++Binary files openssl-1.0.2g-org/test/sha256t and ../save/openssl-1.0.2g/test/sha256t differ
++Binary files openssl-1.0.2g-org/test/sha512t and ../save/openssl-1.0.2g/test/sha512t differ
++Binary files openssl-1.0.2g-org/test/shatest and ../save/openssl-1.0.2g/test/shatest differ
++Binary files openssl-1.0.2g-org/test/srptest and ../save/openssl-1.0.2g/test/srptest differ
++Binary files openssl-1.0.2g-org/test/ssltest and ../save/openssl-1.0.2g/test/ssltest differ
++Binary files openssl-1.0.2g-org/test/sslv2conftest and ../save/openssl-1.0.2g/test/sslv2conftest differ
++Binary files openssl-1.0.2g-org/test/v3nametest and ../save/openssl-1.0.2g/test/v3nametest differ
++Binary files openssl-1.0.2g-org/test/verify_extra_test and ../save/openssl-1.0.2g/test/verify_extra_test differ
++Binary files openssl-1.0.2g-org/test/wp_test and ../save/openssl-1.0.2g/test/wp_test differ
+diff -Nrub buildroot-2.0/package/openssl/openssl.mk p/package/openssl/openssl.mk
 --- buildroot-2.0/package/openssl/openssl.mk	2008-10-13 10:10:35.000000000 +0200
-+++ buildroot-2.0-new//package/openssl/openssl.mk	2015-06-16 16:07:22.000000000 +0200
++++ p/package/openssl/openssl.mk	2016-03-31 17:59:27.000000000 +0200
 @@ -3,7 +3,7 @@
  # openssl
  #
  #############################################################
 -OPENSSL_VERSION:=0.9.8g
-+OPENSSL_VERSION:=1.0.2c
++OPENSSL_VERSION:=1.0.2g
  OPENSSL_SITE:=http://www.openssl.org/source
  
  OPENSSL_TARGET_ARCH=generic32
@@ -285,9 +937,9 @@ diff -Nrub buildroot-2.0/package/openssl/openssl.mk buildroot-2.0-new//package/o
  			--prefix=/usr \
  			--openssldir=/usr/lib/ssl \
  			threads \
-diff -Nrub buildroot-2.0/package/openvpn/openvpn-2.3.2-fix-small.patch buildroot-2.0-new//package/openvpn/openvpn-2.3.2-fix-small.patch
+diff -Nrub buildroot-2.0/package/openvpn/openvpn-2.3.2-fix-small.patch p/package/openvpn/openvpn-2.3.2-fix-small.patch
 --- buildroot-2.0/package/openvpn/openvpn-2.3.2-fix-small.patch	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2.0-new//package/openvpn/openvpn-2.3.2-fix-small.patch	2015-06-16 16:06:12.000000000 +0200
++++ p/package/openvpn/openvpn-2.3.2-fix-small.patch	2016-03-31 17:54:50.000000000 +0200
 @@ -0,0 +1,40 @@
 +diff -Nrub --exclude '*~' openvpn-2.3.2-org//src/openvpn/init.c openvpn-2.3.2/src/openvpn/init.c
 +--- openvpn-2.3.2-org//src/openvpn/init.c	2013-05-31 14:00:25.000000000 +0200
@@ -329,15 +981,15 @@ diff -Nrub buildroot-2.0/package/openvpn/openvpn-2.3.2-fix-small.patch buildroot
 +     }
 +   else
 +     {
-diff -Nrub buildroot-2.0/package/openvpn/openvpn.mk buildroot-2.0-new//package/openvpn/openvpn.mk
+diff -Nrub buildroot-2.0/package/openvpn/openvpn.mk p/package/openvpn/openvpn.mk
 --- buildroot-2.0/package/openvpn/openvpn.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-new//package/openvpn/openvpn.mk	2015-06-16 16:06:12.000000000 +0200
++++ p/package/openvpn/openvpn.mk	2016-03-31 17:56:11.000000000 +0200
 @@ -6,9 +6,9 @@
  # to enable that within busybox
  #
  #############################################################
 -OPENVPN_VERSION:=2.0.9
-+OPENVPN_VERSION:=2.3.2
++OPENVPN_VERSION:=2.3.10
  OPENVPN_SOURCE:=openvpn-$(OPENVPN_VERSION).tar.gz
 -OPENVPN_SITE:=http://openvpn.net/release/
 +OPENVPN_SITE:=http://swupdate.openvpn.org/community/releases/
@@ -360,9 +1012,9 @@ diff -Nrub buildroot-2.0/package/openvpn/openvpn.mk buildroot-2.0-new//package/o
  		$(THREAD_MODEL) \
  	)
  	touch $(OPENVPN_DIR)/.configured
-diff -Nrub buildroot-2.0/package/pppd/pppd.mk buildroot-2.0-new//package/pppd/pppd.mk
+diff -Nrub buildroot-2.0/package/pppd/pppd.mk p/package/pppd/pppd.mk
 --- buildroot-2.0/package/pppd/pppd.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-new//package/pppd/pppd.mk	2015-06-16 16:06:12.000000000 +0200
++++ p/package/pppd/pppd.mk	2016-03-31 17:54:50.000000000 +0200
 @@ -3,8 +3,8 @@
  # pppd
  #
@@ -391,19 +1043,125 @@ diff -Nrub buildroot-2.0/package/pppd/pppd.mk buildroot-2.0-new//package/pppd/pp
  	touch $@
  
  $(PPPD_DIR)/.configured: $(PPPD_DIR)/.unpacked
-diff -Nrub buildroot-2.0/package/stunnel/stunnel.mk buildroot-2.0-new//package/stunnel/stunnel.mk
+diff -Nrub buildroot-2.0/package/stunnel/stunnel-configure-disable_stack-protector.patch p/package/stunnel/stunnel-configure-disable_stack-protector.patch
+--- buildroot-2.0/package/stunnel/stunnel-configure-disable_stack-protector.patch	1970-01-01 01:00:00.000000000 +0100
++++ p/package/stunnel/stunnel-configure-disable_stack-protector.patch	2016-03-31 17:56:47.000000000 +0200
+@@ -0,0 +1,74 @@
++--- stunnel-5.31/configure	2016-02-03 18:23:25.000000000 +0100
+++++ st/configure	2016-03-29 15:49:26.000000000 +0200
++@@ -5712,7 +5712,7 @@
++ 
++ 
++ 
++-for flag in -fPIE; do
+++for flag in ; do
++   as_CACHEVAR=`$as_echo "ax_cv_check_cflags__$flag" | $as_tr_sh`
++ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts $flag" >&5
++ $as_echo_n "checking whether C compiler accepts $flag... " >&6; }
++@@ -5781,7 +5781,7 @@
++ 
++ 
++ 
++-for flag in -fstack-protector; do
+++for flag in ; do
++   as_CACHEVAR=`$as_echo "ax_cv_check_cflags__$flag" | $as_tr_sh`
++ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts $flag" >&5
++ $as_echo_n "checking whether C compiler accepts $flag... " >&6; }
++@@ -5848,7 +5848,7 @@
++ 
++ 
++ 
++-for flag in -fPIE -pie; do
+++for flag in ; do
++   as_CACHEVAR=`$as_echo "ax_cv_check_ldflags__$flag" | $as_tr_sh`
++ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the linker accepts $flag" >&5
++ $as_echo_n "checking whether the linker accepts $flag... " >&6; }
++@@ -5914,7 +5914,7 @@
++ 
++ 
++ 
++-for flag in -Wl,-z,relro; do
+++for flag in ; do
++   as_CACHEVAR=`$as_echo "ax_cv_check_ldflags__$flag" | $as_tr_sh`
++ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the linker accepts $flag" >&5
++ $as_echo_n "checking whether the linker accepts $flag... " >&6; }
++@@ -5980,7 +5980,7 @@
++ 
++ 
++ 
++-for flag in -Wl,-z,now; do
+++for flag in ; do
++   as_CACHEVAR=`$as_echo "ax_cv_check_ldflags__$flag" | $as_tr_sh`
++ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the linker accepts $flag" >&5
++ $as_echo_n "checking whether the linker accepts $flag... " >&6; }
++@@ -6046,7 +6046,7 @@
++ 
++ 
++ 
++-for flag in -Wl,-z,noexecstack; do
+++for flag in ; do
++   as_CACHEVAR=`$as_echo "ax_cv_check_ldflags__$flag" | $as_tr_sh`
++ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the linker accepts $flag" >&5
++ $as_echo_n "checking whether the linker accepts $flag... " >&6; }
++@@ -6113,7 +6113,7 @@
++ 
++ 
++ 
++-for flag in -D_FORTIFY_SOURCE=2; do
+++for flag in ; do
++   as_CACHEVAR=`$as_echo "ax_cv_check_cflags__$flag" | $as_tr_sh`
++ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts $flag" >&5
++ $as_echo_n "checking whether C compiler accepts $flag... " >&6; }
++@@ -15181,7 +15181,7 @@
++ # Let make expand exec_prefix.
++ test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
++ 
++-DEFS=-DHAVE_CONFIG_H
+++DEFS="-DHAVE_CONFIG_H  -DHAVE_GETNAMEINFO"
++ 
++ ac_libobjs=
++ ac_ltlibobjs=
+diff -Nrub buildroot-2.0/package/stunnel/stunnel-have-pty.patch p/package/stunnel/stunnel-have-pty.patch
+--- buildroot-2.0/package/stunnel/stunnel-have-pty.patch	2006-11-24 16:33:04.000000000 +0100
++++ p/package/stunnel/stunnel-have-pty.patch	1970-01-01 01:00:00.000000000 +0100
+@@ -1,15 +0,0 @@
+---- stunnel-4.16/configure.ac.orig	2006-08-20 04:28:14.000000000 +0800
+-+++ stunnel-4.16/configure.ac	2006-11-24 10:17:01.053905560 +0800
+-@@ -45,8 +45,10 @@
+-     AC_DEFINE(socklen_t, int))
+- 
+- AC_MSG_NOTICE([**************************************** PTY device files])
+--AC_CHECK_FILE("/dev/ptmx", AC_DEFINE(HAVE_DEV_PTMX))
+--AC_CHECK_FILE("/dev/ptc", AC_DEFINE(HAVE_DEV_PTS_AND_PTC))
+-+#AC_CHECK_FILE("/dev/ptmx", AC_DEFINE(HAVE_DEV_PTMX))
+-+#AC_CHECK_FILE("/dev/ptc", AC_DEFINE(HAVE_DEV_PTS_AND_PTC))
+-+AC_DEFINE(HAVE_DEV_PTMX)
+-+AC_DEFINE(HAVE_DEV_PTS_AND_PTC)
+- 
+- AC_MSG_NOTICE([**************************************** entropy])
+- 
+diff -Nrub buildroot-2.0/package/stunnel/stunnel.mk p/package/stunnel/stunnel.mk
 --- buildroot-2.0/package/stunnel/stunnel.mk	2008-12-08 09:15:27.000000000 +0100
-+++ buildroot-2.0-new//package/stunnel/stunnel.mk	2015-06-16 16:06:12.000000000 +0200
-@@ -3,7 +3,7 @@
++++ p/package/stunnel/stunnel.mk	2016-03-31 17:56:27.000000000 +0200
+@@ -3,9 +3,9 @@
  # stunnel
  #
  #############################################################
 -STUNNEL_VERSION:=4.16
-+STUNNEL_VERSION:=4.26
++STUNNEL_VERSION:=5.31
  STUNNEL_SOURCE:=stunnel-$(STUNNEL_VERSION).tar.gz
- STUNNEL_SITE:=http://www.stunnel.org/download/stunnel/src
+-STUNNEL_SITE:=http://www.stunnel.org/download/stunnel/src
++STUNNEL_SITE:=http://www.stunnel.org/downloads/
  STUNNEL_CAT:=$(ZCAT)
-@@ -56,7 +56,7 @@
+ STUNNEL_DIR:=$(BUILD_DIR)/stunnel-$(STUNNEL_VERSION)
+ 
+@@ -51,12 +51,12 @@
+ 	touch $(STUNNEL_DIR)/.configured
+ 
+ $(STUNNEL_DIR)/src/stunnel: $(STUNNEL_DIR)/.configured
+-	$(MAKE) CC=$(TARGET_CC) -C $(STUNNEL_DIR)
++	$(MAKE) -C $(STUNNEL_DIR) V=1
+ 
  $(TARGET_DIR)/usr/bin/stunnel: $(STUNNEL_DIR)/src/stunnel
  	install -c $(STUNNEL_DIR)/src/stunnel $(TARGET_DIR)/usr/bin/stunnel
  	$(STRIPCMD) $(TARGET_DIR)/usr/bin/stunnel > /dev/null 2>&1
@@ -420,9 +1178,9 @@ diff -Nrub buildroot-2.0/package/stunnel/stunnel.mk buildroot-2.0-new//package/s
 +ifeq ($(strip $(BR2_PACKAGE_STUNNEL)),y)
  TARGETS+=stunnel
  endif
-diff -Nrub buildroot-2.0/target/makedevs/makedevs.mk buildroot-2.0-new//target/makedevs/makedevs.mk
+diff -Nrub buildroot-2.0/target/makedevs/makedevs.mk p/target/makedevs/makedevs.mk
 --- buildroot-2.0/target/makedevs/makedevs.mk	2006-10-06 14:59:33.000000000 +0200
-+++ buildroot-2.0-new//target/makedevs/makedevs.mk	2015-06-16 16:06:12.000000000 +0200
++++ p/target/makedevs/makedevs.mk	2016-03-31 17:54:50.000000000 +0200
 @@ -13,7 +13,7 @@
  	cp target/makedevs/makedevs.c $(MAKEDEVS_DIR)
  
