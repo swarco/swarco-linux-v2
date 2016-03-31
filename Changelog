@@ -16,7 +16,6 @@
 	* buildroot/buildroot-2.0/ch_conf/etc/sshd_config (PubkeyAcceptedKeyTypes  +ssh-dss): 
 	enable DSS key support for openssh 7.x which are now disabled by default for security reasons!
 
-
 	* buildroot/buildroot-2.0/package/openssl/openssl.mk (OPENSSL_VERSION): 
 	Update OpenSSL to Version 1.0.2g
 	Patches to build on buildroot
