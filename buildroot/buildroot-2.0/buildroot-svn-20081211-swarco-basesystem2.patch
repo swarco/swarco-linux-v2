@@ -30,7 +30,7 @@ diff -Nrub buildroot-2.0/package/busybox/Config.in p/package/busybox/Config.in
  	default "1.12.3"	if BR2_BUSYBOX_VERSION_1_12_X
  	default "1.13.1"	if BR2_BUSYBOX_VERSION_1_13_X
 +	default "1.18.5"	if BR2_BUSYBOX_VERSION_1_18_X
-+	default "1.20.2"	if BR2_BUSYBOX_VERSION_1_20_X
++	default "1.24.2"	if BR2_BUSYBOX_VERSION_1_20_X
  
  config BR2_PACKAGE_BUSYBOX_FULLINSTALL
  	bool "Run BusyBox's own full installation"
