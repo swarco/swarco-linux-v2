@@ -1190,3 +1190,29 @@ diff -Nrub buildroot-2.0/target/makedevs/makedevs.mk p/target/makedevs/makedevs.
  	touch -c $(MAKEDEVS_DIR)/makedevs
  
  $(STAGING_DIR)/bin/makedevs: $(MAKEDEVS_DIR)/makedevs
+--- buildroot-2.0/package/busybox/busybox_no_MNT_DETACH.patch	2016-04-01 14:32:50.000000000 +0200
++++ x	2016-04-01 14:37:25.000000000 +0200
+@@ -0,0 +1,23 @@
++diff -Nrub busybox-1.24.2.org/util-linux/umount.c busybox-1.24.2/util-linux/umount.c
++--- busybox-1.24.2.org/util-linux/umount.c	2016-03-17 21:35:49.000000000 +0100
+++++ busybox-1.24.2/util-linux/umount.c	2016-04-01 14:31:38.000000000 +0200
++@@ -82,11 +82,14 @@
++ 
++ 	// MNT_FORCE and MNT_DETACH (from linux/fs.h) must match
++ 	// OPT_FORCE and OPT_LAZY.
++-	{
++-		typedef char bug[
++-			(OPT_FORCE != MNT_FORCE || OPT_LAZY != MNT_DETACH) ? -1 : 1
++-		];
++-	}
+++	/* 
+++         * 2016-04-01 gc: we don't have MNT_DETACH defined!
+++         * {
+++	 * 	typedef char bug[
+++	 * 		(OPT_FORCE != MNT_FORCE || OPT_LAZY != MNT_DETACH) ? -1 : 1
+++	 * 	];
+++	 * }
+++         */
++ 	doForce = opt & (OPT_FORCE|OPT_LAZY);
++ 
++ 	/* Get a list of mount points from mtab.  We read them all in now mostly
