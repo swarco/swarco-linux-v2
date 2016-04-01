@@ -1,3 +1,9 @@
+2016-04-01  Guido Classen  <gc@tux-mobil.loc>
+
+	* buildroot/swarco_ch_conf/etc/ppp/shell_gprs_dial.sh (Huawei E220, E230, E270, E870): 
+	huaweiAktBbo (only for Huawei E220, E230, E270, E870) is now replaced by usb_modeswitch 
+	which works for switching all devices
+
 2016-03-31  Guido Classen  <gc@tux-mobil.loc>
 
 	* buildroot/buildroot-2.0/package/openvpn/openvpn.mk (OPENVPN_VERSION): 
