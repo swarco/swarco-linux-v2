@@ -9,9 +9,9 @@
 	* buildroot/buildroot-2.0/package/openvpn/openvpn.mk (OPENVPN_VERSION): 
 	Update openvpn to Version 2.3.10
 
-	* buildroot/buildroot-2.0/.config (BR2_BUSYBOX_VERSION):
+	* buildroot/buildroot-2.0/package/busybox/Config.in (if BR2_BUSYBOX_VERSION_1_20_X):
 	Update busybox to Version 1.24.2
-	Provied updated config file buildroot/buildroot-2.0/swarco/busybox.config
+	Provided updated config file buildroot/buildroot-2.0/swarco/busybox.config
 
 	* buildroot/buildroot-2.0/package/stunnel/stunnel.mk (STUNNEL_SITE): 
 	Update stunnel to version 5.31
