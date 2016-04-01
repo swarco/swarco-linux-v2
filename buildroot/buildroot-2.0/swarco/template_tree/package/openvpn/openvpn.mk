@@ -6,9 +6,9 @@
 # to enable that within busybox
 #
 #############################################################
-OPENVPN_VERSION:=2.3.2
+OPENVPN_VERSION:=2.0.9
 OPENVPN_SOURCE:=openvpn-$(OPENVPN_VERSION).tar.gz
-OPENVPN_SITE:=http://swupdate.openvpn.org/community/releases/
+OPENVPN_SITE:=http://openvpn.net/release/
 OPENVPN_DIR:=$(BUILD_DIR)/openvpn-$(OPENVPN_VERSION)
 OPENVPN_CAT:=$(ZCAT)
 OPENVPN_BINARY:=openvpn
@@ -30,7 +30,6 @@ openvpn-source: $(DL_DIR)/$(OPENVPN_SOURCE)
 
 $(OPENVPN_DIR)/.unpacked: $(DL_DIR)/$(OPENVPN_SOURCE)
 	$(OPENVPN_CAT) $(DL_DIR)/$(OPENVPN_SOURCE) | tar -C $(BUILD_DIR) $(TAR_OPTIONS) -
-	toolchain/patch-kernel.sh $(OPENVPN_DIR) package/openvpn/ \*$(OPENVPN_VERSION)\*.patch
 	touch $(OPENVPN_DIR)/.unpacked
 
 $(OPENVPN_DIR)/.configured: $(OPENVPN_DIR)/.unpacked
@@ -54,7 +53,6 @@ $(OPENVPN_DIR)/.configured: $(OPENVPN_DIR)/.unpacked
 		--infodir=/usr/info \
 		--program-prefix="" \
 		--enable-small \
-		--disable-plugin-auth-pam \
 		$(THREAD_MODEL) \
 	)
 	touch $(OPENVPN_DIR)/.configured
