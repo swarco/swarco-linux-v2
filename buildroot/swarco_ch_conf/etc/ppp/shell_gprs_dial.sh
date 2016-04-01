@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2016-04-01 11:32:32 gc]
+echo $0 [Version 2016-04-01 18:25:36 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -406,12 +406,8 @@ init_and_load_drivers() {
         12d1:1003)
                 local d=
                 print_usb_device "Huawei Technologies Co., Ltd. E220 HSDPA Modem"
-                if [ \! -z "$reload_modules" ]; then
-                    # 2016-03-31 gc: huaweiAktBbo is now replaced by usb_modeswitch
-                    # /usr/bin/huaweiAktBbo
-                    usb_modeswitch -v 12d1 -p 1003 -C 0xff --huawei-mode 
-                fi
-
+                # 2016-03-31 gc: huaweiAktBbo is now replaced by usb_modeswitch
+                usb_modeswitch -v 12d1 -p 1003 -C 0xff --huawei-mode 
                 find_usb_device "$reload_modules" 12d1 1003 /dev/ttyUSB0
                 ;;
 
