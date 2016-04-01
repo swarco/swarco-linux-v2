@@ -32,7 +32,7 @@ CFLAGS		+=  -I$(KERNEL_PATH)/include
 LDFLAGS         += -lpthread -lutil
 
 PROGRAMS = ccm2200_gpio_test ccm2200_watchdog ccm2200_serial forward rw \
-	   file_write_test wlogin huaweiAktBbo led_blinkd modemstatus-wait \
+	   file_write_test wlogin led_blinkd modemstatus-wait \
 	   dcf77
 
 .PHONY: all
@@ -51,9 +51,11 @@ install:
 	$(CROSS_CC) -o$@ $(CFLAGS) $(LDFLAGS) $<
 	$(CROSS_STRIP) $@
 
-huaweiAktBbo:	huaweiAktBbo.c
-	$(CROSS_CC) -o$@ $(CFLAGS) $(LDFLAGS) $< -lusb
-	$(CROSS_STRIP) $@
+#2016-04-01 gc: huaweiAktBbo is now replaced by usb_modeswitch which works for switch
+#               all devices ( huaweiAktBbo only works for Huawei E220, E230, E270, E870)
+# huaweiAktBbo:	huaweiAktBbo.c
+# 	$(CROSS_CC) -o$@ $(CFLAGS) $(LDFLAGS) $< -lusb
+# 	$(CROSS_STRIP) $@
 
 
 .PHONY: clean
