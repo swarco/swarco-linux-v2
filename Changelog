@@ -1,5 +1,8 @@
 2016-04-21  Guido Classen  <gc@tux-mobil.loc>
 
+	* buildroot/swarco_ch_conf/etc/udhcp-usb0.conf: 
+	disabled router option
+
 	* buildroot/swarco_ch_conf/etc/ppp/shell_gprs_dial.sh: 
 	close file handle, so device (e.g. /dev/ttyUSB0) can be realloced on
 	Modem Reset
