@@ -1,3 +1,11 @@
+2016-04-21  Guido Classen  <gc@tux-mobil.loc>
+
+	* buildroot/swarco_ch_conf/etc/ppp/shell_gprs_dial.sh: 
+	close file handle, so device (e.g. /dev/ttyUSB0) can be realloced on
+	Modem Reset
+
+	Support for Huawei E353 Stick with Product ID 1446 and 1506
+
 2016-04-01  Guido Classen  <gc@tux-mobil.loc>
 
 	* buildroot/swarco_ch_conf/etc/ppp/shell_gprs_dial.sh (Huawei E220, E230, E270, E870): 

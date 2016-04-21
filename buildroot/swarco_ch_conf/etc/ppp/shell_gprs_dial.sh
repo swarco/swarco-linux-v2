@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2016-04-01 18:25:36 gc]
+echo $0 [Version 2016-04-21 10:19:56 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -128,24 +128,37 @@ reset_terminal_adapter() {
     print "Reseting terminal adapter"
     if [ \! -z "$GPRS_RESET_CMD" ]; then
         /bin/sh -c "$GPRS_RESET_CMD"
-        sleep 20
+        exec 3<>/dev/null
+        fuser -k -9 $GPRS_DEVICE
+        sleep 60
+        exec 3<>$GPRS_DEVICE
     else
         case $TA_VENDOR in
             WAVECOM)
                 at_cmd "AT+CFUN=1"
+                exec 3<>/dev/null
+                fuser -k -9 $GPRS_DEVICE
                 sleep 60
+                exec 3<>$GPRS_DEVICE
                 ;;
 
             SIEMENS | Cinterion )
                 at_cmd "AT+CFUN=1,1"
+                exec 3<>/dev/null
+                fuser -k -9 $GPRS_DEVICE
                 sleep 60
+                exec 3<>$GPRS_DEVICE
                 ;;
 
             *)
                 print "Don't known how to reset terminal adapter $TA_VENDOR"
                 #try Siemens command
                 at_cmd "AT+CFUN=1,1"
+                # close file handle, so device (e.g. /dev/ttyUSB0) can be realloced
+                exec 3<>/dev/null
+                fuser -k -9 $GPRS_DEVICE
                 sleep 60
+                exec 3<>$GPRS_DEVICE
                 ;;
         esac
     fi
@@ -339,6 +352,8 @@ find_usb_device() {
     local dev_mod=$5
 
     if [ \! -z "$reload_modules" ]; then
+        exec 3<>/dev/null
+        fuser -k -9 $GPRS_DEVICE
         sleep 1
         rmmod usbserial; modprobe usbserial vendor=0x$vendor product=0x$product
         sleep 1
@@ -425,17 +440,17 @@ init_and_load_drivers() {
                 ;;
 
         #  Huawei E303/E353/E3131 in mass storage device mode
-        12d1:1f01)
+        12d1:1f01 | 12d1:1446)
                 local d=
                 print_usb_device "Huawei Technologies Co., Ltd. E303/E353/E3131 HSDPA Modem in mass storage mode"
 
-                usb_modeswitch -v 12d1 -p 1f01 -M 55534243123456780000000000000011060000000000000000000000000000
+                usb_modeswitch -v 12d1 -p `cat $id/idProduct` -M 55534243123456780000000000000011060000000000000000000000000000
                 exit 1
                 ;;
 
-        12d1:1001)
+        12d1:1001 | 12d1:1506)
                 print_usb_device "Huawei Technologies Co., Ltd. E303/E353/E3131 HSDPA Modem in USB serial mode"
-                find_usb_device "$reload_modules" 12d1 1001 /dev/ttyUSB0
+                find_usb_device "$reload_modules" 12d1 `cat $id/idProduct` /dev/ttyUSB0
                 ;;
 
         0681:0041)
