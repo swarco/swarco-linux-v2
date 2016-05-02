@@ -1,3 +1,9 @@
+2016-05-02  Guido Classen  <gc@tux-mobil.loc>
+
+	* buildroot/swarco_ch_conf/etc/ppp/shell_gprs_dial.sh: 
+	Cinterion EHS5 must be provided with PDP credentials addition to
+	ppp negation using AT^SGAUTH
+
 2016-04-21  Guido Classen  <gc@tux-mobil.loc>
 
 	* buildroot/swarco_ch_conf/etc/udhcp-usb0.conf: 
