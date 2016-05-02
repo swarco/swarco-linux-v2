@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2016-04-21 10:19:56 gc]
+echo $0 [Version 2016-05-02 15:09:56 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -104,8 +104,11 @@ status_net unknown
 print_at_cmd()
 {
     if [ \! -z "$AT_VERBOSE_FD" ]; then
-        # hide PIN-Number from log, substitute with <hidden>
-        echo >&$AT_VERBOSE_FD "${*/+CPIN=\"????\"/+CPIN=<hidden>}"
+        if [ \! -z "$PRINT_AT_CMD_FILTER" ]; then
+            eval echo '>&$AT_VERBOSE_FD' "$PRINT_AT_CMD_FILTER"
+        else
+            echo >&$AT_VERBOSE_FD "$*"
+        fi
     fi
 }
 
@@ -957,6 +960,19 @@ attach_PDP_context() {
     at_cmd "AT+CGACT?"
     print "PDP Context attach: $r"
     wait_quiet 1
+
+    case "$TA_VENDOR $TA_MODEL" in
+        *Cinterion*EHS*)
+            if [ \! -z "$GPRS_USER" ]; then
+                # Cinterion EHS5 must be provided with PDP credentials 
+                # addition to ppp negation using AT^SGAUTH
+                PRINT_AT_CMD_FILTER='${*/^SGAUTH=1,2,\"*\",\"*\"/^SGAUTH=1,2,\"$GPRS_USER\",\"<hidden>\"}' \
+
+                at_cmd "AT^SGAUTH=1,2,\"$GPRS_USER\",\"$GPRS_PASSWD\"" 10
+            fi
+            ;;
+    esac
+
     
 #GPRS_CMD_SET=1
     
@@ -1087,7 +1103,7 @@ attach_PDP_context() {
     fi
 
     case "$TA_VENDOR $TA_MODEL" in
-        *Cinterion*EHS5*)
+        *Cinterion*EHS*)
             query_board_temp
             ;;
     esac
@@ -1360,7 +1376,9 @@ case $r in
             exit 1
         fi
         print "sending pin"
-        # 2016-02-26 gc: Cinterion EGS5 module requires quotes around pin
+        # 2016-02-26 gc: Cinterion EHS5 module requires quotes around pin
+	# hide PIN-Number from log, substitute with <hidden>
+        PRINT_AT_CMD_FILTER='${*/+CPIN=\"????\"/+CPIN=<hidden>}' \
         at_cmd "AT+CPIN=\"$GPRS_PIN\"" 30 || error
         # Wait until registered
         if [ $TA_VENDOR == "WAVECOM" ]; then
