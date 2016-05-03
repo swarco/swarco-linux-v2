@@ -10,7 +10,7 @@
 	disabled router option
 
 	* buildroot/swarco_ch_conf/etc/ppp/shell_gprs_dial.sh: 
-	close file handle, so device (e.g. /dev/ttyUSB0) can be realloced on
+	close file handle, so device (e.g. /dev/ttyUSB0) can be reallocated on
 	Modem Reset
 
 	Support for Huawei E353 Stick with Product ID 1446 and 1506
