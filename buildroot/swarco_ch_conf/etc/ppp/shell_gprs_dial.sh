@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2016-05-02 15:09:56 gc]
+echo $0 [Version 2016-05-03 17:25:41 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -23,7 +23,7 @@ echo $0 [Version 2016-05-02 15:09:56 gc]
 #. /etc/default/gprs
 #GPRS_DEVICE=/dev/com1
 
-GPRS_STATUS_FILE=/tmp/gprs-stat
+RAGPRS_STATUS_FILE=/tmp/gprs-stat
 GPRS_NET_STATUS_FILE=/tmp/gprs-net
 echo -n >$GPRS_STATUS_FILE
 
@@ -90,6 +90,20 @@ print() {
 status() {
     local var=$1
     shift
+    case var in
+        GPRS_CSQ)
+            local low_limit=10
+            local net=GSM
+            if grep -E "HSDPA|HSUPA|WCDMA|HSPA" /tmp/gprs-net 2>/dev/null; then
+                low_limit=5
+                net=UMTS
+            fi
+            if [ $1 -lt $low_limit ]; then
+                sys_mesg_net -e NET -p warning `M_ "Low $net signal quality" `
+            else
+                sys_mesg_net -e NET -p okay `M_ "No error" `
+            fi
+    esac
     awk "! /^$var=/ {  print } END { print \"$var='$*'\" }" <$GPRS_STATUS_FILE >${GPRS_STATUS_FILE}.tmp
     mv ${GPRS_STATUS_FILE}.tmp ${GPRS_STATUS_FILE}
 }
@@ -187,7 +201,7 @@ wait_quiet() {
 #  print "wait_quiet $1"
   local wait_time=2
   local wait_str=""
-  if [ "$1" -gt 0 ]; then wait_time=$1; fi
+  if [ "0$1" -gt 0 ]; then wait_time=$1; fi
   if [ \! -z "$2" ]; then wait_str="$2"; fi
 
   local line=""
@@ -230,7 +244,7 @@ at_cmd() {
   local wait_str="OK"
   local echo_rcv=""
 
-  if [ "$2" -gt 0 ]; then wait_time=$2; fi
+  if [ "0$2" -gt 0 ]; then wait_time=$2; fi
   if [ \! -z "$3" ]; then wait_str="$3"; fi
 
   wait_quiet 1
@@ -321,11 +335,6 @@ query_signal_quality() {
     print "Signal quality: ${r%% OK}"
     r=${r##*CSQ: }
     GPRS_CSQ=${r%%,*}
-    if [ $GPRS_CSQ -lt 10 ]; then
-        sys_mesg_net -e NET -p warning `M_ "Low GSM/UMTS signal quality" `
-    else
-        sys_mesg_net -e NET -p okay `M_ "No error" `
-    fi
     status GPRS_CSQ $GPRS_CSQ    
 }
 
@@ -453,7 +462,7 @@ init_and_load_drivers() {
 
         12d1:1001 | 12d1:1506)
                 print_usb_device "Huawei Technologies Co., Ltd. E303/E353/E3131 HSDPA Modem in USB serial mode"
-                find_usb_device "$reload_modules" 12d1 `cat $id/idProduct` /dev/ttyUSB0
+                find_usb_device "$reload_modules" 12d1 `cat $id/idProduct` /dev/ttyUSB2 /dev/ttyUSB0
                 ;;
 
         0681:0041)
@@ -866,7 +875,14 @@ check_and_handle_SMS() {
     local sms_reboot=""
     local sms_reconnect=""
 
-    send 'AT+CMGL="REC UNREAD"'
+    case "$TA_VENDOR $TA_MODEL" in
+        *HUAWEI*)
+            send 'AT+CMGL=0'
+            ;;
+        *)
+            send 'AT+CMGL="REC UNREAD"'
+            ;;
+    esac
     while IFS="" read -r -t5 line<&3
     do
         line=${line%%${cr}*}
@@ -1103,12 +1119,6 @@ attach_PDP_context() {
     fi
 
     case "$TA_VENDOR $TA_MODEL" in
-        *Cinterion*EHS*)
-            query_board_temp
-            ;;
-    esac
-
-    case "$TA_VENDOR $TA_MODEL" in
         *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* | *Cinterion*EHS5*)
             if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
                 count=360
@@ -1121,6 +1131,12 @@ attach_PDP_context() {
                     then
                         count=0
                         #
+                        case "$TA_VENDOR $TA_MODEL" in
+                            *Cinterion*EHS*)
+                                query_board_temp
+                                ;;
+                        esac
+
                         query_signal_quality
 
                         # query Packet Switched Data Information:
@@ -1174,7 +1190,6 @@ attach_PDP_context() {
                                     kill -TERM $ppp_pid
                                 fi
                                 ;;
-
                             *RING*)
                                 print "ringing"
                                 on_ring
@@ -1184,6 +1199,119 @@ attach_PDP_context() {
                     done
                     sleep 1
                 done
+            fi
+            # wait till pppd process has terminated
+            wait
+            ;;
+
+
+        *HUAWEI*)
+            if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
+                while [ -d /proc/$ppp_pid ]  && IFS="" read -r -t10 line<&3
+                do
+                    line=${line%%${cr}*}
+                    case $line in
+                        *+CMTI:*|*+CMT:*)
+                            echo SMS URC received
+                            if ! check_and_handle_SMS; then
+                                kill -TERM $ppp_pid
+                            fi
+                            ;;
+
+                        *^MODE:*)
+                            local m1=${line##*^MODE: }
+                            local sys_mode=${m1%%,*}
+                            local sub_mode=${line##*^MODE: *,}
+                            local huawei_net=
+                            local huawei_sub=
+
+                            echo "Mode line received: $line ( ${line##*^: } ) $sys_mode $sub_mode"
+                            case "$sys_mode" in
+                                0)
+                                    huawei_net="No service"
+                                    ;;
+                                1)
+                                    huawei_net="AMPS"
+                                    ;;
+                                2)
+                                    huawei_net="CDMA"
+                                    ;;
+                                3)
+                                    huawei_net="GSM/GPRS"
+                                    ;;
+                                4)
+                                    huawei_net="HDR"
+                                    ;;
+                                5)
+                                    huawei_net="WCDMA"
+                                    ;;
+                                6)
+                                    huawei_net="GPS"
+                                    ;;
+                                *)
+                                    huawei_net="unknown"
+                                    ;;
+                            esac
+
+                            case "$sub_mode" in
+                                0)
+                                    huawei_sub="No service"
+                                    ;;
+                                1)
+                                    huawei_sub="GSM"
+                                    ;;
+                                2)
+                                    huawei_sub="GPRS"
+                                    ;;
+                                3)
+                                    huawei_sub="EDGE"
+                                    ;;
+                                4)
+                                    huawei_sub="WCDMA"
+                                    ;;
+                                5)
+                                    huawei_sub="HSDPA"
+                                    ;;
+                                6)
+                                    huawei_sub="HSUPA"
+                                    ;;
+                                7)
+                                    huawei_sub="HSDPA and HSUPA"
+                                    ;;
+                                8)
+                                    huawei_sub="TD-SCDMA"
+                                    ;;
+                                9)
+                                    huawei_sub="HSPA+"
+                                    ;;
+                                *)
+                                    huawei_sub="unknown"
+                                    ;;
+                            esac
+                            status_net "$huawei_net $huawei_sub"
+                            ;;
+                        
+                        *^RSSI:*)
+                            echo "RSSI line received: $line ( ${line##*^RSSI: } )"
+                            GPRS_CSQ=${line##*^RSSI: }
+                            status GPRS_CSQ $GPRS_CSQ    
+                            ;;
+
+                        *^DSFLOWRPT:*)
+                            # 2016-05-03 gc: TODO
+                            ;;
+                        *RING*)
+                            print "ringing"
+                            on_ring
+                            break;
+                            ;;                        
+                        *)
+                            if ! [ -z "$line" ]; then
+                                print_rcv "APP_PORT: $line"
+                            fi
+                    esac
+                done
+                sleep 1
             fi
             # wait till pppd process has terminated
             wait
@@ -1242,6 +1370,11 @@ fi
 
 # reset "script-alive" watchdog
 echo GPRS_WATCHDOG_COUNT=0 >/tmp/gprs-watchdog
+
+if [ -f /var/run/ppp0.pid ]; then
+    kill -INT `cat /var/run/ppp0.pid`
+    rm /var/run/ppp0.pid
+fi
 
 ##############################################################################
 # check error count
@@ -1410,7 +1543,30 @@ sys_mesg -e SIM -p okay `M_ "No error" `
 op_cmd="AT+COPS=0"
 
 case "$TA_VENDOR $TA_MODEL" in
-    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* | *Cinterion*EHS5*)
+    *Cinterion*EHS*)
+        if [ \! -z "$GPRS_NET_ACCESS_TYPE" ]; then
+            at_cmd "AT^SXRAT=$GPRS_NET_ACCESS_TYPE" 10
+        else
+            at_cmd "AT^SXRAT=1" 10
+        fi
+        ;;
+    *HUAWEI*)
+    case "$GPRS_NET_ACCESS_TYPE" in
+        0)
+            at_cmd "at^SYSCFG=13,2,3FFFFFFF,1,2" 10
+            ;;
+        2)
+            at_cmd "at^SYSCFG=14,2,3FFFFFFF,1,2" 10
+            ;;
+        *)
+            at_cmd "at^SYSCFG=2,2,3FFFFFFF,1,2" 10
+            ;;
+    esac
+    ;;
+esac
+
+case "$TA_VENDOR $TA_MODEL" in
+    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* )
         # supply net access type (GSM or UMTS) for UMTS capable TA
         if [ \! -z "$GPRS_NET_ACCESS_TYPE" ]; then
             op_cmd="AT+COPS=0,,,$GPRS_NET_ACCESS_TYPE"
@@ -1617,7 +1773,9 @@ status GPRS_NUM ${cnum}
 ##############################################################################
 # SMS initialization
 ##############################################################################
-# switch SMS to TEXT mode
+# switch SMS to TEXT mode 
+# TODO: Huawei don't support TEXT mode. 'The "text" mode is unable to
+# display Chinese, so currently, only the PDU mode is used'
 at_cmd "AT+CMGF=1"
 
 #2009-08-28 gc: enable URC on incoming SMS (and break of data/GPRS connection)
@@ -1655,10 +1813,17 @@ do
     # reset "script-alive" watchdog
     echo GPRS_WATCHDOG_COUNT=0 >/tmp/gprs-watchdog
 
-    if ! wait_quiet $ring_wait_time "RING" || [ $ring_recv -ne 0 ]; then
-        on_ring
-        echo back from on_ring
-    fi
+    case "$TA_VENDOR $TA_MODEL" in
+        *HUAWEI*)
+            # HUAWEI stick don't support CSQ mode, but sends a lot of URCs, so don't use wait_quit here!
+            ;;
+        *)
+            if ! wait_quiet $ring_wait_time "RING" || [ $ring_recv -ne 0 ]; then
+                on_ring
+                echo back from on_ring
+            fi
+            ;;
+    esac
 
     ring_recv=0
     check_and_handle_SMS

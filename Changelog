@@ -1,3 +1,9 @@
+2016-05-03  Guido Classen  <gc@tux-mobil.loc>
+
+	* buildroot/swarco_ch_conf/etc/ppp/shell_gprs_dial.sh: 
+	added support for GPRS_NET_ACCESS_TYPE on Cinterion EHS5 and Huawei
+	decode network status information of Huawei adapter
+
 2016-05-02  Guido Classen  <gc@tux-mobil.loc>
 
 	* buildroot/swarco_ch_conf/etc/ppp/shell_gprs_dial.sh: 
