@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2016-05-03 17:25:41 gc]
+echo $0 [Version 2016-05-12 13:34:26 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -23,7 +23,7 @@ echo $0 [Version 2016-05-03 17:25:41 gc]
 #. /etc/default/gprs
 #GPRS_DEVICE=/dev/com1
 
-RAGPRS_STATUS_FILE=/tmp/gprs-stat
+GPRS_STATUS_FILE=/tmp/gprs-stat
 GPRS_NET_STATUS_FILE=/tmp/gprs-net
 echo -n >$GPRS_STATUS_FILE
 
