@@ -1,3 +1,8 @@
+2016-05-20  Guido Classen  <gc@tux-mobil.loc>
+
+	* buildroot/buildroot-2.0/swarco/package/tinc/tinc.mk: 
+	added new package for Tinc Virtual Private Network
+
 2016-05-12  Guido Classen  <gc@tux-mobil.loc>
 
 	* buildroot/buildroot-2.0/ch_conf/etc/ppp/shell_gprs_dial.sh (GPRS_STATUS_FILE): 
