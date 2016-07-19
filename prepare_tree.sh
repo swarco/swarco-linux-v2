@@ -6,7 +6,7 @@
 #*                 Unpacks packages from SWARCO Traffic Systems
 #*                 Embdedded Linux CD and
 #*                 prepares Linux build tree 
-#*                 2010 SWARCO Traffic Systems GmbH
+#*                 2010-2016 SWARCO Traffic Systems GmbH
 #*
 #*  @version       0.1 (\$Revision$)
 #*  @author        Guido Classen
@@ -59,16 +59,16 @@ fi
 (
   cd $BUILDROOT_BASE
 
-  if [ -d $BUILDROOT_DIR/.svn ]
-  then 
-    svn export $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
-  fi
+  # if [ -d $BUILDROOT_DIR/.svn ]
+  # then 
+  #   svn export $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
+  # fi
 
   # fallback if svn export is not available (weiss-linux tree is 
   # created from .tar.gz)
-  if ! [ -d $BUILDROOT_SOFT_FLOAT_DIR ]
+  if ! [ -f $BUILDROOT_SOFT_FLOAT_DIR/Makefile ]
   then
-    cp -a $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
+    cp -aT $BUILDROOT_DIR $BUILDROOT_SOFT_FLOAT_DIR
   fi
 
   ( cd $BUILDROOT_SOFT_FLOAT_DIR; ./prepare_tree_soft_float.sh )
