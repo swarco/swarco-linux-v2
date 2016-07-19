@@ -37,7 +37,7 @@ overwrite_target_device_table: $(PROJECT_BUILD_DIR)/device_table.txt
 .PHONY: install_chconf
 install_chconf: 
 	echo install_chconf: 
-	(cd swarco/ch_conf; tar cf - --exclude .svn .) | (cd $(TARGET_DIR);tar xvf -)
+	(cd swarco/rootfs_overlay; tar cf - --exclude .svn .) | (cd $(TARGET_DIR);tar xvf -)
 	-mv $(TARGET_DIR)/etc/init.d/S*ntp $(TARGET_DIR)/etc/init.d/not_started
 	# create links from /var to /tmp
 	for dir in lock log pcmcia run spool tmp; \

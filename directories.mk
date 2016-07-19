@@ -25,7 +25,7 @@ BUILDROOT_BASE  = buildroot
 BUILDROOT_DIR	= buildroot-2.0
 BUILDROOT_SOFT_FLOAT_DIR = buildroot-2.0-soft-float
 BUILDROOT_PATH  = $(BASE_DIR)/$(BUILDROOT_BASE)/$(BUILDROOT_DIR)
-CH_CONFIG_DIR	= $(BASE_DIR)/$(BUILDROOT_BASE)/swarco_ch_conf
+CH_CONFIG_DIR	= $(BASE_DIR)/board/swarco/ccm2200/rootfs_overlay
 
 
 U_BOOT_BASE	= u-boot

@@ -1,0 +1,11 @@
+--- gcc-4.2.3/Makefile.in~	2006-12-29 18:47:06.000000000 +0100
++++ gcc-4.2.3/Makefile.in	2016-07-19 12:53:29.960099989 +0200
+@@ -486,7 +486,7 @@
+ 	"`echo 'LANGUAGES=$(LANGUAGES)' | sed -e s'/[^=][^=]*=$$/XFOO=/'`" \
+ 	"LEAN=$(LEAN)" \
+ 	"CONFIG_SHELL=$(SHELL)" \
+-	"MAKEINFO=$(MAKEINFO) $(MAKEINFOFLAGS)" 
++	"BUILD_INFO=" 
+ 
+ # We leave this in just in case, but it is not needed anymore.
+ RECURSE_FLAGS_TO_PASS = $(BASE_FLAGS_TO_PASS)
