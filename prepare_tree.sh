@@ -183,8 +183,11 @@ case "$KERNEL_VERS" in
         ;;
     
     2.6.21)
+        # now use kernel sources from our repository
         prepare_kernel_directory  linux-2.6.21                          \
-                                  $1/sources/kernel/2.6.21/
+                                  board/swarco/ccm2200/kernel/2.6.21/   \
+                                  buildroot/dl/linux-2.6.21.tar.bz2
+                                  
         ;;
     
     2.6.35)
