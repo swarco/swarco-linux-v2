@@ -1,5 +1,5 @@
 KERNEL_DIR=.
-INSTALL_MOD_PATH=$PWD/../../buildroot/swarco_ch_conf
+INSTALL_MOD_PATH=$PWD/../../board/swarco/ccm2200/rootfs_overlay
 MOD_DIRECTORY=2.6.21.7-weiss-ccm2200
 OUTPUT_DIR=$PWD/../output-${PWD##*linux-}
 IMAGE_DIR=../../tftp_root/
