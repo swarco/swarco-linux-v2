@@ -1,4 +1,5 @@
-# Embedded Linux
+SWARCO Embedded Linux V2 operating system
+=========================================
 
 for CCM2200 Single Board Computer
 by SWARCO Traffic Systems GmbH
