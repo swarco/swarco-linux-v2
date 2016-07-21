@@ -9,7 +9,7 @@ by SWARCO Traffic Systems GmbH
 
 
 |       | Table of contents                                   |
-|-------+-----------------------------------------------------|
+|-------|-----------------------------------------------------|
 |     1 | Cross Compiler Toolchain                            |
 |   1.1 | What is a Cross Compiler Toolchain                  |
 |   1.2 | Programs and versions                               |
