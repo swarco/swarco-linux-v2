@@ -314,11 +314,11 @@ terminal program (we use Kermit).
 
 Then you can update the system by entering:
 
-    # run update\_uboot\_tftp
+    # run update_uboot_tftp
 
-    # run update\_kernel\_tftp
+    # run update_kernel_tftp
 
-    # run update\_rootfs\_tftp\_nand
+    # run update_rootfs_tftp_nand
 
 to the u-boot prompt.
 
@@ -433,6 +433,7 @@ The following platforms are supported:
 - i386
 - m68k
 
+
  ![](buildroot_config2.jpeg)
 
 
@@ -504,7 +505,7 @@ The cross compiler in your toolchain can be used like the gcc compiler
 of your host system.
 
 Example:
-```
+```C
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -516,9 +517,9 @@ int main(int argc, char **argv)
 ```
 
 Compile using
-```
-  gcc –o test test.c
-```
+
+    gcc –o test test.c
+
 
 to create a binary for your host system, you can use
 
@@ -531,7 +532,7 @@ to generate a binary for the target.
 Optionally, you can write a Makefile to compile your projects:
 
 
-```
+```Makefile
 # Makefile for test.c
 VERSION = 1.00
 CFLAGS = -Wall –O2 –g –DVERSION=\”$(VERSION)\”
@@ -551,9 +552,7 @@ clean:
 
 Then you can compile your source files for the host system with the make utility by entering:
 
-```
-$ make
-```
+    $ make
 
 Or, if you want to cross compile:
 
