@@ -51,7 +51,7 @@ fi
   cd $BUILDROOT_BASE
 #  tar xvzf $1/sources/userland/application_sources.tar.gz
   mkdir dl
-  cp -a $1/sources/userland/dl .
+  #cp -a $1/sources/userland/dl .
 )
 
 # 2011-01-07 gc: prepare a copy of buildroot 2 to create the soft-float
@@ -185,8 +185,8 @@ case "$KERNEL_VERS" in
     2.6.21)
         # now use kernel sources from our repository
         prepare_kernel_directory  linux-2.6.21                          \
-                                  board/swarco/ccm2200/kernel/2.6.21/   \
-                                  buildroot/dl/linux-2.6.21.tar.bz2
+                                  $PWD/board/swarco/ccm2200/kernel/2.6.21/   \
+                                  $PWD/buildroot/dl/linux-2.6.21.tar.bz2
                                   
         ;;
     
