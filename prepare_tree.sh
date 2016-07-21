@@ -51,7 +51,7 @@ fi
   cd $BUILDROOT_BASE
 #  tar xvzf $1/sources/userland/application_sources.tar.gz
   mkdir dl
-  #cp -a $1/sources/userland/dl .
+  cp -a $1/sources/userland/dl .
 )
 
 # 2011-01-07 gc: prepare a copy of buildroot 2 to create the soft-float
