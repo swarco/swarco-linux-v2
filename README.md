@@ -8,7 +8,24 @@ SWARCO Embedded Linux V2 operating system
 |--------------------|
 
 
-## License Information 
+# Documentation
+
+This repository contains a skeleton for the SWARCO Embedded Linux V2
+build environment. It also contains a Makefile for controlling the overall-
+build process.
+
+The complete environment will be populated using the prepare_tree.sh.
+This script extracts the the necessary source and build system files
+from buildroot, Linux kernel and uBoot sources at right places and applies the
+needed patches.
+
+An old version of the documentation for SWARCO Embedded Linux V2 can be
+found under:
+
+[doc/SWARCO-LINUX.md](doc/SWARCO-LINUX.md)
+
+
+# License Information 
 
 This project contains code from Buildroot project (from
 [http://git.buildroot.net/buildroot](http://git.buildroot.net/buildroot)) which is a base for the SWARCO
