@@ -31,3 +31,11 @@
 # PPP secrets
 /etc/ppp/chap-secrets			f	600	0	0	-	-	-	-	-
 /etc/ppp/pap-secrets			f	600	0	0	-	-	-	-	-
+# 2016-08-02 gc: add some empty directories which are not part of the git
+# repository
+/mnt/.ram1                              d	755	0	0	-	-	-	-	
+/mnt/cifs                               d	755	0	0	-	-	-	-	
+/mnt/nfs                                d	755	0	0	-	-	-	-	
+/mnt/smb                                d	755	0	0	-	-	-	-	
+/mnt/usb                                d	755	0	0	-	-	-	-	
+/var/log-archive                        d	755	0	0	-	-	-	-
