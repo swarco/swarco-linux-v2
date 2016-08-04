@@ -7,6 +7,34 @@ SWARCO Embedded Linux V2 operating system
 | :warning: Warning <br> This is a legacy SWARCO linux environment used for CCM2200 board until 2016. <br> It is only for documentation purposes, please don't use it for starting new projects.<br>See [SWARCO Linux V3](https://github.com/swarco/swarco-linux-v3) for the current environment |
 |--------------------|
 
+# Getting started
+
+* Clone the repo: 
+
+    `git clone https://github.com/swarco/swarco-linux-v2`
+    
+* Download needed packages and repos and prepare our build tree (be
+  prepared, this will download over 1.6G of data...):
+
+    `cd swarco-linux-v2`
+
+    `./prepare_tree_github.sh`
+
+* compile everything (now you shoud grab a coffee, this can take an
+  hour or more...):
+
+    `make`
+
+# Output of a successfully build (in directory `tftp_root`):
+
+| File                         | Description                                                            |
+|------------------------------|------------------------------------------------------------------------|
+| ccm2200.bin                  | U-Boot script for updating kernel and rootfs with an USB flash drive   |
+| rootfs-ccm2200-lp-nand.jffs2 | Image of JFFS2 rootfs which can be written to NAND-flash with U-Boot   |
+| u-boot-ccm2200dev.bin        | Binary Image of U-Boot (for installation with JTAG or USB flash drive) |
+| u-boot-update/               | Files for updating u-boot with an USB flash drive                      |
+| uImage-ccm2200dev.bin        | Linux Kernel image in u-boot image format                              |
+
 
 # Documentation
 
