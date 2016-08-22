@@ -1,3 +1,10 @@
+2016-08-22  Guido Classen  <gc@STSTR12221.swarco.loc>
+
+	* board/swarco/ccm2200/kernel/2.6.21/kernel-config-2.6.21-ccm2200:
+	  Enabled kernel options:
+            - network bridge (module bridge.ko)
+            - IP: advanced router / policy routing / multiple routing tables
+
 2016-05-20  Guido Classen  <gc@tux-mobil.loc>
 
 	* buildroot/buildroot-2.0/swarco/package/tinc/tinc.mk: 
