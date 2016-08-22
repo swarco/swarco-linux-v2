@@ -1,5 +1,33 @@
 2016-08-22  Guido Classen  <gc@STSTR12221.swarco.loc>
+	* kernel/linux-2.6.21-ccm2200/drivers/usb/gadget/ether.c:
 
+	added Microsot OS descriptors to RNDIS USB gadget driver.  This
+	causes that Windows will automatically install the RNDIS 6.0
+	driver when our device is connected. So we don't need to install
+	linux.inf anymore.
+    
+        Also supported by Windows 10.
+    
+        When our device is not recognized, please remove the registry hive
+	with our product/vendor id under
+    
+        HKEY_LOCAL_MACHINE/SYSTEM/CurrentControlSet/Control/UsbFlags
+    
+        this can be archived using folowing .reg registry file:
+    
+--------------------------- del_usb_ccm2200.reg ------------------------------
+REGEDIT4
+[-HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbflags\0525A4A20213]
+
+---------------------------------- cut here ----------------------------------
+
+	* kernel/linux-2.6.21-ccm2200/drivers/char/ccm2200_gpio.c:
+	for compatibility with new CCMxCORE board's reset state we will
+	set the digital outputs to '0', so we turn OFF the optocoupler's
+	LED (and also MOSFET output)
+
+         => This enshures an electrically safe initial state of the system
+	
 	* board/swarco/ccm2200/kernel/2.6.21/kernel-config-2.6.21-ccm2200:
 	  Enabled kernel options:
             - network bridge (module bridge.ko)
