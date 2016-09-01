@@ -191,13 +191,12 @@ Ubuntu Linux 5.10 or newer is supported. Because Ubuntu is a desktop
 system and not a developer system, after standard installation, you
 have to perform the following steps:
 
-    apt-get install cpp gcc g++ make
-
-    apt-get install libc6-dev libncurses5-dev
-
-    apt-get install gettext texinfo flex bison autoconf
-
-    apt-get install liblzo2-dev liblzo2-2 libz-dev
+```sh
+apt-get install cpp gcc g++ make
+apt-get install libc6-dev libncurses5-dev
+apt-get install gettext texinfo flex bison autoconf
+apt-get install liblzo2-dev liblzo2-2 libz-dev
+```
 
 ### 2.1.2 SuSE-Linux &amp; openSUSE
 
@@ -216,12 +215,11 @@ Fedora is supported from version 17 and newer.
 
 Install development packages:
 
-    yum install autoconf automake binutils bison flex gcc gcc-c++
-
-    yum install gdb gettext libtool texinfo make strace ncurses-devel
-
-    yum install lzo-devel zlib-devel patch
-
+```sh
+yum install autoconf automake binutils bison flex gcc gcc-c++
+yum install gdb gettext libtool texinfo make strace ncurses-devel
+yum install lzo-devel zlib-devel patch
+```
 
 
 ## 2.2 Installation
