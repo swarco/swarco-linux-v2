@@ -1,3 +1,11 @@
+2016-09-14  Guido Classen  <gc@STSTR12221.swarco.loc>
+
+	* board/swarco/ccm2200/kernel/2.6.21/kernel-config-2.6.21-ccm2200 (CONFIG_BONDING):
+	Enabled Network Bonding:
+        - enabled ethernet bonding driver in kernel (as module) and
+        - enabled ifenslave utility in busybox
+
+
 2016-08-22  Guido Classen  <gc@STSTR12221.swarco.loc>
 	* kernel/linux-2.6.21-ccm2200/drivers/usb/gadget/ether.c:
 

@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.21.7
-# Mon Aug 22 14:47:03 2016
+# Wed Sep 14 00:33:59 2016
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -689,7 +689,7 @@ CONFIG_BLK_DEV_SD=y
 #
 CONFIG_NETDEVICES=y
 # CONFIG_DUMMY is not set
-# CONFIG_BONDING is not set
+CONFIG_BONDING=m
 # CONFIG_EQUALIZER is not set
 CONFIG_TUN=m
 
