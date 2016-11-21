@@ -1,3 +1,20 @@
+2016-11-21  Guido Classen  <gc@STSTR12221.swarco.loc>
+
+	* board/swarco/ccm2200/rootfs_overlay/etc/network/ip-config:
+	Service IP address is changed from 169.254.17.101 to 10.99.99.99
+
+	The IPv4 address block 169.254.0.0/16 is referred to as a "link
+	local", so it can not be routed. This can cause problems on
+	service connection via router (e.g., wireless router, or VPN
+	router for remote access), especially on Apple iOS operating
+	system.
+
+	To avoid the problem comes the following address will used (also
+	used by MicroTechnic and SWARCO Technology):
+
+	IP address: 10.99.99.99
+	Netmask: 255.255.255.248
+
 2016-09-14  Guido Classen  <gc@STSTR12221.swarco.loc>
 
 	* board/swarco/ccm2200/kernel/2.6.21/kernel-config-2.6.21-ccm2200 (CONFIG_BONDING):
