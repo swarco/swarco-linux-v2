@@ -24,6 +24,7 @@ U_BOOT_BASE=u-boot
 U_BOOT_DIR=u-boot-v2010.09-ccm2200
 KERNEL_BASE=kernel
 KERNEL_VERS=2.6.21
+KERNEL_VERS_BRANCH=linux-${KERNEL_VERS}.y-ccm2200
 #KERNEL_VERS=2.6.37
 
 #prepare buildroot dl directory
@@ -84,12 +85,12 @@ KERNEL_VERS=2.6.21
     cd $KERNEL_BASE
 
     if ! [ -d $KERNEL_CCM2200_DIR ] ; then
-        git clone -b v${KERNEL_VERS}-ccm2200 https://github.com/swarco/linux-kernel $KERNEL_CCM2200_DIR
+        git clone -b ${KERNEL_VERS_BRANCH} https://github.com/swarco/linux-kernel $KERNEL_CCM2200_DIR
     else
         (
             cd $KERNEL_CCM2200_DIR
             git clean -d -x -f
-            git checkout v${KERNEL_VERS}-ccm2200
+            git checkout ${KERNEL_VERS_BRANCH}
         )
     fi
     mkdir $KERNEL_OUTPUT_DIR
