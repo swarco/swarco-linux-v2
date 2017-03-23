@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2016-05-12 13:34:26 gc]
+echo $0 [Version 2017-03-23 18:18:55 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -528,6 +528,37 @@ init_and_load_drivers() {
                 find_usb_device "$reload_modules" 1e2d  0058 /dev/ttyACM0 /dev/ttyACM3
                 ;;
 
+
+            1e2d:0061)
+                print_usb_device "Cinterion PLS8-E"
+
+                find_usb_device "$reload_modules" 1e2d  0061 /dev/ttyACM1 /dev/ttyACM0
+                sleep 1
+                initiazlize_port $GPRS_DEVICE
+                sleep 1
+                exec 3<>$GPRS_DEVICE
+                at_cmd 'AT'
+                at_cmd 'AT^SSRVSET="actSrvSet"'
+                case "$r" in
+                    *'^SSRVSET: 2'*)
+                        print "Service Interface Configuration 2: Okay"
+                        ;;
+                    *)
+                        print "Must switch to Service Interface Configuration 2"
+                        #switch to service set 2
+                        # so we have
+                        # Modem Interface at /dev/ttyACM0
+                        # Application Interface at /dev/ttyACM1
+                        at_cmd 'AT^SSRVSET="actSrvSet",2'
+
+                        # new service set is active after reset
+                        reset_terminal_adapter
+                        exit 1
+                        ;;
+                esac
+                ;;
+
+
             114f:1234)
                 print_usb_device "Wavecom Fastrack Xtend FXT003/009 CDC-ACM Modem"
                 ;;
@@ -578,6 +609,11 @@ identify_terminal_adapter() {
                 *PHS8* | *PH8*)
                     TA_MODEL=PH8
                     print "Found Cinterion PH8/PHS8 HSDPA/UMTS/GPRS terminal adapter"
+                    ;;
+
+                *PLS8*)
+                    TA_MODEL=PLS8
+                    print "Found Cinterion PLS8 LTE/HSDPA/UMTS/GPRS terminal adapter"
                     ;;
 
                 *EHS*)
@@ -1119,7 +1155,7 @@ attach_PDP_context() {
     fi
 
     case "$TA_VENDOR $TA_MODEL" in
-        *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* | *Cinterion*EHS5*)
+        *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* | *Cinterion*EHS5* | *Cinterion*PLS8*)
             if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
                 count=360
                 while [ -d /proc/$ppp_pid ]
@@ -1132,7 +1168,7 @@ attach_PDP_context() {
                         count=0
                         #
                         case "$TA_VENDOR $TA_MODEL" in
-                            *Cinterion*EHS*)
+                            *Cinterion*EHS* | *Cinterion*PLS8*)
                                 query_board_temp
                                 ;;
                         esac
@@ -1146,34 +1182,40 @@ attach_PDP_context() {
                                 status_net "no (E)GPRS available in current cell"
                                 ;;
                             *'^SIND: psinfo,0,10'*)
-                                status_net "attached in HSDPA/HSUPA-capable cell"
+                                status_net "UMTS: attached in HSDPA/HSUPA-capable cell"
+                                ;;
+                            *'^SIND: psinfo,0,16'*)
+                                status_net "LTE: camped on EUTRAN capable cell"
+                                ;;
+                            *'^SIND: psinfo,0,17'*)
+                                status_net "LTE: attached in EUTRAN capable cell"
                                 ;;
                             *'^SIND: psinfo,0,1'*)
-                                status_net "GPRS available"
+                                status_net "GSM: GPRS available"
                                 ;;
                             *'^SIND: psinfo,0,2'*)
-                                status_net "GPRS attached"
+                                status_net "GSM: GPRS attached"
                                 ;;
                             *'^SIND: psinfo,0,3'*)
-                                status_net "EGPRS available"
+                                status_net "EDGE: EGPRS available"
                                 ;;
                             *'^SIND: psinfo,0,4'*)
-                                status_net "EGPRS attached"
+                                status_net "EDGE: EGPRS attached"
                                 ;;
                             *'^SIND: psinfo,0,5'*)
-                                status_net "camped on WCDMA cell"
+                                status_net "UMTS: camped on WCDMA cell"
                                 ;;
                             *'^SIND: psinfo,0,6'*)
-                                status_net "WCDMA PS attached"
+                                status_net "UMTS: WCDMA PS attached"
                                 ;;
                             *'^SIND: psinfo,0,7'*)
-                                status_net "camped on HSDPA-capable cell"
+                                status_net "UMTS: camped on HSDPA-capable cell"
                                 ;;
                             *'^SIND: psinfo,0,8'*)
-                                status_net "attached in HSDPA-capable cell"
+                                status_net "UMTS: attached in HSDPA-capable cell"
                                 ;;
                             *'^SIND: psinfo,0,9'*)
-                                status_net "camped on HSDPA/HSUPA-capable cell"
+                                status_net "UMTS: camped on HSDPA/HSUPA-capable cell"
                                 ;;
                         esac
                     fi
@@ -1692,8 +1734,8 @@ at_cmd "ATS0=0"
   query_signal_quality
 
   case "$TA_VENDOR $TA_MODEL" in
-      *Cinterion*EHS5* )
-          # EHSx don't support Siemens style AT^xMONx commands
+      *Cinterion*EHS5* | *Cinterion*PLS8*)
+          # EHSx / PLS8 don't support Siemens style AT^xMONx commands
           at_cmd "AT+CCID"
           print "SIM card id: $r"
           r=${r##+CCID: }

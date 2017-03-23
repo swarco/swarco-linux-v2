@@ -1,3 +1,12 @@
+2017-03-23  Guido Classen  <gc@STSTR12221.swarco.loc>
+
+	* board/swarco/ccm2200/rootfs_overlay/etc/ppp/shell_gprs_dial.sh (attach_PDP_context):
+	 added basic support for Cinterion PLS8-E LTE terminal adapter
+    
+        Added support for Cinterion PLS8-E with Service Interface Configuration
+        2 (Modem interface over USB) using normal ppp connection.
+        The direct cdc_ether network interfaces are currently NOT supported
+
 2016-11-21  Guido Classen  <gc@STSTR12221.swarco.loc>
 
 	* board/swarco/ccm2200/rootfs_overlay/etc/network/ip-config:
