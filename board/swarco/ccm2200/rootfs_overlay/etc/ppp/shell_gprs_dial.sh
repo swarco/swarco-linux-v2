@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2017-03-23 18:18:55 gc]
+echo $0 [Version 2017-03-24 12:13:48 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -424,7 +424,7 @@ init_and_load_drivers() {
 
     for id in /sys/bus/usb/devices/*
     do
-        case `cat $id/idVendor`:`cat $id/idProduct` in
+        case `cat $id/idVendor 2>/dev/null`:`cat $id/idProduct 2>/dev/null` in
             :)
                 continue
                 ;;
@@ -562,6 +562,19 @@ init_and_load_drivers() {
             114f:1234)
                 print_usb_device "Wavecom Fastrack Xtend FXT003/009 CDC-ACM Modem"
                 ;;
+
+            1bc7:1004)
+                print_usb_device "Telit UC864-G 3G Module"
+                find_usb_device "" 1bc7 1004 /dev/ttyUSB0
+                sleep 1
+                initiazlize_port $GPRS_DEVICE
+                sleep 1
+                # enable verbose AT command result messages
+                exec 3<>$GPRS_DEVICE
+                at_cmd "ATv1"
+                sleep 1
+                ;;
+            
             esac
     done
 }
@@ -1047,7 +1060,7 @@ attach_PDP_context() {
         fi
     fi
     
-    ppp_args="call gprs_comgt nolog nodetach $GPRS_PPP_OPTIONS"
+    ppp_args="call gprs nolog nodetach $GPRS_PPP_OPTIONS"
     if [ \! -z "$GPRS_USER" ]; then
         ppp_args="$ppp_args user $GPRS_USER"
     fi
