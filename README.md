@@ -14,7 +14,7 @@ SWARCO Embedded Linux V2 operating system
     * Debian / Ubuntu Linux
 
         ```sh
-        apt-get install cpp gcc g++ make
+        apt-get install git cpp gcc g++ make
         apt-get install libc6-dev libncurses5-dev
         apt-get install gettext texinfo flex bison autoconf
         apt-get install liblzo2-dev liblzo2-2 libz-dev
@@ -23,7 +23,7 @@ SWARCO Embedded Linux V2 operating system
     * Fedora Linux
 
         ```sh
-        yum install autoconf automake binutils bison flex gcc gcc-c++
+        yum install git autoconf automake binutils bison flex gcc gcc-c++
         yum install gdb gettext libtool texinfo make strace ncurses-devel
         yum install lzo-devel zlib-devel patch
         ```
@@ -32,22 +32,22 @@ SWARCO Embedded Linux V2 operating system
 2. Clone the repo: 
 
     ```sh
-git clone https://github.com/swarco/swarco-linux-v2
+        git clone https://github.com/swarco/swarco-linux-v2
     ```
     
 3. Download needed packages and repos and prepare our build tree (be
   prepared, this will download over 1.6G of data...):
 
     ```sh
-cd swarco-linux-v2
-./prepare_tree_github.sh
+        cd swarco-linux-v2
+        ./prepare_tree_github.sh
     ```
 
 4. compile everything (now you shoud grab a coffee, this can take an
   hour or more...):
 
     ```sh
-make
+        make
     ```
 
 # Output of a successfully build (in directory `tftp_root`):
