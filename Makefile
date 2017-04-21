@@ -78,6 +78,8 @@ kernel:
 
 .PHONY: modules_install
 modules_install:
+	-rm -rf buildroot/buildroot-2.0/project_build_arm/ccm2200/root/lib/modules/*
+	-rm -rf board/swarco/ccm2200/rootfs_overlay/lib/modules/*
 	cd $(KERNEL_PATH); sh build-ccm2200.sh modules_install
 
 
