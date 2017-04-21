@@ -1,3 +1,9 @@
+2017-04-21  Guido Classen  <gc@STSTR12221.swarco.loc>
+
+	* buildroot/buildroot-2.0/swarco/Makefile:
+	Advanced version number to "SWARCO Traffic Systems GmbH Embedded
+	Linux v2.03"
+
 2017-03-24  Guido Classen  <gc@STSTR12221.swarco.loc>
 
 	* board/swarco/ccm2200/rootfs_overlay/etc/ppp/shell_gprs_dial.sh:
