@@ -23,9 +23,9 @@ BUILDROOT_SOFT_FLOAT_DIR=buildroot-2.0-soft-float
 U_BOOT_BASE=u-boot
 U_BOOT_DIR=u-boot-v2010.09-ccm2200
 KERNEL_BASE=kernel
-KERNEL_VERS=2.6.21
-KERNEL_VERS_BRANCH=linux-${KERNEL_VERS}.y-ccm2200
-#KERNEL_VERS=2.6.37
+#KERNEL_VERS=2.6.21.y
+KERNEL_VERS=3.4.y
+KERNEL_VERS_BRANCH=linux-${KERNEL_VERS}-ccm2200
 
 #prepare buildroot dl directory
 (

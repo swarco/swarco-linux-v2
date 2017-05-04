@@ -1,3 +1,8 @@
+2017-05-04  Guido Classen  <gc@STSTR12221.swarco.loc>
+
+	* prepare_tree_github.sh (KERNEL_BASE):
+	Updated Kernel to Version Tag v3.4.113-ccm2200
+
 2017-04-21  Guido Classen  <gc@STSTR12221.swarco.loc>
 
 	* buildroot/buildroot-2.0/swarco/Makefile:
