@@ -12,11 +12,9 @@ BUILDROOT_SVN=buildroot-svn-20081211
   (cd swarco/template_tree; tar cf - --exclude .svn .) | \
     (cd $BUILDROOT_BASE; tar xvf -)
   make oldconfig
-  # 2011-01-12 gc: oldconfig has removed kernel version, restore it!
-  mv .config .oldconfig
-  sed 's/^.*BR2_DEFAULT_KERNEL_HEADERS.*/BR2_DEFAULT_KERNEL_HEADERS="2.6.37/g' \
-      <.oldconfig >.config
-  rm .oldconfig
+  # 2011-01-12 gc: .config has removed kernel version, restore it!
+  sed -i-e 's/^.*BR2_DEFAULT_KERNEL_HEADERS.*/BR2_DEFAULT_KERNEL_HEADERS="2.6.37/g' \
+      .config
 
 )
 
