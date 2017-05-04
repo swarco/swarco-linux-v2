@@ -1,5 +1,8 @@
 2017-05-04  Guido Classen  <gc@STSTR12221.swarco.loc>
 
+	* buildroot/buildroot-2.0/.config:
+	Updated busybox to version 1.26.2
+
 	* prepare_tree_github.sh (KERNEL_BASE):
 	Updated Kernel to Version Tag v3.4.113-ccm2200
 
