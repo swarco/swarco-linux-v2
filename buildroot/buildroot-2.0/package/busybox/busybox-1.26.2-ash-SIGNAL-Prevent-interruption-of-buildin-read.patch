@@ -1,0 +1,68 @@
+From fdd97f2865b1cc78b9a81eaf4f5db49bea87353a Mon Sep 17 00:00:00 2001
+From: Guido Classen <clagix@gmail.com>
+Date: Mon, 15 May 2017 16:59:39 +0200
+Subject: [PATCH] ash: [SIGNAL] Prevent interruption of buildin read
+
+I've observed some strange behavior in ash buildin "read" when a SIGCHLD
+arrives in current busybox.
+
+old behavior on busybox 1.24.2 ash (same behavior also on Debian bash and dash)
+
+   sleep 1& read x
+    => waits for ever until input is given
+
+new behavior on busybox
+
+  sleep 1& read x
+   [1]+  Done                       sleep 1
+   => read will be interrupted after one second due raise of SIGCHLD
+
+This patch fixes this issue by blocking SIGCHLD to prevent interruption of the
+corresponding poll() and read() calls when a child process terminates before
+input is given or the timeout is reached.
+
+Signed-off-by: Guido Classen <clagix@gmail.com>
+---
+ shell/shell_common.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/shell/shell_common.c b/shell/shell_common.c
+index 98d8627..2d0dfe4 100644
+--- a/shell/shell_common.c
++++ b/shell/shell_common.c
+@@ -68,6 +68,8 @@ shell_builtin_read(void FAST_FUNC (*setvar)(const char *name, const char *val),
+ 	int bufpos; /* need to be able to hold -1 */
+ 	int startword;
+ 	smallint backslash;
++	sigset_t sigset_block;
++	sigset_t sigset_old;
+ 
+ 	errno = err = 0;
+ 
+@@ -158,6 +160,13 @@ shell_builtin_read(void FAST_FUNC (*setvar)(const char *name, const char *val),
+ 		tcsetattr(fd, TCSANOW, &tty);
+ 	}
+ 
++	/* block SIGCHLD to prevent interrupting of poll() and read()
++	 * when a child process terminates before the timeout is reached
++	 */
++	sigemptyset(&sigset_block);
++	sigaddset(&sigset_block, SIGCHLD);
++	sigprocmask(SIG_BLOCK, &sigset_block, &sigset_old);
++
+ 	retval = (const char *)(uintptr_t)0;
+ 	startword = 1;
+ 	backslash = 0;
+@@ -264,6 +273,9 @@ shell_builtin_read(void FAST_FUNC (*setvar)(const char *name, const char *val),
+ 	}
+ 
+  ret:
++	/* unblock SIGCHLD */
++	sigprocmask(SIG_SETMASK, &sigset_old, NULL);
++
+ 	free(buffer);
+ 	if (read_flags & BUILTIN_READ_SILENT)
+ 		tcsetattr(fd, TCSANOW, &old_tty);
+-- 
+2.1.4
+
