@@ -45,16 +45,18 @@ all: buildroot u-boot kernel \
 # run make in buildroot again, to include the newly build kernel modules in 
 # the jffs2 images
 	cd $(BUILDROOT_PATH); make
-	cp $(BUILDROOT_PATH)/rootfs-ccm2200-lp-nand.jffs2 $(TFTP_ROOT_DIR)
-#	cp $(BUILDROOT_PATH)/rootfs-ccm2200-sp-nand.jffs2 $(TFTP_ROOT_DIR)
+	cp $(BUILDROOT_PATH)/binaries/ccm2200/rootfs-ccm2200-lp-nand.jffs2 $(TFTP_ROOT_DIR)
+#	cp $(BUILDROOT_PATH)/binaries/ccm2200/rootfs-ccm2200-sp-nand.jffs2 $(TFTP_ROOT_DIR)
+	cp $(BUILDROOT_PATH)/binaries/ccm2200/rootfs-ccm2200-lp.arm.ubifs $(TFTP_ROOT_DIR)
 
 
 .PHONY: buildroot
 buildroot:
 #	make -C $(BUILDROOT_PATH) #this dosn't work WHY?
 	cd $(BUILDROOT_PATH); make
-	cp $(BUILDROOT_PATH)/rootfs-ccm2200-lp-nand.jffs2 $(TFTP_ROOT_DIR)
-#	cp $(BUILDROOT_PATH)/rootfs-ccm2200-sp-nand.jffs2 $(TFTP_ROOT_DIR)
+	cp $(BUILDROOT_PATH)/binaries/ccm2200/rootfs-ccm2200-lp-nand.jffs2 $(TFTP_ROOT_DIR)
+#	cp $(BUILDROOT_PATH)/binaries/ccm2200/rootfs-ccm2200-sp-nand.jffs2 $(TFTP_ROOT_DIR)
+	cp $(BUILDROOT_PATH)/binaries/ccm2200/rootfs-ccm2200-lp.arm.ubifs $(TFTP_ROOT_DIR)
 
 
 # .PHONY: buildroot-soft-float

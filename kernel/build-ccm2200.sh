@@ -36,7 +36,14 @@ make -C "$KERNEL_DIR" ARCH=arm CROSS_COMPILE="arm-linux-"       \
                       INSTALL_MOD_PATH=$INSTALL_MOD_PATH        \
                       O=$OUTPUT_DIR $@ || exit $?
 
-cp $OUTPUT_DIR/arch/arm/boot/uImage $IMAGE_DIR/uImage-ccm2200dev.bin
+
+if grep "CONFIG_UBIFS_FS=y" $OUTPUT_DIR/.config >/dev/null 2>&1
+then
+    cp $OUTPUT_DIR/arch/arm/boot/uImage $IMAGE_DIR/uImage-ccm2200-ubifs.bin
+else
+    cp $OUTPUT_DIR/arch/arm/boot/uImage $IMAGE_DIR/uImage-ccm2200dev.bin
+fi
+
 
 # Local Variables:
 # mode: shell-script

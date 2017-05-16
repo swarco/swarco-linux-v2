@@ -27,6 +27,9 @@ KERNEL_BASE=kernel
 KERNEL_VERS=3.4.y
 KERNEL_VERS_BRANCH=linux-${KERNEL_VERS}-ccm2200
 
+# 2017-05-16 gc: uncomment this line to build kernel for jffs2 rootfs
+UBIFS_CONFIG="-ubifs"
+
 #prepare buildroot dl directory
 (
   cd $BUILDROOT_BASE
@@ -94,7 +97,7 @@ KERNEL_VERS_BRANCH=linux-${KERNEL_VERS}-ccm2200
         )
     fi
     mkdir $KERNEL_OUTPUT_DIR
-    cp $KERNEL_BOARD_DIR/kernel-config-${KERNEL_CCM2200_DIR##*linux-} $KERNEL_OUTPUT_DIR/.config
+    cp $KERNEL_BOARD_DIR/kernel-config-${KERNEL_CCM2200_DIR##*linux-}$UBIFS_CONFIG $KERNEL_OUTPUT_DIR/.config
     (
             cd ${KERNEL_CCM2200_DIR}
             ln -sf ../build-ccm2200.sh .

@@ -1216,3 +1216,28 @@ diff -Nrub buildroot-2.0/target/makedevs/makedevs.mk p/target/makedevs/makedevs.
 + 	doForce = opt & (OPT_FORCE|OPT_LAZY);
 + 
 + 	/* Get a list of mount points from mtab.  We read them all in now mostly
+--- buildroot-2.0/target/ubifs/ubifsroot.mk	2008-12-08 10:06:59.000000000 +0100
++++ buildroot-2.0-new/target/ubifs/ubifsroot.mk	2017-05-02 17:52:42.170580169 +0200
+@@ -5,10 +5,11 @@
+ #############################################################
+ #MKFS_UBIFS_VERSION=2582f128dad78591bc3adcc87c343c690bb82e61
+ #MKFS_UBIFS_URL=http://git.infradead.org/users/dedekind/mkfs.ubifs.git?a=snapshot;h=$(MKFS_UBIFS_VERSION);sf=tgz
+-MKFS_UBIFS_VERSION=v0.4
++# 2017-05-02 gc: mkubifs downloaded from http://git.infradead.org/users/ahunter/mkfs.ubifs.git
++MKFS_UBIFS_VERSION=HEAD-bdaac0f
+ MKFS_UBIFS_URL=http://git.infradead.org/users/dedekind/mkfs.ubifs.git?a=snapshot;h=refs/tags/mkfs.ubifs-$(MKFS_UBIFS_VERSION);sf=tgz
+ MKFS_UBIFS_SOURCE:=mkfs.ubifs-$(MKFS_UBIFS_VERSION).tar.gz
+-MKFS_UBIFS_DIR:= $(BUILD_DIR)/mkfs-ubifs-$(MKFS_UBIFS_VERSION)
++MKFS_UBIFS_DIR:= $(BUILD_DIR)/mkfs.ubifs-$(MKFS_UBIFS_VERSION)
+ MKFS_UBIFS_CAT:=$(ZCAT)
+ MKFS_UBIFS_NAME:=mkfs.ubifs
+ 
+@@ -17,7 +18,7 @@
+ 
+ $(MKFS_UBIFS_DIR)/.unpacked: $(DL_DIR)/$(MKFS_UBIFS_SOURCE)
+ 	$(ZCAT) $(DL_DIR)/$(MKFS_UBIFS_SOURCE) | tar -C $(BUILD_DIR) -xvf -
+-	mv $(BUILD_DIR)/$(MKFS_UBIFS_NAME) $(MKFS_UBIFS_DIR)
++	# mv $(BUILD_DIR)/$(MKFS_UBIFS_NAME) $(MKFS_UBIFS_DIR)
+ 	toolchain/patch-kernel.sh $(MKFS_UBIFS_DIR) target/ubifs/ mkfs-ubifs-\*.patch
+ 	touch $@
+ 
