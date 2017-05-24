@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2017-03-24 12:13:48 gc]
+echo $0 [Version 2017-05-24 15:22:19 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -1027,6 +1027,16 @@ attach_PDP_context() {
     wait_quiet 1
 
     case "$TA_VENDOR $TA_MODEL" in
+        *Cinterion*PLS8*)
+            if [ \! -z "$GPRS_USER" ]; then
+                # Warning: Password / User name swapped compared to
+                # Cinterion EHS5!
+                PRINT_AT_CMD_FILTER='${*/^SGAUTH=1,2,\"*\",\"*\"/^SGAUTH=1,2,\"<hidden>\",\"$GPRS_USER\"}' \
+
+                at_cmd "AT^SGAUTH=1,2,\"$GPRS_PASSWD\",\"$GPRS_USER\"" 10
+            fi
+            ;;
+
         *Cinterion*EHS*)
             if [ \! -z "$GPRS_USER" ]; then
                 # Cinterion EHS5 must be provided with PDP credentials 
