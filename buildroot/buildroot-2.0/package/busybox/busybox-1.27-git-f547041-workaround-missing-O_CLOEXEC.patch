@@ -1,0 +1,12 @@
+diff -Nrub busybox-1.26.3-org/miscutils/time.c busybox-1.26.3/miscutils/time.c
+--- busybox-1.26.3-org/miscutils/time.c	2017-05-23 14:47:27.000000000 +0200
++++ busybox-1.26.3/miscutils/time.c	2017-05-31 18:23:30.463105162 +0200
+@@ -32,6 +32,8 @@
+ 
+ #include "libbb.h"
+ #include <sys/resource.h> /* getrusage */
++/* 2017-05-31 gc: workaround */
++#define O_CLOEXEC	02000000	/* set close_on_exec */
+ 
+ /* Information on the resources used by a child process.  */
+ typedef struct {

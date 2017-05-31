@@ -1,3 +1,11 @@
+2017-06-01  Guido Classen  <gc@STSTR12221.swarco.loc>
+
+	* board/swarco/busybox.config:
+	Upgrade busybox to git version 1.27-git-f547041
+
+	This includes offical patch from Denys Vlasenko
+	to prevent interruption of buildin read on SIGCHLD
+
 2017-05-04  Guido Classen  <gc@STSTR12221.swarco.loc>
 
 	* buildroot/buildroot-2.0/.config:
