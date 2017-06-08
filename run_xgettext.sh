@@ -20,6 +20,8 @@
 #*  
 #*****************************************************************************
 
+ROOTFS_OVERLAY=board/swarco/ccm2200/rootfs_overlay
+
 xgettext --output system_messages.pot           \
          --default-domain=system_messages       \
          --directory=.                          \
@@ -28,8 +30,8 @@ xgettext --output system_messages.pot           \
          --keyword=M_                           \
          --from-code=ISO-8859-1                 \
          --language=Shell                       \
-         ch_conf/etc/ppp/*.sh                   \
-         ch_conf/etc/init.d/S*
+         $ROOTFS_OVERLAY/etc/ppp/*.sh           \
+         $ROOTFS_OVERLAY/etc/init.d/S*
 
 # Local Variables:
 # mode: shell-script
