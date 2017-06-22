@@ -15,7 +15,7 @@
 #*
 #****************************************************************************/
 
-echo $0 [Version 2017-05-24 15:22:19 gc]
+echo $0 [Version 2017-06-07 16:31:37 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -99,7 +99,7 @@ status() {
                 net=UMTS
             fi
             if [ $1 -lt $low_limit ]; then
-                sys_mesg_net -e NET -p warning `M_ "Low $net signal quality" `
+                sys_mesg_net -e NET -p warning `M_ "Low mobile data network signal quality" `
             else
                 sys_mesg_net -e NET -p okay `M_ "No error" `
             fi
