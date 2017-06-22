@@ -1,5 +1,9 @@
 2017-06-22  Guido Classen  <gc@STSTR12221.swarco.loc>
 
+	* buildroot/buildroot-2.0/package/netsnmp/Config.in:
+	Make netsnmp MIB-modules configurable via buildroot .config
+	Enable modules ucd-snmp/disk and ucd-snmp/loadave
+
 	* buildroot/buildroot-2.0/package/openvpn/openvpn.mk:
 	Security upgrade to openvpn version 2.3.17
 

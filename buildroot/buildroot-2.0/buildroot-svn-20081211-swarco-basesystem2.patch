@@ -1245,3 +1245,35 @@ diff -Nrub buildroot-2.0/target/makedevs/makedevs.mk p/target/makedevs/makedevs.
  	toolchain/patch-kernel.sh $(MKFS_UBIFS_DIR) target/ubifs/ mkfs-ubifs-\*.patch
  	touch $@
  
+--- br-org/package/netsnmp/Config.in	2008-08-04 21:07:05.000000000 +0200
++++ buildroot-2.0/package/netsnmp/Config.in	2017-06-22 11:04:24.102835843 +0200
+@@ -6,3 +6,17 @@
+ 	  SNMP v3 using both IPv4 and IPv6.
+ 
+ 	  http://net-snmp.sourceforge.net/
++
++config BR2_PACKAGE_NETSNMP_WITH_MIB_MODULES
++	string "Build with these MIB modules"
++	default "host smux ucd-snmp/dlmod agentx" if !BR2_STATIC_LIBS
++	default "host smux agentx" if BR2_STATIC_LIBS
++	help
++	  Specify which MIB modules to include.
++
++config BR2_PACKAGE_NETSNMP_WITHOUT_MIB_MODULES
++	string "Build without these MIB modules"
++	default "disman/event disman/schedule utilities"
++	help
++	  Specify which MIB modules to exclude.
++
+--- br-org/package/netsnmp/netsnmp.mk	2008-11-04 12:31:58.000000000 +0100
++++ buildroot-2.0/package/netsnmp/netsnmp.mk	2017-06-22 11:16:30.386585171 +0200
+@@ -87,7 +87,8 @@
+ 		--without-rsaref \
+ 		--with-sys-contact="root" \
+ 		--with-sys-location="Unknown" \
+-		--with-mib-modules="host smux ucd-snmp/dlmod" \
++		--with-mib-modules=$(BR2_PACKAGE_NETSNMP_WITH_MIB_MODULES) \
++		--with-out-mib-modules=$(BR2_PACKAGE_NETSNMP_WITHOUT_MIB_MODULES) \
+ 		--with-out-transports="$(NETSNMP_WO_TRANSPORT)" \
+ 		--with-defaults \
+ 		--disable-debugging \
