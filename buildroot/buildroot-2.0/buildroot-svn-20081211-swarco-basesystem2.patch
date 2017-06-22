@@ -993,7 +993,7 @@ diff -Nrub buildroot-2.0/package/openvpn/openvpn.mk p/package/openvpn/openvpn.mk
  #
  #############################################################
 -OPENVPN_VERSION:=2.0.9
-+OPENVPN_VERSION:=2.3.10
++OPENVPN_VERSION:=2.3.17
  OPENVPN_SOURCE:=openvpn-$(OPENVPN_VERSION).tar.gz
 -OPENVPN_SITE:=http://openvpn.net/release/
 +OPENVPN_SITE:=http://swupdate.openvpn.org/community/releases/
