@@ -1,24 +1,34 @@
 #!/bin/sh
-#*****************************************************************************/
-#* 
-#*  @file          iptables.sh
-#*
-#*  Einfache Paketfilter-Regeln als Firewall für die Internet-Einwahl
-#*  einrichten.  
-#*
-#*  Die Paketfilter-Regeln sollten geladen werden bevor die Netzwerkinterfaces
-#*  initialisiert werden, damit sich keine kurzzeitigen Sicherheitslücken 
-#*  ergeben.
-#*
-#*  @version       0.1
-#*  @date          <2007-10-25 12:33:11 gc>
-#*  @author        Guido Classen
-#* 
-#*  Changes:
-#*    2007-01-11 gc: bugfix let incoming FIN packets pass!!!!
-#*    2004-12-23 gc: initial version
-#*  
-#****************************************************************************/
+#
+# iptables.sh
+#
+# Creates simple packet filter rules with iptables for a firewall to
+# block traffic on internet dial-up device (e.g. mobile packet data).
+#
+# The packet filter rules should be loaded before the network interfaces
+# can be initialized to avoid short-term security gaps.
+#
+# Copyright (C) 2004-2017 by Weiss-Electronic GmbH
+#                            SWARCO Traffic Systems GmbH
+#                            Guido Classen <clagix@gmail.com>
+# All rights reserved.
+#     
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License version
+# 2 or later as published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, see <http://www.gnu.org/licenses/>.
+#
+# Modification History:
+#     2007-01-11 gc: bugfix let incoming FIN packets pass!!!!
+#     2004-12-23 gc: initial version
+#
 
 case "$1" in
   start)
