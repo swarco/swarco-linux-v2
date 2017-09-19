@@ -36,7 +36,7 @@ UBIFS_CONFIG="-ubifs"
 #  tar xvzf $1/sources/userland/application_sources.tar.gz
 #  mkdir dl
 #  cd dl
-  git clone https://github.com/swarco/swarco-linux-v2-dl
+  git clone --depth 1 https://github.com/swarco/swarco-linux-v2-dl
   rm -rf dl
   ln -s swarco-linux-v2-dl/dl dl
 )
@@ -76,7 +76,7 @@ UBIFS_CONFIG="-ubifs"
     cd $U_BOOT_BASE
     
     \rm -rf $U_BOOT_DIR
-    git clone -b v2010.09-ccm2200 https://github.com/swarco/u-boot $U_BOOT_DIR
+    git clone --depth 1 -b v2010.09-ccm2200 https://github.com/swarco/u-boot $U_BOOT_DIR
 )
 
 
@@ -88,7 +88,7 @@ UBIFS_CONFIG="-ubifs"
     cd $KERNEL_BASE
 
     if ! [ -d $KERNEL_CCM2200_DIR ] ; then
-        git clone -b ${KERNEL_VERS_BRANCH} https://github.com/swarco/linux-kernel $KERNEL_CCM2200_DIR
+        git clone --depth 1 -b ${KERNEL_VERS_BRANCH} https://github.com/swarco/linux-kernel $KERNEL_CCM2200_DIR
     else
         (
             cd $KERNEL_CCM2200_DIR
@@ -104,6 +104,13 @@ UBIFS_CONFIG="-ubifs"
     )
 )
 echo KERNEL_VERS=${KERNEL_VERS} > version.mk
+
+#prepare swarco-usermode-tools directory
+(
+    SWARCO_USERMODE_TOOLS=swarco-usermode-tools
+    \rm -rf $SWARCO_USERMODE_TOOLS
+    git clone --depth 1 https://github.com/swarco/swarco-usermode-tools $SWARCO_USERMODE_TOOLS
+)
 
 # Local Variables:
 # mode: shell-script

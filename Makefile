@@ -41,7 +41,7 @@ SOFT_FLOAT_TOOLCHAIN = $(SOFT_FLOAT_TOOLCHAIN_DIR)/arm-linux-gcc	\
 
 .PHONY: all
 all: buildroot u-boot kernel \
-     modules_install usermode
+     modules_install swarco-usermode-tools
 # run make in buildroot again, to include the newly build kernel modules in 
 # the jffs2 images
 	cd $(BUILDROOT_PATH); make
@@ -85,9 +85,12 @@ modules_install:
 	cd $(KERNEL_PATH); sh build-ccm2200.sh modules_install
 
 
-.PHONY: usermode
-usermode:
-	make -C usermode
+.PHONY: swarco-usermode-tools
+swarco-usermode-tools:
+	make -C swarco-usermode-tools \
+		CROSS_CC=../$(BUILDROOT_PATH)/build_arm/staging_dir/usr/bin/$(CROSS_CC) \
+		CROSS_STRIP=../$(BUILDROOT_PATH)/build_arm/staging_dir/usr/bin/$(CROSS_STRIP) \
+		CH_CONFIG_DIR=../$(CH_CONFIG_DIR)
 
 
 .PHONY: prepare_tree
