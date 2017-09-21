@@ -9,7 +9,7 @@ cd swarco-linux-v2
 ./prepare_tree_github.sh && make
 (
     cd tftp_root
-    tar cJf ../../swarco-linux-v2_images.tar.bz2 .
+    tar cjf ../../swarco-linux-v2_images.tar.bz2 .
 )
 
 #(
@@ -35,7 +35,7 @@ mkdir -p swarco-linux-v2/buildroot/buildroot-2.0/build_arm/
 mv staging_dir swarco-linux-v2/buildroot/buildroot-2.0/build_arm/
 
 #cd swarco-linux-v2
-#tar xvJf ../swarco-linux-v2_staging_dir.tar.bz2
+#tar xjf ../swarco-linux-v2_staging_dir.tar.bz2
 arm-linux-uclibc-gcc -o hello hello.c
 #cd ..
 ls -l
