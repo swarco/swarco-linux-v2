@@ -22,6 +22,7 @@ RUN useradd -ms /bin/bash builduser &&                  \
             gettext                                     \
             git                                         \
             groff-base                                  \
+            kmod                                        \
             libc6-dev                                   \
             liblzo2-2                                   \
             liblzo2-dev                                 \
