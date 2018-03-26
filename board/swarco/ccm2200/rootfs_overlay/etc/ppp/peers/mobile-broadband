@@ -1,26 +1,23 @@
-#!/bin/sh
 #
-# ntp-query.sh
+# mobile-broadband
 #
-# Run NTP timeserver query as background process.  The ntpdate utility can run
-# for several minutes until it has gotten a valid time in particular on a slow
-# network connection (GPRS), a large timeout (-t option) and if many NTP-hosts
-# are specified.
+# pppd peer file for mobile data network for GPRS/UMTS/LTE communication
+# using mmobile-data-connector package
 #
-# Copyright (c) 2007-2017, SWARCO Traffic Systems GmbH
+# Copyright (c) 2007-2018, SWARCO Traffic Systems GmbH
 #                          Guido Classen <clagix@gmail.com>
 # All rights reserved.
-#
+#     
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#
+# 
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
-#
+# 
 # * Redistributions in binary form must reproduce the above copyright notice,
 #   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -36,39 +33,33 @@
 #     2007-12-03 gc: initial version
 #
 
-NTPDATE=/usr/bin/ntpdate
-HWCLOCK=/sbin/hwclock
+noproxyarp 
+usehostname 
+noipdefault  
+noauth
+hide-password 
+defaultroute
 
-# synchronize systime from NTP-Server
-test -f $NTPDATE || exit 0
-test -f /etc/default/ntpdate || exit 0
+crtscts
+lock
+asyncmap 0
+modem
 
-. /etc/default/ntpdate
+lcp-echo-failure 5
+lcp-echo-interval 10
+lcp-max-configure 60
+lcp-restart 2
 
-test -n "$NTPSERVERS" || exit 0
+ipcp-accept-local
+ipcp-accept-remote
 
-. /etc/create_lock.sh
-create_lock ntp-
+#mtu 1495
+#mru 1495
 
-# set -p 1 option when no -p option is specified
-case $NTPOPTIONS in
-    *-p*)
-        ;;
-    *)
-        NTPOPTIONS="-p 1 $NTPOPTIONS"
-        ;;
-esac
+persist
+holdoff 5
+# exit in case device number of /dev/ttyUSBx or /dev/ttyACMx device has changed
+maxfail 3
 
-logger -t $0 "Running ntpdate to synchronize clock"
-if $NTPDATE $NTPOPTIONS $NTPSERVERS; then
-    $HWCLOCK -w
-    logger -t $0 "ntpdate finished with: `date`"
-    if [ -f /etc/ppp/gprs-okay.sh ]; then
-        sh /etc/ppp/gprs-okay.sh
-    fi
-else
-    logger -t $0 "ntpdate FAILED"
-    if [ -f /etc/ppp/gprs-fail.sh ]; then
-        sh /etc/ppp/gprs-fail.sh
-    fi
-fi
+# passive
+# novj

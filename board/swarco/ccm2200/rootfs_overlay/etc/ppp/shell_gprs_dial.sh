@@ -1,21 +1,40 @@
 #!/bin/sh
-#*****************************************************************************/
-#*
-#*  @file          shell_gprs_dial.sh
-#*
-#*  Shell script based GPRS/UMTS dial script
-#*
-#*  @version       0.1
-#*  @date
-#*  @author        Guido Classen
-#*                 SWARCO Traffic Systems GmbH
-#*
-#*  Changes:
-#*    2009-08-28 gc: initial version
-#*
-#****************************************************************************/
+#
+# shell_gprs_dial.sh
+#
+# Package mobile-data-connector 
+# Shell-script based GPRS/UMTS/LTE mobile data network dial script
+#
+# Copyright (c) 2009-2018, SWARCO Traffic Systems GmbH
+#                          Guido Classen <clagix@gmail.com>
+# All rights reserved.
+#     
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Modification History:
+#     2009-08-28 gc: initial version
+#
 
-echo $0 [Version 2017-06-07 16:31:37 gc]
+echo $0 [Version 2018-03-21 15:39:33 gc]
 
 #GPRS_DEVICE=/dev/ttyS0
 #GPRS_DEVICE=/dev/com1
@@ -99,7 +118,7 @@ status() {
                 net=UMTS
             fi
             if [ $1 -lt $low_limit ]; then
-                sys_mesg_net -e NET -p warning `M_ "Low mobile data network signal quality" `
+                sys_mesg_net -e NET -p warning `M_ "Low $net signal quality" `
             else
                 sys_mesg_net -e NET -p okay `M_ "No error" `
             fi
@@ -203,13 +222,18 @@ wait_quiet() {
   local wait_str=""
   if [ "0$1" -gt 0 ]; then wait_time=$1; fi
   if [ \! -z "$2" ]; then wait_str="$2"; fi
-
+  local start_time=`date +%s`
   local line=""
   while IFS="" read -r -t$wait_time line<&3
   do
       #remove trailing carriage return
       line=${line%%${cr}*}
       print_rcv "$line"
+
+      if [ `date +%s` -ge $((start_time+wait_time)) ]; then
+          print "wait_quiet -- FORCED timeout"
+          break
+      fi
 
       if [ \! -z "$wait_str" ]; then
 #          print "wq: str -${wait_str}-"
@@ -226,6 +250,7 @@ wait_quiet() {
 #          print "wq: no str"
       fi
   done
+#  print "wait_quiet finished"
   return 0
 }
 
@@ -354,7 +379,7 @@ query_board_temp() {
 
 
 ##############################################################################
-# load modules and detect ttyUSB* devices
+# load modules and detect ttyUSB* devices (2018-03-09 gc: deprecated)
 ##############################################################################
 find_usb_device() {
     local reload_modules=$1
@@ -405,6 +430,56 @@ find_usb_device() {
             sleep 2
         done
     fi
+}
+
+get_device_by_usb_interface()
+{
+    local dev_path=$1
+    local if_num=$2
+
+    (
+        cd $dev_path/*:1.$if_num
+        if [ -d tty ] ; then
+            echo "/dev/`ls tty`"
+        else
+            echo "/dev/`echo tty*`"
+        fi
+    )
+    
+}
+
+##############################################################################
+# load modules and detect ttyACM* devices by specifying USB interface numbers
+# for application and modem port
+##############################################################################
+find_usb_device_by_interface_num() {
+    local reload_modules=$1
+    local dev_path=$2
+    local if_num_app=$3
+    local if_num_mod="$4"
+
+    echo "app interface bInterfaceClass: `cat $dev_path/*:1.$if_num_app/bInterfaceClass`"
+    #    GPRS_DEVICE_APP="/dev/`ls $dev_path/*:1.$if_num_app/tty`"
+    GPRS_DEVICE_APP=`get_device_by_usb_interface "$dev_path" $if_num_app`
+    GPRS_DEVICE=$GPRS_DEVICE_APP
+    #    GPRS_DEVICE_MODEM="/dev/`ls $dev_path/*:1.$if_num_mod/tty`"
+    if ! [ -z "$if_num_mod" ]; then
+        echo "modem interface bInterfaceClass: `cat $dev_path/*:1.$if_num_mod/bInterfaceClass`"
+        GPRS_DEVICE_MODEM=`get_device_by_usb_interface "$dev_path" $if_num_mod`
+    fi
+#    GPRS_BAUDRATE=115200
+    GPRS_BAUDRATE=921600
+    
+    # wait until devices have setteled
+    for l in 1 2 3 4 5
+    do
+        #echo "app: $GPRS_DEVICE_APP, mod: $if_num_mod, ($GPRS_DEVICE_MODEM)"
+        if [ -c "$GPRS_DEVICE_APP" -a \( -z "$if_num_mod" -o -c "$GPRS_DEVICE_MODEM" \) ]; then
+            return
+        fi
+        sleep 2
+    done
+    echo "Devices $GPRS_DEVICE_APP or $GPRS_DEVICE_MODEM not found"
 }
 
 print_usb_device() {
@@ -503,8 +578,28 @@ init_and_load_drivers() {
 
             1e2d:0053)
                 print_usb_device "Cinterion PH8 in USB component mode"
+                find_usb_device_by_interface_num "$reload_modules" $id 2
+                print "first USB port is $GPRS_DEVICE"
+                # find_usb_device "" 1e2d 0053 /dev/ttyUSB3
+                sleep 1
+                initialize_port $GPRS_DEVICE
+                sleep 1
+                # connect file handle 3 with terminal adapter
+                exec 3<>$GPRS_DEVICE
+                at_cmd 'AT'
+                at_cmd "AT^SDPORT?"
+                case "$r" in
+                    *'^SDPORT: 3'*)
+                        print "Service Interface Allocation 3: Okay"
+                        ;;
+                    *)
+                        print "Must switch to Interface Allocation 3"
+                        at_cmd "AT^SDPORT=3"
+                        exit 1
+                        ;;
+                esac
 
-                find_usb_device "$reload_modules" 1e2d 0053 /dev/ttyUSB2 /dev/ttyUSB3
+                find_usb_device_by_interface_num "$reload_modules" $id 2 3
                 ;;
 
             1e2d:0054)
@@ -513,7 +608,7 @@ init_and_load_drivers() {
                 find_usb_device "" 1e2d 0054 /dev/ttyACM0
                 # switch to USB component mode
                 sleep 1
-                initiazlize_port $GPRS_DEVICE
+                initialize_port $GPRS_DEVICE
                 sleep 1
                 # connect file handle 3 with terminal adapter
                 exec 3<>$GPRS_DEVICE
@@ -525,16 +620,18 @@ init_and_load_drivers() {
             1e2d:0058)
                 print_usb_device "Cinterion EHS5-E in USB CDC-ACM mode"
 
-                find_usb_device "$reload_modules" 1e2d  0058 /dev/ttyACM0 /dev/ttyACM3
+                #find_usb_device "$reload_modules" 1e2d  0058 /dev/ttyACM0 /dev/ttyACM3
+                find_usb_device_by_interface_num "$reload_modules" $id 0 6
                 ;;
 
 
             1e2d:0061)
                 print_usb_device "Cinterion PLS8-E"
 
-                find_usb_device "$reload_modules" 1e2d  0061 /dev/ttyACM1 /dev/ttyACM0
+                find_usb_device_by_interface_num "$reload_modules" $id 2
+                #find_usb_device "$reload_modules" 1e2d  0061 /dev/ttyACM1
                 sleep 1
-                initiazlize_port $GPRS_DEVICE
+                initialize_port $GPRS_DEVICE
                 sleep 1
                 exec 3<>$GPRS_DEVICE
                 at_cmd 'AT'
@@ -556,6 +653,7 @@ init_and_load_drivers() {
                         exit 1
                         ;;
                 esac
+                find_usb_device_by_interface_num "$reload_modules" $id 2 0
                 ;;
 
 
@@ -565,14 +663,20 @@ init_and_load_drivers() {
 
             1bc7:1004)
                 print_usb_device "Telit UC864-G 3G Module"
+                TA_VENDOR="Telit"
+                TA_MODEL="UC864"
                 find_usb_device "" 1bc7 1004 /dev/ttyUSB0
-                sleep 1
-                initiazlize_port $GPRS_DEVICE
-                sleep 1
-                # enable verbose AT command result messages
-                exec 3<>$GPRS_DEVICE
-                at_cmd "ATv1"
-                sleep 1
+                ;;
+
+            1bc7:0021)
+                print_usb_device "Telit HE910 3G Module"
+                TA_VENDOR="Telit"
+                TA_MODEL="HE910"
+
+                # find_usb_device "" 1bc7 0021 /dev/ttyACM0
+                # sleep 1
+                # initialize_port $GPRS_DEVICE
+                find_usb_device_by_interface_num "$reload_modules" $id 0 6
                 ;;
             
             esac
@@ -618,6 +722,10 @@ identify_terminal_adapter() {
                     print "Found Cinterion HC25 UMTS/GPRS terminal adapter"
                 # HC25: enable network (UTMS=blue/GSM=green) status LEDs
                     at_cmd "AT^sled=1"
+# 2011-08-01 gc: added the following two options to prevent
+#                assignment of dummy DNS address "10.11.12.13"
+#                on GPRS / UMTS terminal adapters (Siemens HC25, ...)
+                   GPRS_PPP_OPTIONS="$GPRS_PPP_OPTIONS connect-delay 5000 ipcp-max-failure 30"
                     ;;
                 *PHS8* | *PH8*)
                     TA_MODEL=PH8
@@ -716,13 +824,15 @@ identify_terminal_adapter() {
             ;;
 
         *)
-            print "Found unkonwn terminal adapter"
+            if [ -z "$TA_VENDOR$TA_MODEL" ]; then
+                print "Found unkonwn terminal adapter"
+            fi
             ;;
     esac
 }
 
 
-initiazlize_port() {
+initialize_port() {
     local device=$1
 
     # prevent blocking when opening the TTY device due modem status lines
@@ -775,7 +885,8 @@ on_ring() {
                 ;;
 
             *CONNECT*)
-	        echo GPRS_ERROR_COUNT=0 >/tmp/gprs-error
+                GPRS_ERROR_COUNT=0
+                write_error_count_file
                 echo starting $GPRS_ANSWER_CSD_CMD
                 status_net "GSM / CSD connection active"
                 set_gprs_led 50 1000
@@ -1056,7 +1167,7 @@ attach_PDP_context() {
 # AT command interpreter on application port remains still accessible
 # connect file handle 3 with modem device
         print "Switching to modem interface $GPRS_DEVICE_MODEM"
-        if  initiazlize_port $GPRS_DEVICE_MODEM; then
+        if  initialize_port $GPRS_DEVICE_MODEM; then
             
             exec 3<>$GPRS_DEVICE_MODEM
             for l in 1 2 3 4 5
@@ -1069,8 +1180,13 @@ attach_PDP_context() {
             GPRS_DEVICE_MODEM=""
         fi
     fi
-    
-    ppp_args="call gprs nolog nodetach $GPRS_PPP_OPTIONS"
+
+    if [ -f /etc/ppp/peers/mobile-broadband ]; then
+        PEER=mobile-broadband
+    else
+        PEER=gprs
+    fi
+    ppp_args="call $PEER nolog nodetach $GPRS_PPP_OPTIONS"
     if [ \! -z "$GPRS_USER" ]; then
         ppp_args="$ppp_args user $GPRS_USER"
     fi
@@ -1128,6 +1244,29 @@ attach_PDP_context() {
             ppp_pid=$!
             echo $ppp_pid >/var/run/ppp0.pid
             status_net "PDP context attached (GPRS or UMTS)"
+
+            # 2018-03-21 gc: reset error count on successfully PDP context attach
+            GPRS_ERROR_COUNT=0
+            write_error_count_file
+
+
+# #            Experimential: Use USB-CDC Networking interface on PLS-8
+#              at_cmd "AT+CGACT=0,1"
+#              at_cmd "AT+CGACT?"
+#              at_cmd "AT+CGPADDR=1" 2
+
+             
+#              at_cmd "AT^SWWAN=1,1,1" 90 || (at_cmd "AT+CERR"; error)
+#              iptables -D INPUT -i usb1 -j ACCEPT
+#              iptables -A INPUT -i usb1 -j ACCEPT
+
+#              ifconfig usb1 up
+#              udhcpc -bn -i usb1
+#              status_net "PDP context attached (GPRS or UMTS)"
+
+# #            /usr/bin/modemstatus-wait ri break  <&3
+#              GPRS_DEVICE_MODEM=$GPRS_DEVICE
+#              ppp_pid=$$            
             ;;
         
 #         *)
@@ -1382,6 +1521,67 @@ attach_PDP_context() {
             wait
             ;;
 
+        *Telit*)
+            if [ \! -z "$GPRS_DEVICE_MODEM" ]; then
+                count=360
+                while [ -d /proc/$ppp_pid ]
+                do
+                    count=$(($count+1))
+                    if [ $count -gt 360 ]
+                    then
+                        count=0
+                        #
+                        query_signal_quality
+
+                        # query Packet Switched Data Information:
+                        at_cmd 'AT#PSNT?'
+                        case "$r" in
+                            *'#PSNT: 0,0'*)
+                                status_net "GPRS network"
+                                ;;
+                            *'#PSNT: 0,1'*)
+                                status_net "EGPRS network"
+                                ;;
+                            *'#PSNT: 0,2'*)
+                                status_net "WCDMA network"
+                                ;;
+                            *'#PSNT: 0,3'*)
+                                status_net "HSDPA network"
+                                ;;
+                            *'#PSNT: 0,4'*)
+                                status_net "unknown network or not registered"
+                                ;;
+                            *)
+                                status_net "unknown network"
+                                ;;
+                        esac
+                    fi
+
+                    while [ -d /proc/$ppp_pid ]  && IFS="" read -r -t10 line<&3
+                    do
+                        line=${line%%${cr}*}
+                        print_rcv "APP_PORT: $line"
+                        case $line in
+                            *+CMTI:* | *+CMT:*)
+                                echo SMS URC received
+                                if ! check_and_handle_SMS; then
+                                    kill -TERM $ppp_pid
+                                fi
+                                ;;
+                            *RING*)
+                                print "ringing"
+                                on_ring
+                                break;
+                                ;;
+                        esac
+                    done
+                    sleep 1
+                done
+            fi
+            # wait till pppd process has terminated
+            wait
+            ;;
+
         *)
             print "waiting for modem status change"
             /usr/bin/modemstatus-wait ri break pid $ppp_pid <&3
@@ -1424,6 +1624,16 @@ attach_PDP_context() {
     return $result
 }
 
+write_error_count_file() {
+
+    cat >$GRPS_ERROR_COUNT_FILE <<FILE_END
+# GRPS-Error Count, do not edit!
+GPRS_ERROR_COUNT=$GPRS_ERROR_COUNT
+FILE_END
+
+true
+}
+
 ##############################################################################
 # Main
 ##############################################################################
@@ -1442,16 +1652,12 @@ if [ -f /var/run/ppp0.pid ]; then
 fi
 
 ##############################################################################
-# check error count
+# Initialize device and/or load kernel modules on first start
 ##############################################################################
-GPRS_ERROR_COUNT_MAX=3
 if [ -f $GRPS_ERROR_COUNT_FILE ] ; then
-    . $GRPS_ERROR_COUNT_FILE
-    GPRS_ERROR_COUNT=$(($GPRS_ERROR_COUNT + 1))
     init_and_load_drivers
 else
     init_and_load_drivers 1
-    GPRS_ERROR_COUNT=0
 fi
 
 
@@ -1459,45 +1665,57 @@ fi
 ##############################################################################
 # Check if TTY device does not block after open
 ##############################################################################
-if [ ! -c $GPRS_DEVICE ]; then
- exit 1
-fi
+if [ -c $GPRS_DEVICE ]; then
 
-print "Starting GPRS connection on device $GPRS_DEVICE ($GPRS_BAUDRATE baud)"
-print "(Modem device: $GPRS_DEVICE_MODEM)"
-
-status GPRS_DEVICE_CMD   "$GPRS_DEVICE"
-status GPRS_DEVICE_MODEM "$GPRS_DEVICE_MODEM"
-
-if ! initiazlize_port $GPRS_DEVICE; then
-    sleep 10
-    killall watchdog
-    echo initializing port failed
-    # 2012-10-11 gc: don't reboot here, we have gprs-watchdog now!
+    print "Connecting mobile broadband. Device $GPRS_DEVICE (Modem: $GPRS_DEVICE_MODEM) ($GPRS_BAUDRATE baud)"
+    
+    status GPRS_DEVICE_CMD   "$GPRS_DEVICE"
+    status GPRS_DEVICE_MODEM "$GPRS_DEVICE_MODEM"
+    
+    if ! initialize_port $GPRS_DEVICE; then
+        sleep 10
+        killall watchdog
+        echo initializing port failed
+        # 2012-10-11 gc: don't reboot here, we have gprs-watchdog now!
     #reboot
-    exit 3
-fi
-
-# connect file handle 3 with terminal adapter
-exec 3<>$GPRS_DEVICE
-
-print "ready"
-
-#command_mode
-
-for l in 1 2 3 4 5
-do
-    if at_cmd "AT"; then
-        break
-    else
-        command_mode
-        wait_quiet 1
+        exit 3
     fi
-done
+    
+    # connect file handle 3 with terminal adapter
+    exec 3<>$GPRS_DEVICE
+    
+    print "ready"
+    
+    #command_mode
+    
+    for l in 1 2 3 4 5
+    do
+        if at_cmd "AT"; then
+            break
+        else
+            command_mode
+            wait_quiet 1
+        fi
+    done
+
+    case "$TA_VENDOR $TA_MODEL" in
+        *Telit*)
+            at_cmd "ATv1"
+            ;;
+        *)
+            ;;
+    esac
+fi
 
 ##############################################################################
 # check error count
 ##############################################################################
+GPRS_ERROR_COUNT_MAX=3
+if [ -f $GRPS_ERROR_COUNT_FILE ] ; then
+    . $GRPS_ERROR_COUNT_FILE
+else
+    GPRS_ERROR_COUNT=0
+fi
 
 print GPRS_ERROR_COUNT: $GPRS_ERROR_COUNT
 
@@ -1505,16 +1723,17 @@ if [ $GPRS_ERROR_COUNT -ge $GPRS_ERROR_COUNT_MAX ] ; then
     print max err count reached
     # reload drivers in case /dev/ttyUSBxx device is not present
     init_and_load_drivers 1
-    GPRS_ERROR_COUNT=0
     identify_terminal_adapter
     reset_terminal_adapter
     init_and_load_drivers 1
+    GPRS_ERROR_COUNT=$(($GPRS_ERROR_COUNT - 1))
+    write_error_count_file
+    exit 1
+else
+    GPRS_ERROR_COUNT=$((GPRS_ERROR_COUNT + 1))    
 fi
 
-cat >$GRPS_ERROR_COUNT_FILE <<FILE_END
-# GRPS-Error Count, do not edit!
-GPRS_ERROR_COUNT=$GPRS_ERROR_COUNT
-FILE_END
+write_error_count_file
 
 if ! at_cmd "AT"; then
     sys_mesg -e TA -p error `M_ "No response from terminal adapter, check connection" `
@@ -1845,7 +2064,7 @@ at_cmd "AT+CMGF=1"
 
 #2009-08-28 gc: enable URC on incoming SMS (and break of data/GPRS connection)
 case "$TA_VENDOR $TA_MODEL" in
-    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* | *Cinterion*EHS5*)
+    *SIEMENS*HC25* | *Cinterion*HC25* | *Cinterion*PH8* | *Cinterion*PLS8* | *Cinterion*EHS5*)
         at_cmd "AT+CNMI=2,1"
         ;;
     *WAVECOM*)
@@ -1895,6 +2114,9 @@ do
 
     if [ -z "$GPRS_ONLY_CSD" -o "$GPRS_ONLY_CSD" -eq 0 ]; then
         attach_PDP_context || do_restart=0
+    else
+        GPRS_ERROR_COUNT=0
+        write_error_count_file
     fi
 done
 
@@ -1905,6 +2127,6 @@ exit 0
 
 # Local Variables:
 # mode: shell-script
-# time-stamp-pattern: "20/\\[Version[\t ]+%%\\]"
+# time-stamp-pattern: "40/\\[Version[\t ]+%%\\]"
 # backup-inhibited: t
 # End:
