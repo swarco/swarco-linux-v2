@@ -43,7 +43,7 @@ RUN useradd -ms /bin/bash builduser &&                  \
 
 
 COPY docker_build.sh /home/builduser
-USER builduser
+#USER builduser
 WORKDIR /home/builduser
 
 RUN ./docker_build.sh
